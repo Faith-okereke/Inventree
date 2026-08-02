@@ -1,0 +1,44 @@
+{
+    "name": "Inventree",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon",
+        "start": "node dist/index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "packageManager": "pnpm@10.30.1",
+    "dependencies": {
+        "@prisma/adapter-pg": "^7.9.0",
+        "@prisma/client": "^7.9.0",
+        "bcrypt": "^6.0.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.19.2",
+        "express-validator": "^7.3.2",
+        "jsonwebtoken": "^9.0.2",
+        "nodemailer": "^9.0.3",
+        "nodemon": "^3.1.14",
+        "pg": "^8.22.0",
+        "swagger-jsdoc": "^6.3.0",
+        "swagger-ui-express": "^5.0.1",
+        "zod": "^4.4.3"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.17",
+        "@types/express": "^4.17.21",
+        "@types/jsonwebtoken": "^9.0.6",
+        "@types/node": "^20.14.10",
+        "@types/nodemailer": "^8.0.1",
+        "@types/pg": "^8.20.0",
+        "@types/swagger-jsdoc": "^6.0.4",
+        "@types/swagger-ui-express": "^4.1.8",
+        "prisma": "^7.9.0",
+        "tsx": "^4.23.1",
+        "typescript": "^5.5.3"
+    }
+}
