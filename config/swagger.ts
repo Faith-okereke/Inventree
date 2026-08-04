@@ -9,6 +9,14 @@ const options: swaggerJSDoc.Options = {
       version,
       description: 'API documentation for the Inventree E-commerce and Inventory Management System.',
     },
+    // Swagger UI renders tag groups in this order, so declaring them here
+    // controls the sidebar order regardless of which file each path lives in.
+    tags: [
+      { name: 'Auth', description: 'Registration, login, and password reset' },
+      { name: 'Users', description: 'User management (admin only)' },
+      { name: 'Products', description: 'Product catalogue and inventory' },
+      { name: 'Orders', description: 'Customer orders and fulfilment' },
+    ],
     components: {
       securitySchemes: {
         bearerAuth: {

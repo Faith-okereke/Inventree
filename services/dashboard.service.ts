@@ -49,7 +49,7 @@ export const getOrderDashboard = async () => {
         return total + (price * item.quantity)
     }, 0)
 
-    const productStats = orderItems.reduce<Map<number, { productId: number; name: string; sku: string; totalQuantity: number }>>((acc, item) => {
+    const productStats = orderItems.reduce<Map<string, { productId: string; name: string; sku: string; totalQuantity: number }>>((acc, item) => {
         const existing = acc.get(item.productId)
         const quantity = item.quantity
         if (existing) {

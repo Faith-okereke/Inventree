@@ -1,6 +1,6 @@
 {
   "watch": ["."],
-  "ext": "ts,json",
+  "ext": "ts,json,yaml",
   "ignore": ["node_modules", "dist"],
   "exec": "tsx index.ts",
   "signal": "SIGTERM"

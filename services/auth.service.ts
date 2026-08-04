@@ -68,3 +68,12 @@ export const consumePasswordResetToken = async (tokenHash: string) => {
     where: { tokenHash }
   })
 }
+
+export const logoutUserService=({ userId }: { userId: string })=>{
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      refreshToken: null
+    }
+  })
+}
