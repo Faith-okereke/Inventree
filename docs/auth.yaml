@@ -17,7 +17,15 @@ components:
         password:
           type: string
           minLength: 8
+          description: >
+            Must be at least 8 characters and include a lowercase letter,
+            an uppercase letter, a number, and a special character.
           example: "Password123!"
+        role:
+          type: string
+          enum: [admin, staff]
+          description: Optional. Defaults to `staff` when omitted.
+          example: "staff"
     LoginUserInput:
       type: object
       required:
@@ -30,32 +38,66 @@ components:
           example: "john.doe@example.com"
         password:
           type: string
-          minLength: 8
           example: "Password123!"
-    UserOutput:
+    ForgotPasswordInput:
       type: object
+      required:
+        - email
       properties:
-        id:
-          type: string
-          format: cuid
         email:
           type: string
           format: email
+          example: "john.doe@example.com"
+    ResetPasswordInput:
+      type: object
+      required:
+        - token
+        - newPassword
+      properties:
+        token:
+          type: string
+          description: The raw reset token from the emailed link.
+          example: "9f2c1a7e4b..."
+        newPassword:
+          type: string
+          minLength: 8
+          example: "NewPassword123!"
+    UserOutput:
+      type: object
+      description: A user with the password field stripped.
+      properties:
+        id:
+          type: string
+          format: uuid
         name:
           type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
         role:
           type: string
-          enum: [admin, user]
+          enum: [admin, staff]
+          example: "staff"
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
         createdAt:
           type: string
           format: date-time
-          example: "Password123!"
+        updatedAt:
+          type: string
+          format: date-time
 
 paths:
   /api/auth/register:
     post:
       tags: [Auth]
       summary: Register a new user
+      description: Creates an account with a bcrypt-hashed password. Returns the created user without a token.
+      security: []
       requestBody:
         required: true
         content:
@@ -65,6 +107,10 @@ paths:
       responses:
         "201":
           description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserOutput"
         "400":
           description: Bad request (e.g., validation error, email already in use)
         "500":
@@ -73,6 +119,8 @@ paths:
     post:
       tags: [Auth]
       summary: Login a user
+      description: Verifies credentials and returns a JWT valid for 1 day.
+      security: []
       requestBody:
         required: true
         content:
@@ -91,10 +139,143 @@ paths:
                     type: string
                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                   user:
-                    $ref: '#/components/schemas/UserOutput'
+                    $ref: "#/components/schemas/UserOutput"
         "400":
           description: Bad request (e.g., validation error)
         "401":
           description: Invalid credentials
+        "500":
+          description: Internal server error
+  /api/auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Request a password reset link
+      description: >
+        Generates a reset token valid for 30 minutes and emails it.
+        Always returns 200 whether or not the email exists, so the
+        response cannot be used to enumerate accounts.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordInput"
+      responses:
+        "200":
+          description: Reset link sent if the account exists.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "If that email exists, a reset link was sent."
+        "500":
+          description: Internal server error
+  /api/auth/verify-password:
+    get:
+      tags: [Auth]
+      summary: Checks whether a reset token is  valid
+      description: >
+        Used by the reset page to validate the token before showing the
+        new-password form. Does not consume the token.
+      security: []
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+          description: The raw reset token from the emailed link.
+      responses:
+        "200":
+          description: The token is valid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                    example: true
+        "400":
+          description: Invalid, expired, or missing token
+        "500":
+          description: Internal server error
+  /api/auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Complete a password reset
+      description: Validates the token, updates the password, then consumes the token so it cannot be reused.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordInput"
+      responses:
+        "200":
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Your password has been reset successfully. Sign in with new password to access account."
+        "400":
+          description: Bad request (missing fields, password under 8 characters, or invalid/expired token)
+        "500":
+          description: Internal server error
+  /api/auth/me:
+    get:
+      tags: [Auth]
+      summary: Get the authenticated user's profile
+      description: Returns the profile of the user identified by the bearer token.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: The authenticated user's profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  data:
+                    $ref: "#/components/schemas/UserOutput"
+        "401":
+          description: Missing or invalid authorization token
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+    delete:
+      tags: [Auth]
+      summary: Delete the authenticated user's own account
+      description: >
+        Soft-deletes the caller's own account by setting `deletedAt`.
+        Currently restricted to admins by `requireRole('admin')`.
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Account deleted successfully (no content)
+        "401":
+          description: Missing or invalid authorization token
+        "403":
+          description: Forbidden (requires admin role)
+        "404":
+          description: User not found
         "500":
           description: Internal server error

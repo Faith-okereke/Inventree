@@ -4,14 +4,15 @@ import { loginRequestSchema, registerRequestSchema } from "../middleware/auth.mi
 import { requireAuth } from "../middleware/require-auth.middleware"
 import { deleteUserProfile, forgotPassword, getUserProfile, loginUser, registerUser, resetUserPassword, verifyUserPassword } from "../controllers/auth.controller"
 import { requireRole } from "../middleware/role.middleware"
+import { forgotPasswordLimiter, registerLimiter, loginLimiter } from "../middleware/rate-limiter.middleware"
 
 const router = Router()
 
-router.post('/register', validate(registerRequestSchema, { errorFormatter: (issues) => ({ error: issues[0]?.message ?? 'Invalid request body' }) }), registerUser)
+router.post('/register', validate(registerRequestSchema, { errorFormatter: (issues) => ({ error: issues[0]?.message ?? 'Invalid request body' }) }), registerLimiter, registerUser)
 
-router.post('/login', validate(loginRequestSchema, { errorFormatter: (issues) => ({ error: issues[0]?.message ?? 'Invalid request body' }) }), loginUser)
+router.post('/login', validate(loginRequestSchema, { errorFormatter: (issues) => ({ error: issues[0]?.message ?? 'Invalid request body' }) }), loginLimiter, loginUser)
 
-router.post('/forgot-password', forgotPassword)
+router.post('/forgot-password', forgotPasswordLimiter, forgotPassword)
 
 router.get('/verify-password', verifyUserPassword)
 

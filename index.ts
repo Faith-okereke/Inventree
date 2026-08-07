@@ -7,6 +7,7 @@ import dashboardRoute from './routes/dashboard.route'
 import { errorHandler } from "./middleware/error-handler"
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
+import {limiter} from "./middleware/rate-limiter.middleware"
 
 const app = express()
 
@@ -19,6 +20,7 @@ app.use('/api/products', productRoute)
 app.use('/api/orders', ordersRoute)
 app.use('/api/users', userRoute)
 app.use('/api/dashboard', dashboardRoute)
+app.use(limiter)
 
 app.use(errorHandler)
 
