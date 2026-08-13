@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand — sampled from the Figma frames */
+  --color-brand-50: #eff4ff;
+  --color-brand-100: #dbe6ff;
+  --color-brand-200: #bfd3ff;
+  --color-brand-300: #93b4ff;
+  --color-brand-400: #6089ff;
+  --color-brand-500: #4a7cf7;
+  --color-brand-600: #1c4ed8;
+  --color-brand-700: #1a43b8;
+  --color-brand-800: #1b3a94;
+  --color-brand-900: #1c3475;
+
+  /* Auth illustration panel */
+  --color-canvas: #4d7cf5;
+
+  /* Neutrals */
+  --color-ink-50: #f8fafc;
+  --color-ink-100: #f1f5f9;
+  --color-ink-200: #e2e8f0;
+  --color-ink-300: #cbd5e1;
+  --color-ink-400: #94a3b8;
+  --color-ink-500: #64748b;
+  --color-ink-600: #475569;
+  --color-ink-700: #334155;
+  --color-ink-800: #1e293b;
+  --color-ink-900: #0f172a;
+
+  /* Status — badges, stat deltas, stock levels */
+  --color-success-50: #ecfdf5;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+  --color-warn-50: #fffbeb;
+  --color-warn-500: #f59e0b;
+  --color-warn-600: #d97706;
+  --color-warn-700: #b45309;
+  --color-danger-50: #fef2f2;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Motion — shared curve so every transition feels like one system */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-up: fade-up 0.32s var(--ease-out-soft) both;
+  --animate-fade-in: fade-in 0.24s var(--ease-out-soft) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+  --animate-ring-draw: ring-draw 0.9s var(--ease-out-soft) both;
+  --animate-bar-grow: bar-grow 0.7s var(--ease-out-soft) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+/*
+ * Donut slices carry `pathLength="100"`, so `stroke-dasharray` is expressed in
+ * percent. Only `from` is declared — the implicit `to` resolves to each slice's
+ * own dasharray, so one keyframe draws every slice to its correct length.
+ * Pure CSS: the chart stays a Server Component and ships no JS.
+ */
+@keyframes ring-draw {
+  from {
+    stroke-dasharray: 0 100;
+  }
+}
+
+/* scaleX rather than width: compositor-only, so the bars never trigger layout. */
+@keyframes bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-ink-100);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+  }
+
+  /* Consistent, visible focus ring on every interactive element */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+  }
+
+  /*
+   * Pointer cursor on everything clickable. Done here rather than as a
+   * `cursor-pointer` class on each component so it cannot be forgotten on the
+   * next one — and `:not(:disabled)` keeps inert controls from claiming to be
+   * clickable, which a per-component class would have to undo every time.
+   */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  label[for],
+  select:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
+
+  /* Respect users who ask the OS for less animation */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-300) transparent;
+}
+
+/* Stagger helper for list/table entrance animations */
+@utility stagger-children {
+  & > * {
+    animation: var(--animate-fade-up);
+    animation-delay: calc(var(--stagger-index, 0) * 40ms);
+  }
+}

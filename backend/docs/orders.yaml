@@ -191,7 +191,7 @@ paths:
           schema:
             type: string
             format: uuid
-          description: The order's UUID.
+          description: The order's UUID (OrderId property).
       responses:
         "200":
           description: The requested order.
@@ -256,7 +256,7 @@ paths:
           schema:
             type: string
             format: uuid
-          description: The order's UUID.
+          description: The order's UUID (OrderId property)D.
       requestBody:
         required: true
         content:
