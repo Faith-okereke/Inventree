@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const validate_middleware_1 = require("../middleware/validate.middleware");
+const user_middleware_1 = require("../middleware/user.middleware");
+const require_auth_middleware_1 = require("../middleware/require-auth.middleware");
+const role_middleware_1 = require("../middleware/role.middleware");
+const user_controller_1 = require("../controllers/user.controller");
+const router = (0, express_1.Router)();
+router.get('/all', require_auth_middleware_1.requireAuth, (0, role_middleware_1.requireRole)('admin'), user_controller_1.getAllUsers);
+router.get('/:id', require_auth_middleware_1.requireAuth, (0, role_middleware_1.requireRole)('admin'), (0, validate_middleware_1.validate)(user_middleware_1.userIdSchema, { source: 'params' }), user_controller_1.getUser);
+router.post('/create', require_auth_middleware_1.requireAuth, (0, role_middleware_1.requireRole)('admin'), (0, validate_middleware_1.validate)(user_middleware_1.createUserSchema), user_controller_1.createUser);
+router.patch('/:id', require_auth_middleware_1.requireAuth, (0, role_middleware_1.requireRole)('admin'), (0, validate_middleware_1.validate)(user_middleware_1.userIdSchema, { source: 'params' }), (0, validate_middleware_1.validate)(user_middleware_1.updateUserSchema), user_controller_1.updateUser);
+router.delete('/:id', require_auth_middleware_1.requireAuth, (0, role_middleware_1.requireRole)('admin'), (0, validate_middleware_1.validate)(user_middleware_1.userIdSchema, { source: 'params' }), user_controller_1.deleteUser);
+exports.default = router;

@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const validate_middleware_1 = require("../middleware/validate.middleware");
+const product_middleware_1 = require("../middleware/product.middleware");
+const role_middleware_1 = require("../middleware/role.middleware");
+const product_controller_1 = require("../controllers/product.controller");
+const require_auth_middleware_1 = require("../middleware/require-auth.middleware");
+const router = (0, express_1.Router)();
+router.get('/all', require_auth_middleware_1.requireAuth, product_controller_1.getAllProducts);
+router.get('/search', require_auth_middleware_1.requireAuth, product_controller_1.searchTheProducts);
+router.get("/:id", require_auth_middleware_1.requireAuth, (0, validate_middleware_1.validate)(product_middleware_1.productIdSchema, { source: 'params' }), product_controller_1.getTheProduct);
+router.post('/create', require_auth_middleware_1.requireAuth, (0, role_middleware_1.requireRole)('admin'), (0, validate_middleware_1.validate)(product_middleware_1.productRequestSchema), product_controller_1.createProduct);
+router.patch('/:id', require_auth_middleware_1.requireAuth, (0, role_middleware_1.requireRole)('admin'), (0, validate_middleware_1.validate)(product_middleware_1.productIdSchema, { source: 'params' }), (0, validate_middleware_1.validate)(product_middleware_1.productRequestSchema), product_controller_1.updateTheProduct);
+router.delete('/:id', require_auth_middleware_1.requireAuth, (0, role_middleware_1.requireRole)('admin'), (0, validate_middleware_1.validate)(product_middleware_1.productIdSchema, { source: 'params' }), product_controller_1.deleteTheProduct);
+exports.default = router;

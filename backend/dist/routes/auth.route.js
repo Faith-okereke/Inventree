@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const validate_middleware_1 = require("../middleware/validate.middleware");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const require_auth_middleware_1 = require("../middleware/require-auth.middleware");
+const auth_controller_1 = require("../controllers/auth.controller");
+const role_middleware_1 = require("../middleware/role.middleware");
+const rate_limiter_middleware_1 = require("../middleware/rate-limiter.middleware");
+const router = (0, express_1.Router)();
+router.post('/register', (0, validate_middleware_1.validate)(auth_middleware_1.registerRequestSchema, { errorFormatter: (issues) => ({ error: issues[0]?.message ?? 'Invalid request body' }) }), rate_limiter_middleware_1.registerLimiter, auth_controller_1.registerUser);
+router.post('/login', (0, validate_middleware_1.validate)(auth_middleware_1.loginRequestSchema, { errorFormatter: (issues) => ({ error: issues[0]?.message ?? 'Invalid request body' }) }), rate_limiter_middleware_1.loginLimiter, auth_controller_1.loginUser);
+router.post('/forgot-password', rate_limiter_middleware_1.forgotPasswordLimiter, auth_controller_1.forgotPassword);
+router.get('/verify-password', auth_controller_1.verifyUserPassword);
+router.post('/reset-password', auth_controller_1.resetUserPassword);
+router.get('/me', require_auth_middleware_1.requireAuth, auth_controller_1.getUserProfile);
+router.delete('/me', require_auth_middleware_1.requireAuth, (0, role_middleware_1.requireRole)("admin"), auth_controller_1.deleteUserProfile);
+exports.default = router;

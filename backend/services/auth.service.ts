@@ -1,4 +1,5 @@
-import { prisma } from "../database/prisma.ts"
+import { prisma } from "../database/prisma"
+import { Prisma } from "../generated/prisma/client"
 
 export const registerService = async (data: { email: string, name: string, password: string}) => {
   return prisma.user.create({ data })
@@ -47,7 +48,7 @@ export const updateUserPassword = async (userId: string, newHashedPassword: stri
 }
 
 export const softDeleteUser = async (userId: string) => {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const user = await tx.user.update({
       where: { id: userId },
       data: {
@@ -69,11 +70,8 @@ export const consumePasswordResetToken = async (tokenHash: string) => {
   })
 }
 
-export const logoutUserService=({ userId }: { userId: string })=>{
-  return prisma.user.update({
-    where: { id: userId },
-    data: {
-      refreshToken: null
-    }
+export const logoutUserService = async ({ userId }: { userId: string }) => {
+  return prisma.user.findUnique({
+    where: { id: userId }
   })
 }

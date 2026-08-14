@@ -1,4 +1,4 @@
-import { sendEmail } from "../services/email.service.ts"
+import { sendEmail } from "../services/email.service"
 
 export const sendPasswordResetEmail = async (to: string, token: string) => {
     const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`

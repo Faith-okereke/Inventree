@@ -1,5 +1,30 @@
 import { prisma } from "../database/prisma"
+import { Prisma } from "../generated/prisma/client"
+
 const dashboardLowStockThreshold = 5
+
+type DashboardOrder = {
+    status: string
+}
+
+type DashboardOrderItem = {
+    quantity: number
+    priceAtOrder: Prisma.Decimal
+    productId: string
+    product: {
+        id: string
+        name: string
+        sku: string
+    }
+}
+
+type LowStockProduct = {
+    id: string
+    name: string
+    sku: string
+    quantityInStock: number
+}
+
 export const getOrderDashboard = async () => {
     const [orders, orderItems, lowStockProducts] = await prisma.$transaction([
         prisma.order.findMany({
@@ -37,14 +62,14 @@ export const getOrderDashboard = async () => {
                 quantityInStock: 'asc',
             },
         }),
-    ])
+    ]) as [DashboardOrder[], DashboardOrderItem[], LowStockProduct[]]
 
     const ordersByStatus = orders.reduce<Record<string, number>>((acc, order) => {
         acc[order.status] = (acc[order.status] ?? 0) + 1
         return acc
     }, {})
 
-    const revenue = orderItems.reduce((total, item) => {
+    const revenue = orderItems.reduce((total: number, item: DashboardOrderItem) => {
         const price = Number(item.priceAtOrder)
         return total + (price * item.quantity)
     }, 0)
@@ -63,7 +88,7 @@ export const getOrderDashboard = async () => {
             totalQuantity: quantity,
         })
         return acc
-    }, new Map())
+    }, new Map<string, { productId: string; name: string; sku: string; totalQuantity: number }>())
 
     const topProducts = Array.from(productStats.values())
         .sort((a, b) => b.totalQuantity - a.totalQuantity)

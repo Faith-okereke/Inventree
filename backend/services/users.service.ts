@@ -1,4 +1,5 @@
 import { prisma } from "../database/prisma"
+import { Prisma } from "../generated/prisma/client"
 
 export const getAllUsersService = () => {
     return prisma.user.findMany({
@@ -39,7 +40,7 @@ export const updateUserService = (id: string, data: { email?: string, name?: str
     })
 }
 export const deleteUserService = (id: string) => {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         await tx.user.update({
             where: { id },
             data: {

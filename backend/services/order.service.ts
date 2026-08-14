@@ -1,4 +1,5 @@
 import { prisma } from "../database/prisma"
+import { Prisma } from "../generated/prisma/client"
 import { CreateOrderInput, UpdateOrderInput } from "../types/order"
 
 const orderInclude = {
@@ -23,6 +24,13 @@ const orderInclude = {
     },
 } as const
 
+type InventoryProduct = {
+    id: string
+    name: string
+    price: Prisma.Decimal
+    quantityInStock: number
+}
+
 export const getOrders = async (status?: string) => {
     return await prisma.order.findMany({
         where: status ? { status } : undefined,
@@ -41,19 +49,19 @@ export const getOrderById = async (id: string) => {
 export const createOrder = async (data: CreateOrderInput) => {
     const { userId, status, items } = data
 
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         const productIds = items.map(item => item.productId)
         const products = await tx.product.findMany({
             where: {
                 id: { in: productIds },
             },
-        })
+        }) as InventoryProduct[]
 
         if (products.length !== productIds.length) {
             throw new Error("One or more products not found.")
         }
 
-        const productMap = new Map(products.map(p => [p.id, p]))
+        const productMap = new Map<string, InventoryProduct>(products.map((p: InventoryProduct) => [p.id, p]))
 
         for (const item of items) {
             const product = productMap.get(item.productId)
@@ -109,7 +117,7 @@ export const updateOrder = async (id: string, data: UpdateOrderInput) => {
 }
 
 export const deleteOrder = async (id: string) => {
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         await tx.orderItem.deleteMany({
             where: { orderId: id },
         })
@@ -124,4 +132,3 @@ export const updateOrderStatus = async (id: string, status: string) => {
         include: orderInclude,
     })
 }
-
