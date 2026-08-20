@@ -1,20 +1,32 @@
-import { Request, Response,} from "express";
-import { hashPassword, verifyPassword } from "../utils/password";
-import { consumePasswordResetToken, createPasswordResetToken, getUserService, registerService, softDeleteUser, updateUserPassword, verifyPasswordResetToken } from "../services/auth.service";
-import jwt from "jsonwebtoken"
-import { sendPasswordResetEmail } from "../emails/reset-password";
-import crypto from "node:crypto"
-import { AuthenticatedRequest } from "../middleware/require-auth.middleware";
+import { Request, Response } from "express";
+import crypto from "node:crypto";
+import jwt from "jsonwebtoken";
 
+import { sendPasswordResetEmail } from "../emails/reset-password";
+import { AuthenticatedRequest } from "../middleware/require-auth.middleware";
+import {
+  consumePasswordResetToken,
+  createPasswordResetToken,
+  getUserService,
+  registerService,
+  softDeleteUser,
+  updateUserPassword,
+  verifyPasswordResetToken,
+} from "../services/auth.service";
+import type {
+  LoginRequest,
+  RegisterRequest,
+  ResetPasswordRequest,
+} from "../types/auth";
+import { hashPassword, verifyPassword } from "../utils/password";
 
 export const registerUser = async (req: Request, res: Response) => {
-    const { email, password, name } = req.body
+    const { email, password, name }: RegisterRequest = req.body;
     try {
         const existingUser = await getUserService({ email })
         if (existingUser) {
             return res.status(400).json({
-                status: 400,
-                error: "That email is already in use. Login with it or use a different email address"
+                message: "That email is already in use. Login with it or use a different email address"
             })
         }
 
@@ -28,19 +40,19 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 
 }
-export const loginUser =async (req: Request, res: Response) => {
-    const { email, password } = req.body
+export const loginUser = async (req: Request, res: Response) => {
+    const { email, password }: LoginRequest = req.body;
     try {
         const existingUser = await getUserService({ email })
         if (!existingUser) {
             return res.status(401).json({
-                error: "Invalid email or password"
+                message: "Invalid email or password"
             })
         }
 
         const passwordMatches = await verifyPassword(password, existingUser.password)
         if (!passwordMatches) {
-            return res.status(401).json({ error: 'Invalid email or password' })
+            return res.status(401).json({ message: 'Invalid email or password' })
         }
 
         const token = jwt.sign(
@@ -101,7 +113,7 @@ export const verifyUserPassword = async (req: Request, res: Response) => {
     }
 }
 export const resetUserPassword = async (req: Request, res: Response) => {
-    const { newPassword, token } = req.body
+    const { newPassword, token }: ResetPasswordRequest = req.body;
     try {
         if (!token || !newPassword) {
             return res.status(400).json({ message: "Token and new password are required" })
@@ -132,16 +144,14 @@ export const getUserProfile =  async (req: Request, res: Response) => {
         const user = await getUserService({ email: authReq?.auth?.email as string })
 
         if (!user) {
-            return res.status(404).json({ error: "User not found" })
+            return res.status(404).json({ message: "User not found" })
         }
 
         const { password, ...safeUser } = user
         return res.status(200).json({ status: 200, data: safeUser })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({
-            error: "Internal Server Error occured"
-        })
+        return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }
 export const deleteUserProfile = async (req: Request, res: Response) => {
@@ -150,15 +160,13 @@ export const deleteUserProfile = async (req: Request, res: Response) => {
         const user = await getUserService({ email: authReq?.auth?.email as string })
 
         if (!user) {
-            return res.status(404).json({ error: "User not found" })
+            return res.status(404).json({ message: "User not found" })
         }
 
         await softDeleteUser(user.id)
         return res.status(204).send()
     } catch (error) {
         console.log(error)
-        return res.status(500).json({
-            error: "Internal Server Error occured"
-        })
+        return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }

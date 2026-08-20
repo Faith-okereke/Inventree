@@ -9,6 +9,26 @@ const nextConfig: NextConfig = {
     // stylesheet request on first paint.
     inlineCss: true,
   },
+  // images: {
+  //   remotePatterns: [
+  //     {
+  //       protocol: 'https',
+  //       hostname: 'upload.wikimedia.org',
+  //     },
+  //     {
+  //       protocol: 'https',
+  //       hostname: 'cdn.shopify.com',
+  //     },
+  //     {
+  //       protocol: 'https',
+  //       hostname: 'images.unsplash.com',
+  //     },
+  //     {
+  //       protocol: 'https',
+  //       hostname: 'www.shutterstock.com',
+  //     },
+  //   ],
+  // },
   // Typed `href` on <Link> — a bad route becomes a build error, not a 404.
   typedRoutes: true,
   poweredByHeader: false,

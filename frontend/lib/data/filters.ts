@@ -1,4 +1,4 @@
-import type { Order, Product, User } from "@/lib/data/types";
+﻿import { Order, ProductResponse, User } from "@/lib/data/types";
 import type { TableFilters } from "@/store/slices/filters.slice";
 
 /** Case-insensitive "any field contains" match. Empty query matches everything. */
@@ -21,13 +21,20 @@ export function filterOrders(rows: readonly Order[], f: TableFilters) {
   );
 }
 
-export function filterProducts(rows: readonly Product[], f: TableFilters) {
-  return rows.filter(
-    (product) =>
-      matches([product.sku, product.name, product.category], f.search) &&
-      (f.status === "all" ||
-        product.status.toLowerCase().replace(/\s+/g, "-") === f.status),
-  );
+export function filterProducts(rows: readonly ProductResponse[], f: TableFilters) {
+  return rows.filter((product) => {
+    const stockStatus =
+      product.quantityInStock <= 0
+        ? "out-of-stock"
+        : product.quantityInStock <= 5
+          ? "low-stock"
+          : "in-stock";
+
+    return (
+      matches([product.sku, product.name, product.description], f.search) &&
+      (f.status === "all" || f.status === stockStatus)
+    );
+  });
 }
 
 export function filterUsers(rows: readonly User[], f: TableFilters) {

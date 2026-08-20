@@ -10,9 +10,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
         })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({
-            error: "Internal Server Error occured"
-        })
+        return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }
 export const searchTheProducts = async (req: Request, res: Response) => {
@@ -30,9 +28,7 @@ export const searchTheProducts = async (req: Request, res: Response) => {
         })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({
-            error: "Internal Server Error occured"
-        })
+        return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }
 export const getTheProduct = async (req: Request, res: Response) => {
@@ -46,7 +42,7 @@ export const getTheProduct = async (req: Request, res: Response) => {
         return res.status(200).json({ status: 200, data: product })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ error: "Internal Server Error occured" })
+        return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }
 
@@ -70,7 +66,7 @@ export const createProduct = async (req: Request, res: Response) => {
             }
         }
         console.log(error)
-        return res.status(500).json({ error: "Internal Server Error occurred" })
+        return res.status(500).json({ message: "Internal Server Error occurred" })
     }
 }
 export const updateTheProduct = async(req: Request, res: Response) => {
@@ -102,7 +98,7 @@ export const updateTheProduct = async(req: Request, res: Response) => {
                 }
             }
             console.log(error)
-            return res.status(500).json({ error: "Internal Server Error occurred" })
+            return res.status(500).json({ message: "Internal Server Error occurred" })
         }
     }
     export const deleteTheProduct =async (req: Request, res: Response) => {

@@ -10,6 +10,10 @@ import { primaryNav, secondaryNav } from "@/components/dashboard/nav-config";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setMobileNavOpen, toggleSidebar } from "@/store/slices/ui.slice";
 import { cn } from "@/lib/utils/cn";
+import { clearAuth } from "@/store/slices/auth.slice";
+import { clearAuthSession } from "@/lib/auth/session";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 function NavSections({
   collapsed,
@@ -18,14 +22,17 @@ function NavSections({
   collapsed?: boolean;
   onNavigate?: () => void;
 }) {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const logout = () => {
+    clearAuthSession();
+    dispatch(clearAuth());
+    toast.success("Logout successful. Login to access your account");
+    router.push("/login");
+  };
+
   return (
     <>
-      {/*
-       * `min-h-0` lets this shrink inside the column instead of forcing the
-       * footer group past the bottom edge — so Settings/Support stay parked
-       * where they are and only this list would ever scroll, and only on a
-       * viewport too short to fit six rows.
-       */}
       <nav
         aria-label="Main"
         className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3"
@@ -46,6 +53,7 @@ function NavSections({
             key={item.label}
             type="button"
             title={collapsed ? item.label : undefined}
+            onClick={() => logout()}
             className={cn(
               "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-ink-600",
               "transition-colors duration-200 ease-out-soft hover:bg-ink-100 hover:text-ink-900",
@@ -61,15 +69,6 @@ function NavSections({
   );
 }
 
-/**
- * Persistent sidebar, `lg` and up. Collapsed width is persisted in Redux.
- *
- * `sticky top-0 h-dvh` rather than letting the aside stretch with the document:
- * pinned to exactly one viewport, so the nav holds its position while `<main>`
- * scrolls underneath and every item stays reachable without scrolling back up.
- * Sticky (not `fixed`) keeps it a flex item, so it still reserves its own column
- * and the content beside it needs no compensating margin.
- */
 export function DesktopSidebar() {
   const collapsed = useAppSelector((s) => s.ui.sidebarCollapsed);
   const dispatch = useAppDispatch();

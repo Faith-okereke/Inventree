@@ -1,59 +1,57 @@
-"use client";
+﻿"use client";
 
 import { FilterPopover } from "@/components/dashboard/filter-popover";
 import { AppIcon, icons } from "@/components/ui/app-icon";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import { filterProducts } from "@/lib/data/filters";
-import { products } from "@/lib/data/products";
+import type { ProductResponse } from "@/lib/data/types";
 import { downloadCsv, toCsv } from "@/lib/utils/csv";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setFilter } from "@/store/slices/filters.slice";
+import { resetFilters, setFilter } from "@/store/slices/filters.slice";
 
-const statusOptions = [
-  { value: "all", label: "All stock levels" },
+const stockOptions = [
+  { value: "all", label: "All stock" },
   { value: "in-stock", label: "In Stock" },
   { value: "low-stock", label: "Low Stock" },
   { value: "out-of-stock", label: "Out of Stock" },
 ] as const;
 
-export function ProductsToolbar() {
+export function ProductsToolbar({ products }: { products: readonly ProductResponse[] }) {
   const filters = useAppSelector((s) => s.filters.products);
   const dispatch = useAppDispatch();
 
   function exportCsv() {
-    const rows = filterProducts(products, filters).map((product) => [
+    const rows = products.map((product) => [
       product.sku,
       product.name,
-      product.category,
+      product.description,
       product.price,
-      product.stock,
-      product.status,
+      product.quantityInStock,
     ]);
 
     downloadCsv(
       "products.csv",
       toCsv(
-        ["SKU", "Product Name", "Category", "Price", "Stock", "Status"],
+        ["SKU", "Product Name", "Description", "Price", "Stock"],
         rows,
       ),
     );
   }
 
+  const activeCount =
+    Number(filters.search.trim() !== "") + Number(filters.status !== "all");
+
   return (
     <>
-      <FilterPopover activeCount={filters.status === "all" ? 0 : 1}>
+      <FilterPopover activeCount={activeCount}>
         <Select
-          id="products-status-filter"
+          id="products-stock-filter"
           label="Stock"
-          options={statusOptions}
+          options={stockOptions}
           value={filters.status}
           onChange={(e) =>
             dispatch(
-              setFilter({
-                table: "products",
-                patch: { status: e.target.value },
-              }),
+              setFilter({ table: "products", patch: { status: e.target.value } }),
             )
           }
           className="mt-1"
@@ -62,14 +60,7 @@ export function ProductsToolbar() {
           variant="ghost"
           size="sm"
           className="w-full"
-          onClick={() =>
-            dispatch(
-              setFilter({
-                table: "products",
-                patch: { status: "all", search: "" },
-              }),
-            )
-          }
+          onClick={() => dispatch(resetFilters("products"))}
         >
           Clear filters
         </Button>
@@ -78,6 +69,11 @@ export function ProductsToolbar() {
       <Button variant="secondary" size="sm" className="h-9" onClick={exportCsv}>
         <AppIcon name={icons.export} className="size-4" />
         Export
+      </Button>
+
+      <Button size="sm" className="h-9">
+        <AppIcon name={icons.plus} className="size-4" />
+        Create Product
       </Button>
     </>
   );

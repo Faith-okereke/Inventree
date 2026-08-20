@@ -1,10 +1,8 @@
 import nodemailer from "nodemailer"
-// console.log("USER:", process.env.SMTP_USER)
-// console.log("PASS SET:", !!process.env.SMTP_PASS)
 const transporter = nodemailer.createTransport({
-    // host: process.env.SMTP_HOST,
-    // port: Number(process.env.SMTP_PORT) || 587,
-    // secure: false,
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: false,
     service:'gmail',
     auth: {
         user: process.env.SMTP_USER,

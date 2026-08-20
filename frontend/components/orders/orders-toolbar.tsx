@@ -1,6 +1,9 @@
-"use client";
+﻿"use client";
+
+import { useState } from "react";
 
 import { FilterPopover } from "@/components/dashboard/filter-popover";
+import { OrderFormModal } from "@/components/orders/order-form-modal";
 import { AppIcon, icons } from "@/components/ui/app-icon";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -20,6 +23,7 @@ const statusOptions = [
 export function OrdersToolbar() {
   const filters = useAppSelector((s) => s.filters.orders);
   const dispatch = useAppDispatch();
+  const [createOpen, setCreateOpen] = useState(false);
 
   function exportCsv() {
     // Exports what the user is looking at, not the whole fixture set.
@@ -75,12 +79,12 @@ export function OrdersToolbar() {
         Export
       </Button>
 
-      {/* The Figma set has no "create order" frame, so this opens nothing yet —
-          it is the designed affordance, waiting on that screen. */}
-      <Button size="sm" className="h-9">
+      <Button size="sm" className="h-9" onClick={() => setCreateOpen(true)}>
         <AppIcon name={icons.plus} className="size-4" />
         Create Order
       </Button>
+
+      <OrderFormModal open={createOpen} onOpenChange={setCreateOpen} />
     </>
   );
 }

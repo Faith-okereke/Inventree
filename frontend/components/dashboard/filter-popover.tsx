@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
@@ -27,16 +27,21 @@ export function FilterPopover({
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
+  function closePopover() {
+    setOpen(false);
+    triggerRef.current?.focus();
+  }
+
   useEffect(() => {
     if (!open) return;
 
     function onPointerDown(event: PointerEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+      if (rootRef.current?.contains(event.target as Node)) return;
+      closePopover();
     }
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
-      setOpen(false);
-      triggerRef.current?.focus();
+      closePopover();
     }
 
     document.addEventListener("pointerdown", onPointerDown);
@@ -48,7 +53,7 @@ export function FilterPopover({
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative">
+    <div ref={rootRef} className="relative z-50">
       <button
         ref={triggerRef}
         type="button"
@@ -81,18 +86,32 @@ export function FilterPopover({
 
       <AnimatePresence>
         {open && (
-          <motion.div
-            id={panelId}
-            initial={{ opacity: 0, y: -6, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.97 }}
-            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute top-full right-0 z-30 mt-2 w-60 origin-top-right space-y-3 rounded-xl border border-ink-200 bg-white p-3.5 shadow-lg"
-          >
-            {children}
-          </motion.div>
+          <>
+            <motion.button
+              aria-hidden="true"
+              tabIndex={-1}
+              type="button"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              onClick={closePopover}
+              className="fixed inset-0 z-40 cursor-default bg-ink-950/15 backdrop-blur-[1px]"
+            />
+            <motion.div
+              id={panelId}
+              initial={{ opacity: 0, y: -6, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.97 }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute top-full right-0 z-50 mt-2 w-60 origin-top-right space-y-3 rounded-xl border border-ink-200 bg-white p-3.5 shadow-xl shadow-ink-900/10"
+            >
+              {children}
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
   );
 }
+

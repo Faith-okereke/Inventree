@@ -15,7 +15,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
         return res.status(200).json({ status: 200, data: users })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ error: "Internal Server Error occured" })
+        return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }
 
@@ -29,7 +29,7 @@ export const getUser = async (req: Request, res: Response) => {
         return res.status(200).json({ status: 200, data: user })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ error: "Internal Server Error occured" })
+        return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }
 
@@ -49,7 +49,7 @@ export const createUser = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "That email is already in use." })
         }
         console.log(error)
-        return res.status(500).json({ error: "Internal Server Error occured" })
+        return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }
 
@@ -75,7 +75,7 @@ export const updateUser = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "That email is already in use." })
         }
         console.log(error)
-        return res.status(500).json({ error: "Internal Server Error occured" })
+        return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }
 
@@ -91,6 +91,6 @@ export const deleteUser = async (req: Request, res: Response) => {
         return res.status(204).send()
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ error: "Internal Server Error occured" })
+        return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }

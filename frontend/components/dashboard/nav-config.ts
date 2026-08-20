@@ -15,5 +15,6 @@ export const primaryNav: NavItem[] = [
 
 export const secondaryNav = [
   { label: "Settings", icon: icons.settings },
-  { label: "Support", icon: icons.support },
+  { label: "Logout", icon: icons.logout},
+
 ] as const;

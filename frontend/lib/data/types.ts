@@ -2,15 +2,14 @@ export type StockStatus = "In Stock" | "Low Stock" | "Out of Stock";
 export type OrderStatus = "PENDING" | "FULFILLED" | "CANCELLED";
 export type UserRole = "Admin" | "Staff";
 
-export interface Product {
+export interface ProductResponse {
+  id: string;
   sku: string;
   name: string;
-  category: string;
-  price: number;
-  stock: number;
-  status: StockStatus;
-  icon: string;
-  discontinued?: boolean;
+  description: string;
+  price: number | string;
+  quantityInStock: number;
+  image: string;
 }
 
 export interface Order {

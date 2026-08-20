@@ -30,7 +30,7 @@ const statusTones: Record<string, BadgeTone> = {
 };
 
 export function statusTone(status: string): BadgeTone {
-  return statusTones[status.toLowerCase()] ?? "neutral";
+  return statusTones[status?.toLowerCase()] ?? "neutral";
 }
 
 export interface BadgeProps extends React.ComponentProps<"span"> {

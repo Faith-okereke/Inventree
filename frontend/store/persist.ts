@@ -1,4 +1,5 @@
 import type { AccessState } from "@/store/slices/access.slice";
+import type { AuthState } from "@/store/slices/auth.slice";
 import type { FiltersState } from "@/store/slices/filters.slice";
 import type { UiState } from "@/store/slices/ui.slice";
 
@@ -15,6 +16,7 @@ export interface PersistedState {
   ui?: Pick<UiState, "sidebarCollapsed">;
   filters?: FiltersState;
   access?: AccessState;
+  auth?: AuthState;
 }
 
 export function loadPersistedState(): PersistedState | undefined {

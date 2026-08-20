@@ -1,21 +1,13 @@
-import { cn } from "@/lib/utils/cn";
+﻿import { cn } from "@/lib/utils/cn";
 import { iconData, type IconName } from "@/lib/icons/generated";
 
 export type { IconName };
 
 export interface AppIconProps extends React.ComponentProps<"svg"> {
   name: IconName;
-  /** Set when the icon is the only content of a control. */
   label?: string;
 }
 
-/**
- * Server Component — renders inline SVG from the generated bundle.
- *
- * The glyph bodies come from `lib/icons/generated.ts` (see scripts/build-icons.mjs),
- * so no icon JS reaches the client and nothing is fetched at runtime.
- * Sizing is done with Tailwind `size-*` classes; colour follows `currentColor`.
- */
 export function AppIcon({ name, label, className, ...props }: AppIconProps) {
   const icon = iconData[name];
 
@@ -52,6 +44,7 @@ export const icons = {
   chevronRight: "lucide:chevron-right",
   chevronDown: "lucide:chevron-down",
   menu: "lucide:menu",
+  moreVertical: "lucide:more-vertical",
   close: "lucide:x",
   eye: "lucide:eye",
   eyeOff: "lucide:eye-off",
@@ -64,4 +57,6 @@ export const icons = {
   wallet: "lucide:wallet",
   panelLeft: "lucide:panel-left",
   compass: "lucide:compass",
+  logout: "lucide:log-out",
+  loader: "lucide:loader",
 } as const satisfies Record<string, IconName>;

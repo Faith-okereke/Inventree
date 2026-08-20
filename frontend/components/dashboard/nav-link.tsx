@@ -8,13 +8,6 @@ import { AppIcon } from "@/components/ui/app-icon";
 import { cn } from "@/lib/utils/cn";
 import type { NavItem } from "@/components/dashboard/nav-config";
 
-/**
- * A single sidebar link. Client Component because it needs `usePathname` to know
- * whether it is the active route.
- *
- * `memo` here is meaningful: the parent re-renders whenever the sidebar collapses
- * or the drawer opens, and these props are stable primitives.
- */
 export const NavLink = memo(function NavLink({
   item,
   collapsed,

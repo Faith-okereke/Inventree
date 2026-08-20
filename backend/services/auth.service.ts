@@ -1,7 +1,8 @@
 import { prisma } from "../database/prisma"
 import { Prisma } from "../generated/prisma/client"
+import type { RegisterRequest } from "../types/auth"
 
-export const registerService = async (data: { email: string, name: string, password: string}) => {
+export const registerService = async (data: RegisterRequest) => {
   return prisma.user.create({ data })
 }
 

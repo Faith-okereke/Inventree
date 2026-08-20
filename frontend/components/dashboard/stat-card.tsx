@@ -83,7 +83,7 @@ export function StatCard({
 /** 1 → 2 → 4 columns, with the stagger utility applied to the children. */
 export function StatGrid({ children }: { children: React.ReactNode }) {
   return (
-    <div className="stagger-children grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
+    <div className="stagger-children grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4 pb-10">
       {children}
     </div>
   );

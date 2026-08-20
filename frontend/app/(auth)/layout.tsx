@@ -1,15 +1,6 @@
 "use client";
 import Image from "next/image";
 
-/**
- * Split-screen shell shared by login and signup.
- *
- * Server Component: the layout itself has no interactivity, so only the form
- * inside each page crosses the client boundary.
- *
- * Responsive: below `lg` the illustration panel is dropped entirely (rather than
- * stacked) so the form is the first thing on screen on a phone.
- */
 export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="grid min-h-dvh lg:flex ">

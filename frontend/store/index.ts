@@ -1,15 +1,8 @@
-import {
-  configureStore,
-  createListenerMiddleware,
-  isAnyOf,
-} from "@reduxjs/toolkit";
+import { configureStore, createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
 
 import accessReducer, { setUserActive } from "@/store/slices/access.slice";
-import filtersReducer, {
-  resetFilters,
-  setFilter,
-  setPage,
-} from "@/store/slices/filters.slice";
+import authReducer, { clearAuth, setAuth } from "@/store/slices/auth.slice";
+import filtersReducer, { resetFilters, setFilter, setPage } from "@/store/slices/filters.slice";
 import { savePersistedState } from "@/store/persist";
 import uiReducer, { toggleSidebar } from "@/store/slices/ui.slice";
 
@@ -21,13 +14,7 @@ import uiReducer, { toggleSidebar } from "@/store/slices/ui.slice";
 const persistListener = createListenerMiddleware();
 
 persistListener.startListening({
-  matcher: isAnyOf(
-    toggleSidebar,
-    setFilter,
-    setPage,
-    resetFilters,
-    setUserActive,
-  ),
+  matcher: isAnyOf(toggleSidebar, setFilter, setPage, resetFilters, setUserActive, setAuth, clearAuth),
   effect: (_action, api) => {
     // Collapse bursts of dispatches (e.g. fast typing) into one write.
     api.cancelActiveListeners();
@@ -37,6 +24,7 @@ persistListener.startListening({
       ui: { sidebarCollapsed: state.ui.sidebarCollapsed },
       filters: state.filters,
       access: state.access,
+      auth: state.auth,
     });
   },
 });
@@ -47,6 +35,7 @@ export const makeStore = () =>
       ui: uiReducer,
       filters: filtersReducer,
       access: accessReducer,
+      auth: authReducer,
     },
     middleware: (getDefault) =>
       getDefault().prepend(persistListener.middleware),

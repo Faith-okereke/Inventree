@@ -1,4 +1,4 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+﻿import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 import { hydrateFromStorage } from "@/store/hydrate";
 
@@ -33,7 +33,7 @@ const filtersSlice = createSlice({
   name: "filters",
   initialState,
   reducers: {
-    /** Any filter change resets pagination — page 3 of a new result set is a dead end. */
+    /** Any filter change resets pagination â€” page 3 of a new result set is a dead end. */
     setFilter(
       state,
       action: PayloadAction<{ table: TableId; patch: Patch }>,
