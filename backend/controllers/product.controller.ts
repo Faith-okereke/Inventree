@@ -1,12 +1,24 @@
 import { Request, Response } from "express"
 import { getProducts, searchProducts, getProductById, getProductByName, postProducts, updateProducts, deleteProducts } from "../services/product.service"
 
+const paginationParams = (req: Request) => {
+  const page = Math.max(Number(req.query.page) || 1, 1);
+  const pageSize = Math.min(
+    Math.max(Number(req.query.pageSize) || 10, 1),
+    100,
+  );
+
+  return { page, pageSize };
+}
+
 export const getAllProducts = async (req: Request, res: Response) => {
     try {
-        const products = await getProducts()
+        const { page, pageSize } = paginationParams(req);
+        const products = await getProducts(page, pageSize);
         return res.status(200).json({
             status: 200,
-            data: products
+            data: products.data,
+            pagination: products.pagination,
         })
     } catch (error) {
         console.log(error)

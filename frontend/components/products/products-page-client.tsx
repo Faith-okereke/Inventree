@@ -24,10 +24,12 @@ const stockOptions = [
 ] as const;
 
 export function ProductsPageClient() {
-  const { data: products = [], isLoading } = useGetAllProducts();
   const filters = useAppSelector((s) => s.filters.products);
   const dispatch = useAppDispatch();
   const [createOpen, setCreateOpen] = useState(false);
+  const { data: products = [], pagination, isLoading } = useGetAllProducts(
+    filters.page,
+  );
 
   const stats = useMemo(() => {
     const lowStockCount = products.filter(
@@ -138,7 +140,7 @@ export function ProductsPageClient() {
           ))}
         </StatGrid>
 
-        <ProductsTable products={products} />
+        <ProductsTable products={products} pagination={pagination} />
       </div>
 
       <ProductFormModal open={createOpen} onOpenChange={setCreateOpen} />

@@ -24,6 +24,8 @@ import { formatCurrency, formatNumber } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import { useAppSelector } from "@/store/hooks";
 import { useDeleteProducts } from "@/api/hooks/useProducts";
+import { TableFooter } from "../dashboard/table-footer";
+import type { Pagination } from "@/api/hooks/types";
 
 const COLUMN_COUNT = 7;
 const MENU_WIDTH = 280;
@@ -46,7 +48,7 @@ function ProductActions({ product }: { product: ProductResponse }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { mutate: remove, isPending } = useDeleteProducts(product.id)
+  const { mutate: remove, isPending } = useDeleteProducts(product.id);
 
   function toggleMenu(event: React.MouseEvent<HTMLButtonElement>) {
     const trigger = event.currentTarget;
@@ -117,7 +119,11 @@ function ProductActions({ product }: { product: ProductResponse }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -4, scale: 0.98 }}
                 transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
-                style={{ top: position.top, left: position.left, width: MENU_WIDTH }}
+                style={{
+                  top: position.top,
+                  left: position.left,
+                  width: MENU_WIDTH,
+                }}
                 className="fixed z-[999] overflow-hidden rounded-xl border border-ink-200 bg-white p-1.5 shadow-2xl shadow-ink-900/15"
               >
                 <button
@@ -168,8 +174,10 @@ function ProductActions({ product }: { product: ProductResponse }) {
 
 export function ProductsTable({
   products,
+  pagination,
 }: {
   products: readonly ProductResponse[];
+  pagination?: Pagination;
 }) {
   const filters = useAppSelector((s) => s.filters.products);
   const filteredProducts = filterProducts(products, filters);
@@ -240,6 +248,7 @@ export function ProductsTable({
             </tbody>
           </Table>
         </TableScroll>
+        {pagination && <TableFooter table="products" {...pagination} />}
       </Card>
     </div>
   );

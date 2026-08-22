@@ -164,7 +164,7 @@ export function OrderFormModal({
   onOpenChange: (open: boolean) => void;
 }) {
   const { mutate, isPending } = useCreateOrder();
-  const { data: products } = useGetAllProducts();
+  const { data: products } = useGetAllProducts(1, 10);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingValues, setPendingValues] = useState<OrderFormValues | null>(
     null,

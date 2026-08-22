@@ -1,7 +1,9 @@
 import { api } from "./client";
 
-export const getAllUsers = async () => {
-    const response = await api.get("/users/all");
+export const getAllUsers = async (page=1, pageSize=10) => {
+    const response = await api.get("/users/all", {
+        params: { page, pageSize }
+    });
     return response.data;
 }
 export const getUsersById = async (userId: string | undefined) => {

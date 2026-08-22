@@ -10,8 +10,10 @@ export interface ProductMutationInput {
   image: string;
 }
 
-export const getProducts = async () => {
-  const response = await api.get("/products/all");
+export const getProducts = async (page=1, pageSize=10) => {
+  const response = await api.get("/products/all", {
+    params: { page, pageSize }
+  });
   return response.data;
 };
 

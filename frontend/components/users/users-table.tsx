@@ -1,8 +1,5 @@
 "use client";
-
-// import { useMemo } from "react";
-
-// import { TableFooter } from "@/components/dashboard/table-footer";
+import { TableFooter } from "@/components/dashboard/table-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,16 +11,14 @@ import {
   Th,
   Tr,
 } from "@/components/ui/table";
-// import { filterUsers } from "@/lib/data/filters";
-// import { paginate } from "@/lib/data/pagination";
+
 import { formatDate } from "@/lib/utils/format";
-// import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppSelector } from "@/store/hooks";
 // import { setUserActive } from "@/store/slices/access.slice";
 import { useGetAllUsers } from "@/api/hooks/useUser";
 
 const COLUMN_COUNT = 5;
 
-/** Matches the design's three role pills: Admin, Staff, Staff (Inactive). */
 function RoleBadge({ role, active }: { role: string; active: boolean }) {
   if (!active) {
     return <Badge tone="neutral">{role} (Inactive)</Badge>;
@@ -32,7 +27,8 @@ function RoleBadge({ role, active }: { role: string; active: boolean }) {
 }
 
 export function UsersTable() {
-  const { data: users } = useGetAllUsers();
+  const filters = useAppSelector((s) => s.filters.users);
+  const { data: users, pagination } = useGetAllUsers(filters.page, 10);
 
   return (
     <Card className="animate-fade-up overflow-hidden">
@@ -101,14 +97,7 @@ export function UsersTable() {
         </Table>
       </TableScroll>
 
-      {/* <TableFooter
-        table="users"
-        from={view.from}
-        to={view.to}
-        total={view.total}
-        page={view.page}
-        totalPages={view.totalPages}
-      /> */}
+      {pagination && <TableFooter table="users" {...pagination} />}
     </Card>
   );
 }

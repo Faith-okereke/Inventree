@@ -21,19 +21,22 @@ const statusOptions = [
 ] as const;
 
 export function OrdersToolbar() {
-  const {data:orders= []}= useGetAllOrders()
+  const { data: orders = [] } = useGetAllOrders();
   const filters = useAppSelector((s) => s.filters.orders);
   const dispatch = useAppDispatch();
   const [createOpen, setCreateOpen] = useState(false);
 
   function exportCsv() {
-    // Exports what the user is looking at, not the whole fixture set.
+    // Export the currently filtered orders.
     const rows = filterOrders(orders, filters).map((order) => [
       order.id,
-      order.date,
-      order.customer,
-      order.items,
-      order.total,
+      order.createdAt,
+      order.user.name,
+      order.orderItems.reduce((total, item) => total + item.quantity, 0),
+      order.orderItems.reduce(
+        (total, item) => total + Number(item.priceAtOrder) * item.quantity,
+        0,
+      ),
       order.status,
     ]);
 

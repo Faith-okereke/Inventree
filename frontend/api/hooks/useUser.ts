@@ -13,10 +13,10 @@ function getErrorMessage(error: unknown): string {
   return "Something went wrong, Please check connection";
 }
 
-export const useGetAllUsers = () => {
+export const useGetAllUsers = (page = 1, pageSize = 10) => {
   const query = useQuery<T_ApiResponse<User[]>>({
-    queryKey: ["getAllUsers"],
-    queryFn: () => getAllUsers(),
+    queryKey: ["getAllUsers", page, pageSize],
+    queryFn: () => getAllUsers(page, pageSize),
   });
 
   if (query.isError) {
@@ -24,7 +24,7 @@ export const useGetAllUsers = () => {
     toast.error(errorMessage);
   }
 
-  return { ...query, data: query.data?.data ?? [] };
+  return { ...query, data: query.data?.data ?? [], pagination: query.data?.pagination };
 };
 
 export const useGetUsersById = (userId: string | undefined) => {

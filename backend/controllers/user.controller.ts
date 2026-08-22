@@ -8,11 +8,24 @@ import {
     updateUserService,
     deleteUserService,
 } from "../services/users.service"
+const paginationParams = (req: Request) => {
+  const page = Math.max(Number(req.query.page) || 1, 1);
+  const pageSize = Math.min(
+    Math.max(Number(req.query.pageSize) || 10, 1),
+    100,
+  );
 
+  return { page, pageSize };
+}
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
-        const users = await getAllUsersService()
-        return res.status(200).json({ status: 200, data: users })
+        const { page, pageSize } = paginationParams(req);
+        const users = await getAllUsersService(page, pageSize);
+        return res.status(200).json({
+            status: 200,
+            data: users.data,
+            pagination: users.pagination,
+        })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Internal Server Error occured" })

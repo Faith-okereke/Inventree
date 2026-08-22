@@ -12,11 +12,19 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 import { useGetAllOrders } from "@/api/hooks/useOrders";
+import { TableFooter } from "@/components/dashboard/table-footer";
+import { useAppSelector } from "@/store/hooks";
 
 const COLUMN_COUNT = 6;
 
 export function OrdersTable() {
-  const { data: orders } = useGetAllOrders();
+  const filters = useAppSelector((s) => s.filters.orders);
+  const { data: orders, pagination } = useGetAllOrders(
+    filters.page,
+    10,
+    filters.status,
+  );
+  console.log(pagination)
 
   return (
     <Card className="animate-fade-up overflow-hidden">
@@ -80,6 +88,7 @@ export function OrdersTable() {
           </tbody>
         </Table>
       </TableScroll>
+      {pagination && <TableFooter table="orders" {...pagination} />}
     </Card>
   );
 }

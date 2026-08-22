@@ -1,10 +1,29 @@
 import { prisma } from "../database/prisma"
 import { ProductRequest } from "../types/product"
 
-export const getProducts = async () => {
-    return await prisma.product.findMany()
-}
 
+export const getProducts = async (page: number, pageSize: number) => {
+    const skip = (page - 1) * pageSize;
+
+    const [data, total] = await Promise.all([
+        prisma.product.findMany({
+            skip,
+            take: pageSize,
+            orderBy: { name: "asc" },
+        }),
+        prisma.product.count(),
+    ]);
+
+    return {
+        data,
+        pagination: {
+            page,
+            pageSize,
+            total,
+            totalPages: Math.ceil(total / pageSize),
+        },
+    };
+};
 export const searchProducts = async (query: string) => {
     return await prisma.product.findMany({
         where: {

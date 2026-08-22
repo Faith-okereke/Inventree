@@ -31,12 +31,30 @@ type InventoryProduct = {
     quantityInStock: number
 }
 
-export const getOrders = async (status?: string) => {
-    return await prisma.order.findMany({
-        where: status ? { status } : undefined,
-        orderBy: { createdAt: 'desc' },
-        include: orderInclude,
-    })
+export const getOrders = async (status?: string, page: number = 1, pageSize: number = 10) => {
+    const skip = (page - 1) * pageSize;
+
+    const [data, total] = await Promise.all([
+        prisma.order.findMany({
+            where: status ? { status } : undefined,
+            skip,
+            take: pageSize,
+            orderBy: { createdAt: "desc" },
+            include: orderInclude,
+        }),
+        prisma.order.count({
+            where: status ? { status } : undefined,
+        }),
+    ]);
+    return {
+        data,
+        pagination: {
+            page,
+            pageSize,
+            total,
+            totalPages: Math.ceil(total / pageSize),
+        },
+    };
 }
 
 export const getOrderById = async (id: string) => {

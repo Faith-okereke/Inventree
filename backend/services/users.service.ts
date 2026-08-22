@@ -1,13 +1,28 @@
 import { prisma } from "../database/prisma"
 import { Prisma } from "../generated/prisma/client"
 
-export const getAllUsersService = () => {
-    return prisma.user.findMany({
-        where: {
-            deletedAt: null
-        },
-        omit: { password: true }
-    })
+export const getAllUsersService = async (page: number, pageSize: number) => {
+    const skip = (page - 1) * pageSize;
+
+    const [data, total] = await Promise.all([
+        prisma.user.findMany({
+            where: { deletedAt: null },
+            skip,
+            take: pageSize,
+            orderBy: { createdAt: "desc" },
+            omit: { password: true },
+        }),
+        prisma.user.count(),
+    ]);
+    return {
+        data,
+        pagination: {
+            page,
+            pageSize,
+            total,
+            totalPages: Math.ceil(total / pageSize)
+        }
+    }
 }
 export const getUserByIdService = (id: string) => {
     return prisma.user.findFirst({

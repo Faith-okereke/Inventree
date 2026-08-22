@@ -13,10 +13,10 @@ function getErrorMessage(error: unknown): string {
   return "Something went wrong, Please check connection";
 }
 
-export const useGetAllOrders = () => {
+export const useGetAllOrders = (page = 1, pageSize = 10, status?: string) => {
   const query = useQuery<T_ApiResponse<OrderListResponse[]>>({
-    queryKey: ["getAllOrders"],
-    queryFn: () => getOrders(),
+    queryKey: ["getAllOrders", page, pageSize, status],
+    queryFn: () => getOrders(page, pageSize, status),
   });
 
   if (query.isError) {
@@ -24,7 +24,7 @@ export const useGetAllOrders = () => {
     toast.error(errorMessage);
   }
 
-  return { ...query, data: query.data?.data || [] };
+  return { ...query, data: query.data?.data || [], pagination: query.data?.pagination };
 };
 
 export const useCreateOrder = () => {
