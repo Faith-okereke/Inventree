@@ -1,4 +1,4 @@
-﻿import { Order, ProductResponse, User } from "@/lib/data/types";
+﻿import {  OrderListResponse, ProductResponse, User } from "@/lib/data/types";
 import type { TableFilters } from "@/store/slices/filters.slice";
 
 /** Case-insensitive "any field contains" match. Empty query matches everything. */
@@ -13,10 +13,10 @@ function matches(fields: readonly string[], query: string) {
  * toolbar (for Export) and in the table without the two drifting apart.
  */
 
-export function filterOrders(rows: readonly Order[], f: TableFilters) {
+export function filterOrders(rows: readonly OrderListResponse[], f: TableFilters) {
   return rows.filter(
     (order) =>
-      matches([order.id, order.customer], f.search) &&
+      matches([order.id, order.user.name], f.search) &&
       (f.status === "all" || order.status.toLowerCase() === f.status),
   );
 }
