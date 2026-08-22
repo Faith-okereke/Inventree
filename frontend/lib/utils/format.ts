@@ -1,11 +1,13 @@
 const currency = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "USD",
+  currency: "NGN",
+  currencyDisplay: "symbol",
 });
 
 const compactCurrency = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "USD",
+  currency: "NGN",
+  currencyDisplay: "symbol",
   notation: "compact",
   maximumFractionDigits: 1,
 });

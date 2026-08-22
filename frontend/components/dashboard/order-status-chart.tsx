@@ -1,5 +1,5 @@
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
-import { ORDER_STATUS_TOTAL, orderStatusBreakdown } from "@/lib/data/dashboard";
+import type { OrderListResponse } from "@/lib/data/types";
 import { formatNumber } from "@/lib/utils/format";
 
 /**
@@ -9,13 +9,6 @@ import { formatNumber } from "@/lib/utils/format";
  * done once at import rather than on every render — and it stays a pure
  * expression instead of a counter mutated inside `map`.
  */
-const slices = orderStatusBreakdown.map((slice, index) => ({
-  ...slice,
-  start: orderStatusBreakdown
-    .slice(0, index)
-    .reduce((sum, previous) => sum + previous.percent, 0),
-}));
-
 const ring = {
   x: 48,
   y: 48,
@@ -39,7 +32,29 @@ const ring = {
  * Server Component: the reveal is a CSS keyframe (`ring-draw`), so the chart
  * ships zero JavaScript.
  */
-export function OrderStatusChart() {
+export function OrderStatusChart({ orders }: { orders: OrderListResponse[] }) {
+  const total = orders.length;
+  const statusData = [
+    { label: "Fulfilled", status: "fulfilled", colorVar: "var(--color-success-500)" },
+    { label: "Pending", status: "pending", colorVar: "var(--color-warn-500)" },
+    { label: "Cancelled", status: "cancelled", colorVar: "var(--color-brand-600)" },
+  ];
+  const slices = statusData.map((slice, index) => {
+    const count = orders.filter((order) => order.status === slice.status).length;
+    const percent = total === 0 ? 0 : Math.round((count / total) * 100);
+    return {
+      ...slice,
+      count,
+      percent,
+      start: statusData.slice(0, index).reduce((sum, previous) => {
+        const previousCount = orders.filter(
+          (order) => order.status === previous.status,
+        ).length;
+        return sum + (total === 0 ? 0 : Math.round((previousCount / total) * 100));
+      }, 0),
+    };
+  });
+
   return (
     <Card className="animate-fade-up flex flex-col">
       <CardHeader>
@@ -71,7 +86,7 @@ export function OrderStatusChart() {
               Total
             </span>
             <span className="text-2xl font-bold text-ink-900 tabular-nums">
-              {formatNumber(ORDER_STATUS_TOTAL)}
+              {formatNumber(total)}
             </span>
           </div>
         </div>
@@ -88,7 +103,7 @@ export function OrderStatusChart() {
               />
               <dt className="flex-1 text-sm text-ink-600">{slice.label}</dt>
               <dd className="text-sm font-semibold text-ink-900 tabular-nums">
-                {slice.percent}%
+                {slice.percent}% ({formatNumber(slice.count)})
               </dd>
             </div>
           ))}

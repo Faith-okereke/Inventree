@@ -1,12 +1,25 @@
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
-import { topMovingProducts } from "@/lib/data/dashboard";
+import type { OrderListResponse } from "@/lib/data/types";
 import { formatNumber } from "@/lib/utils/format";
 
 /**
  * Server Component. Bars grow with a `scaleX` keyframe rather than an animated
  * `width`, so the reveal runs on the compositor and never triggers layout.
  */
-export function TopProductsChart() {
+export function TopProductsChart({ orders }: { orders: OrderListResponse[] }) {
+  const productTotals = new Map<string, { name: string; units: number }>();
+  orders.forEach((order) => {
+    order.orderItems.forEach((item) => {
+      const current = productTotals.get(item.productId);
+      productTotals.set(item.productId, {
+        name: item.product.name,
+        units: (current?.units ?? 0) + item.quantity,
+      });
+    });
+  });
+  const topMovingProducts = Array.from(productTotals.values())
+    .sort((a, b) => b.units - a.units)
+    .slice(0, 5);
   const max = Math.max(...topMovingProducts.map((product) => product.units));
 
   return (
@@ -35,7 +48,7 @@ export function TopProductsChart() {
                 <div
                   className="animate-bar-grow h-full origin-left rounded-full bg-brand-600"
                   style={{
-                    width: `${(product.units / max) * 100}%`,
+                    width: `${max > 0 ? (product.units / max) * 100 : 0}%`,
                     animationDelay: `${index * 70}ms`,
                   }}
                 />

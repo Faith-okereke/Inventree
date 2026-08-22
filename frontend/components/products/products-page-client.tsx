@@ -132,7 +132,7 @@ export function ProductsPageClient() {
               key={stat.label}
               index={index}
               label={stat.label}
-              value={isLoading ? "Loading..." : stat.value}
+              value={isLoading ? "0" : stat.value}
               tone={stat.tone}
             />
           ))}

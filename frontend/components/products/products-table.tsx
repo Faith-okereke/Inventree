@@ -3,12 +3,8 @@
 
 import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
-
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
-import toast from "react-hot-toast";
 
-import { deleteProduct } from "@/api/services/product.service";
 import { ConfirmModal } from "@/components/dashboard/dashboard-modal";
 import { ProductFormModal } from "@/components/products/product-form-modal";
 import { icons } from "@/components/ui/app-icon";
@@ -27,6 +23,7 @@ import type { ProductResponse } from "@/lib/data/types";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import { useAppSelector } from "@/store/hooks";
+import { useDeleteProducts } from "@/api/hooks/useProducts";
 
 const COLUMN_COUNT = 7;
 const MENU_WIDTH = 280;
@@ -49,18 +46,7 @@ function ProductActions({ product }: { product: ProductResponse }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const queryClient = useQueryClient();
-  const { mutate: remove, isPending } = useMutation({
-    mutationFn: () => deleteProduct(product.id),
-    onSuccess: async () => {
-      toast.success(`Deleted ${product.name}`);
-      await queryClient.invalidateQueries({ queryKey: ["getAllProducts"] });
-      setDeleteOpen(false);
-    },
-    onError: () => {
-      toast.error("Unable to delete product");
-    },
-  });
+  const { mutate: remove, isPending } = useDeleteProducts(product.id)
 
   function toggleMenu(event: React.MouseEvent<HTMLButtonElement>) {
     const trigger = event.currentTarget;

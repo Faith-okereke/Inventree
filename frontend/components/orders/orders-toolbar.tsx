@@ -8,10 +8,10 @@ import { AppIcon, icons } from "@/components/ui/app-icon";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { filterOrders } from "@/lib/data/filters";
-import { orders } from "@/lib/data/orders";
 import { downloadCsv, toCsv } from "@/lib/utils/csv";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setFilter } from "@/store/slices/filters.slice";
+import { useGetAllOrders } from "@/api/hooks/useOrders";
 
 const statusOptions = [
   { value: "all", label: "All statuses" },
@@ -21,6 +21,7 @@ const statusOptions = [
 ] as const;
 
 export function OrdersToolbar() {
+  const {data:orders= []}= useGetAllOrders()
   const filters = useAppSelector((s) => s.filters.orders);
   const dispatch = useAppDispatch();
   const [createOpen, setCreateOpen] = useState(false);

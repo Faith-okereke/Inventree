@@ -53,7 +53,7 @@ export function FilterPopover({
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative z-50">
+    <div ref={rootRef} className="relative ">
       <button
         ref={triggerRef}
         type="button"
@@ -96,7 +96,7 @@ export function FilterPopover({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.18 }}
               onClick={closePopover}
-              className="fixed inset-0 z-40 cursor-default bg-ink-950/15 backdrop-blur-[1px]"
+              className="fixed inset-0 z-70 cursor-default bg-ink-950/15 backdrop-blur-[1px]"
             />
             <motion.div
               id={panelId}
@@ -104,7 +104,7 @@ export function FilterPopover({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6, scale: 0.97 }}
               transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute top-full right-0 z-50 mt-2 w-60 origin-top-right space-y-3 rounded-xl border border-ink-200 bg-white p-3.5 shadow-xl shadow-ink-900/10"
+              className="absolute top-full right-0 z-70 mt-2 w-60 origin-top-right space-y-3 rounded-xl border border-ink-200 bg-white p-3.5 shadow-xl shadow-ink-900/10"
             >
               {children}
             </motion.div>

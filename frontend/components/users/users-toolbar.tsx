@@ -1,7 +1,7 @@
 "use client";
 
-import { AppIcon, icons } from "@/components/ui/app-icon";
-import { Button } from "@/components/ui/button";
+// import { AppIcon, icons } from "@/components/ui/app-icon";
+// import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setFilter } from "@/store/slices/filters.slice";
@@ -49,10 +49,10 @@ export function UsersToolbar() {
 
       {/* No "add user" frame in the Figma set — the affordance is here, the
           form it should open is not designed yet. */}
-      <Button size="sm" className="h-9">
+      {/* <Button size="sm" className="h-9">
         <AppIcon name={icons.plus} className="size-4" />
         Add New User
-      </Button>
+      </Button> */}
     </>
   );
 }

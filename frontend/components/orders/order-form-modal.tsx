@@ -2,26 +2,29 @@
 
 import { useState } from "react";
 
-import toast from "react-hot-toast";
-
-import { ConfirmModal, DashboardModal } from "@/components/dashboard/dashboard-modal";
+import {
+  ConfirmModal,
+  DashboardModal,
+} from "@/components/dashboard/dashboard-modal";
 import { Button } from "@/components/ui/button";
-import type { OrderStatus } from "@/lib/data/types";
+import type { OrderStatus, ProductResponse } from "@/lib/data/types";
+import { useGetAllProducts } from "@/api/hooks/useProducts";
+import { useCreateOrder } from "@/api/hooks/useOrders";
 
 interface OrderFormValues {
-  id: string;
+  product: string;
   customer: string;
-  items: string;
+  quantity: number;
   total: string;
   status: OrderStatus;
 }
 
 const emptyValues: OrderFormValues = {
-  id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
+  product: ``,
   customer: "",
-  items: "",
+  quantity: 0,
   total: "",
-  status: "PENDING",
+  status: "pending",
 };
 
 function inputClassName() {
@@ -35,11 +38,23 @@ function inputClassName() {
 function OrderFormContent({
   onSubmit,
   onCancel,
+  products,
 }: {
   onSubmit: (values: OrderFormValues) => void;
   onCancel: () => void;
+  products: ProductResponse[];
 }) {
   const [values, setValues] = useState<OrderFormValues>(emptyValues);
+  const totalPrice = products.find((p) => p.id === values?.product)?.price
+    ? (
+        Number(products.find((p) => p.id === values?.product)?.price) *
+        values?.quantity
+      ).toFixed(2)
+    : "0.00";
+  const productOptions = products?.map((product) => ({
+    value: product.id,
+    label: product.name,
+  }));
 
   return (
     <form
@@ -51,20 +66,32 @@ function OrderFormContent({
     >
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-1.5 text-sm font-medium text-ink-700">
-          <span>Order ID</span>
-          <input
-            value={values.id}
-            onChange={(e) => setValues((current) => ({ ...current, id: e.target.value }))}
+          <span>Product</span>
+          <select
+            value={values.product}
+            onChange={(e) =>
+              setValues((current) => ({ ...current, product: e.target.value }))
+            }
             className={inputClassName()}
             required
-          />
+          >
+            <option value="">Select a product</option>
+            {productOptions?.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="space-y-1.5 text-sm font-medium text-ink-700">
           <span>Status</span>
           <select
             value={values.status}
             onChange={(e) =>
-              setValues((current) => ({ ...current, status: e.target.value as OrderStatus }))
+              setValues((current) => ({
+                ...current,
+                status: e.target.value as OrderStatus,
+              }))
             }
             className={inputClassName()}
           >
@@ -79,7 +106,9 @@ function OrderFormContent({
         <span>Customer</span>
         <input
           value={values.customer}
-          onChange={(e) => setValues((current) => ({ ...current, customer: e.target.value }))}
+          onChange={(e) =>
+            setValues((current) => ({ ...current, customer: e.target.value }))
+          }
           className={inputClassName()}
           placeholder="Acme Manufacturing Corp."
           required
@@ -88,12 +117,17 @@ function OrderFormContent({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-1.5 text-sm font-medium text-ink-700">
-          <span>Items</span>
+          <span>Quantity</span>
           <input
             type="number"
             min="1"
-            value={values.items}
-            onChange={(e) => setValues((current) => ({ ...current, items: e.target.value }))}
+            value={values.quantity}
+            onChange={(e) =>
+              setValues((current) => ({
+                ...current,
+                quantity: Number(e.target.value),
+              }))
+            }
             className={inputClassName()}
             required
           />
@@ -104,8 +138,8 @@ function OrderFormContent({
             type="number"
             min="0"
             step="0.01"
-            value={values.total}
-            onChange={(e) => setValues((current) => ({ ...current, total: e.target.value }))}
+            value={totalPrice}
+            readOnly
             className={inputClassName()}
             required
           />
@@ -129,18 +163,33 @@ export function OrderFormModal({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { mutate, isPending } = useCreateOrder();
+  const { data: products } = useGetAllProducts();
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [pendingValues, setPendingValues] = useState<OrderFormValues | null>(null);
+  const [pendingValues, setPendingValues] = useState<OrderFormValues | null>(
+    null,
+  );
+  const productId =
+    products
+      .map((product) => product.id)
+      .find((id) => id === pendingValues?.product) || "";
 
-  function createOrder() {
-    toast.success(`Created order ${pendingValues?.id ?? ""}`);
-    setConfirmOpen(false);
-    onOpenChange(false);
-    setPendingValues(null);
-  }
+  const createOrder = () => {
+    mutate(
+      {
+        items: [{ productId, quantity: pendingValues?.quantity ?? 0 }],
+      },
+      {
+        onSuccess: () => {
+          setConfirmOpen(false);
+          onOpenChange(false);
+          setPendingValues(null);
+        },
+      },
+    );
+  };
 
   if (!open) return null;
-
   return (
     <>
       <DashboardModal
@@ -156,6 +205,7 @@ export function OrderFormModal({
             setPendingValues(values);
             setConfirmOpen(true);
           }}
+          products={products}
         />
       </DashboardModal>
 
@@ -163,9 +213,10 @@ export function OrderFormModal({
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
         title="Confirm order creation"
-        description={`Create order ${pendingValues?.id || "this order"} for ${pendingValues?.customer || "this customer"}?`}
+        description={`Create order ${pendingValues?.product || "this order"} for ${pendingValues?.customer || "this customer"}?`}
         confirmLabel="Create Order"
         onConfirm={createOrder}
+        loading={isPending}
       />
     </>
   );
