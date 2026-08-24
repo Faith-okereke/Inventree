@@ -1,25 +1,22 @@
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
-import type { OrderListResponse } from "@/lib/data/types";
 import { formatNumber } from "@/lib/utils/format";
 
-/**
- * Server Component. Bars grow with a `scaleX` keyframe rather than an animated
- * `width`, so the reveal runs on the compositor and never triggers layout.
- */
-export function TopProductsChart({ orders }: { orders: OrderListResponse[] }) {
-  const productTotals = new Map<string, { name: string; units: number }>();
-  orders.forEach((order) => {
-    order.orderItems.forEach((item) => {
-      const current = productTotals.get(item.productId);
-      productTotals.set(item.productId, {
-        name: item.product.name,
-        units: (current?.units ?? 0) + item.quantity,
-      });
-    });
-  });
-  const topMovingProducts = Array.from(productTotals.values())
-    .sort((a, b) => b.units - a.units)
-    .slice(0, 5);
+type DashboardTopProduct = {
+  productId: string;
+  name: string;
+  sku: string;
+  totalQuantity: number;
+};
+
+export function TopProductsChart({
+  products,
+}: {
+  products: DashboardTopProduct[];
+}) {
+  const topMovingProducts = products.map((product) => ({
+    name: product.name,
+    units: product.totalQuantity,
+  }));
   const max = Math.max(...topMovingProducts.map((product) => product.units));
 
   return (

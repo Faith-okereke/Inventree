@@ -8,7 +8,7 @@ import { requireAuth } from "../middleware/require-auth.middleware"
 const router = Router()
 
 router.get('/all',
-    //  requireAuth,
+     requireAuth,
      getAllProducts)
 
 router.get('/search', requireAuth, searchTheProducts)

@@ -11,21 +11,25 @@ import {
   Tr,
 } from "@/components/ui/table";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
+import type { OrderListResponse } from "@/lib/data/types";
 import { useGetAllOrders } from "@/api/hooks/useOrders";
 import { TableFooter } from "@/components/dashboard/table-footer";
 import { useAppSelector } from "@/store/hooks";
+import { useState } from "react";
+import { IconButton } from "@/components/ui/icon-button";
+import { icons } from "@/components/ui/app-icon";
+import { OrderDetailsModal } from "@/components/orders/order-details-modal";
 
-const COLUMN_COUNT = 6;
+const COLUMN_COUNT = 7;
 
 export function OrdersTable() {
+  const [selectedOrder, setSelectedOrder] = useState<OrderListResponse | null>(null);
   const filters = useAppSelector((s) => s.filters.orders);
   const { data: orders, pagination } = useGetAllOrders(
     filters.page,
     10,
     filters.status,
   );
-  console.log(pagination)
-
   return (
     <Card className="animate-fade-up overflow-hidden">
       <TableScroll>
@@ -38,6 +42,7 @@ export function OrdersTable() {
               <Th className="hidden sm:table-cell">Items</Th>
               <Th className="text-right">Total</Th>
               <Th>Status</Th>
+              <Th className="text-right">Actions</Th>
             </tr>
           </thead>
           <tbody>
@@ -81,6 +86,13 @@ export function OrdersTable() {
                     <Td>
                       <StatusBadge status={order.status} />
                     </Td>
+                    <Td className="text-right">
+                      <IconButton
+                        icon={icons.eye}
+                        label={`View order ${order.id}`}
+                        onClick={() => setSelectedOrder(order)}
+                      />
+                    </Td>
                   </Tr>
                 );
               })
@@ -89,6 +101,15 @@ export function OrdersTable() {
         </Table>
       </TableScroll>
       {pagination && <TableFooter table="orders" {...pagination} />}
+      {selectedOrder && (
+        <OrderDetailsModal
+          order={selectedOrder}
+          open={Boolean(selectedOrder)}
+          onOpenChange={(open) => {
+            if (!open) setSelectedOrder(null);
+          }}
+        />
+      )}
     </Card>
   );
 }

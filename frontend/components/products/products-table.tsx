@@ -26,6 +26,8 @@ import { useAppSelector } from "@/store/hooks";
 import { useDeleteProducts } from "@/api/hooks/useProducts";
 import { TableFooter } from "../dashboard/table-footer";
 import type { Pagination } from "@/api/hooks/types";
+import { RequireRole } from "@/components/auth/require-role";
+import { ProductDetailsModal } from "@/components/products/product-details-modal";
 
 const COLUMN_COUNT = 7;
 const MENU_WIDTH = 280;
@@ -46,6 +48,7 @@ function ProductActions({ product }: { product: ProductResponse }) {
   const [position, setPosition] = useState<MenuPosition | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { mutate: remove, isPending } = useDeleteProducts(product.id);
@@ -130,22 +133,34 @@ function ProductActions({ product }: { product: ProductResponse }) {
                   type="button"
                   onClick={() => {
                     setOpen(false);
-                    setEditOpen(true);
+                    setViewOpen(true);
                   }}
                   className="flex w-full items-center rounded-lg px-4 py-2.5 text-left text-sm font-medium text-ink-700 transition-colors hover:bg-ink-100 hover:text-ink-900"
                 >
-                  Edit
+                  View
                 </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOpen(false);
-                    setDeleteOpen(true);
-                  }}
-                  className="flex w-full items-center rounded-lg px-4 py-2.5 text-left text-sm font-medium text-danger-600 transition-colors hover:bg-danger-50 hover:text-danger-700"
-                >
-                  Delete
-                </button>
+                <RequireRole roles={["admin"]}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      setEditOpen(true);
+                    }}
+                    className="flex w-full items-center rounded-lg px-4 py-2.5 text-left text-sm font-medium text-ink-700 transition-colors hover:bg-ink-100 hover:text-ink-900"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      setDeleteOpen(true);
+                    }}
+                    className="flex w-full items-center rounded-lg px-4 py-2.5 text-left text-sm font-medium text-danger-600 transition-colors hover:bg-danger-50 hover:text-danger-700"
+                  >
+                    Delete
+                  </button>
+                </RequireRole>
               </motion.div>
             </AnimatePresence>,
             document.body,
@@ -156,6 +171,12 @@ function ProductActions({ product }: { product: ProductResponse }) {
         open={editOpen}
         onOpenChange={setEditOpen}
         product={product}
+      />
+
+      <ProductDetailsModal
+        product={product}
+        open={viewOpen}
+        onOpenChange={setViewOpen}
       />
 
       <ConfirmModal

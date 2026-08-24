@@ -12,6 +12,7 @@ import { downloadCsv, toCsv } from "@/lib/utils/csv";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setFilter } from "@/store/slices/filters.slice";
 import { useGetAllOrders } from "@/api/hooks/useOrders";
+import { RequireRole } from "@/components/auth/require-role";
 
 const statusOptions = [
   { value: "all", label: "All statuses" },
@@ -83,12 +84,13 @@ export function OrdersToolbar() {
         Export
       </Button>
 
-      <Button size="sm" className="h-9" onClick={() => setCreateOpen(true)}>
-        <AppIcon name={icons.plus} className="size-4" />
-        Create Order
-      </Button>
-
-      <OrderFormModal open={createOpen} onOpenChange={setCreateOpen} />
+      <RequireRole roles={["admin"]}>
+        <Button size="sm" className="h-9" onClick={() => setCreateOpen(true)}>
+          <AppIcon name={icons.plus} className="size-4" />
+          Create Order
+        </Button>
+        <OrderFormModal open={createOpen} onOpenChange={setCreateOpen} />
+      </RequireRole>
     </>
   );
 }

@@ -4,7 +4,7 @@ export interface AuthUser {
   id: string;
   email: string;
   name: string;
-  role: string;
+  role: AuthRole;
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -32,7 +32,7 @@ export interface LoginResponse {
   user: AuthUser;
 }
 
-export interface RegisterResponse extends AuthUser {}
+export type RegisterResponse = AuthUser;
 
 export interface CurrentUserResponse {
   status: number;

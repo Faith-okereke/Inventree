@@ -26,10 +26,6 @@ export interface StatCardProps {
   index?: number;
 }
 
-/**
- * Server Component. Covers both card flavours in the design: the Overview cards
- * (icon + delta) and the Products registry cards (uppercase label, tinted value).
- */
 export function StatCard({
   label,
   value,
@@ -50,7 +46,7 @@ export function StatCard({
         </p>
         <p
           className={cn(
-            "mt-2 text-2xl font-bold tracking-tight text-ink-900 tabular-nums sm:text-[28px]",
+            "mt-2 text-2xl pt-12 font-bold tracking-tight text-ink-900 tabular-nums sm:text-[28px]",
             tone && valueTones[tone],
           )}
         >
@@ -71,9 +67,9 @@ export function StatCard({
       {icon && (
         <span
           aria-hidden
-          className="grid size-10 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600"
+          className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600"
         >
-          <AppIcon name={icon} className="size-5" />
+          <AppIcon name={icon} className="size-4" />
         </span>
       )}
     </Card>

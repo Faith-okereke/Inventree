@@ -7,7 +7,7 @@ import { getAllOrders, getTheOrder, createTheOrder, updateTheOrder, deleteTheOrd
 
 const router = Router()
 
-router.get('/all', requireAuth, requireRole('admin'), getAllOrders)
+router.get('/all', requireAuth, getAllOrders)
 
 router.get('/:id', requireAuth, validate(orderIdSchema, { source: 'params' }), getTheOrder )
 

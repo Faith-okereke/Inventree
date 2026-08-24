@@ -1,14 +1,8 @@
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
-import type { OrderListResponse } from "@/lib/data/types";
 import { formatNumber } from "@/lib/utils/format";
 
-/**
- * Where each slice starts, as a running total of the ones before it.
- *
- * Computed at module scope from a module constant: it never changes, so it is
- * done once at import rather than on every render — and it stays a pure
- * expression instead of a counter mutated inside `map`.
- */
+
+ 
 const ring = {
   x: 48,
   y: 48,
@@ -21,35 +15,28 @@ const ring = {
   transform: "rotate(45 100 100)",
 } as const;
 
-/**
- * The Figma frame draws this breakdown as a rotated rounded square rather than a
- * circle, so the ring is a `<rect>` turned 45°.
- *
- * `pathLength="100"` renormalises the perimeter to 100 units, which lets each
- * slice's `stroke-dasharray` be written as its raw percentage — no arc maths, and
- * the geometry can change without touching the numbers.
- *
- * Server Component: the reveal is a CSS keyframe (`ring-draw`), so the chart
- * ships zero JavaScript.
- */
-export function OrderStatusChart({ orders }: { orders: OrderListResponse[] }) {
-  const total = orders.length;
+
+export function OrderStatusChart({
+  ordersByStatus,
+  total,
+}: {
+  ordersByStatus: Record<string, number>;
+  total: number;
+}) {
   const statusData = [
     { label: "Fulfilled", status: "fulfilled", colorVar: "var(--color-success-500)" },
     { label: "Pending", status: "pending", colorVar: "var(--color-warn-500)" },
     { label: "Cancelled", status: "cancelled", colorVar: "var(--color-brand-600)" },
   ];
   const slices = statusData.map((slice, index) => {
-    const count = orders.filter((order) => order.status === slice.status).length;
+    const count = ordersByStatus[slice.status] ?? 0;
     const percent = total === 0 ? 0 : Math.round((count / total) * 100);
     return {
       ...slice,
       count,
       percent,
       start: statusData.slice(0, index).reduce((sum, previous) => {
-        const previousCount = orders.filter(
-          (order) => order.status === previous.status,
-        ).length;
+        const previousCount = ordersByStatus[previous.status] ?? 0;
         return sum + (total === 0 ? 0 : Math.round((previousCount / total) * 100));
       }, 0),
     };
@@ -91,8 +78,7 @@ export function OrderStatusChart({ orders }: { orders: OrderListResponse[] }) {
           </div>
         </div>
 
-        {/* The legend carries the same numbers as text, so the chart needs no
-            accessible description of its own. */}
+        
         <dl className="w-full max-w-56 space-y-3">
           {slices.map((slice) => (
             <div key={slice.label} className="flex items-center gap-2.5">

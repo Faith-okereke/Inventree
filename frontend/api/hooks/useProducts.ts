@@ -12,7 +12,7 @@ import {
 import { T_ApiResponse } from "./types";
 import { ProductResponse } from "@/lib/data/types";
 
-function getErrorMessage(error: unknown): string {
+export const getErrorMessage = (error: unknown): string => {
   const response = error as { response?: { data?: { message?: unknown } } };
   const message = response?.response?.data?.message;
 

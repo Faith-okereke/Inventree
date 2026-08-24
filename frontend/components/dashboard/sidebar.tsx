@@ -14,6 +14,7 @@ import { clearAuth } from "@/store/slices/auth.slice";
 import { clearAuthSession } from "@/lib/auth/session";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { RequireRole } from "@/components/auth/require-role";
 
 function NavSections({
   collapsed,
@@ -38,12 +39,22 @@ function NavSections({
         className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3"
       >
         {primaryNav.map((item) => (
-          <NavLink
-            key={item.href}
-            item={item}
-            collapsed={collapsed}
-            onNavigate={onNavigate}
-          />
+          item.href === "/users" ? (
+            <RequireRole key={item.href} roles={["admin"]}>
+              <NavLink
+                item={item}
+                collapsed={collapsed}
+                onNavigate={onNavigate}
+              />
+            </RequireRole>
+          ) : (
+            <NavLink
+              key={item.href}
+              item={item}
+              collapsed={collapsed}
+              onNavigate={onNavigate}
+            />
+          )
         ))}
       </nav>
 

@@ -1,7 +1,6 @@
 "use client";
 
-import { useGetAllOrders } from "@/api/hooks/useOrders";
-import { useGetAllProducts } from "@/api/hooks/useProducts";
+import { useGetDashboard } from "@/api/hooks/useDashboard";
 import { LowStockTable } from "@/components/dashboard/low-stock-table";
 import { OrderStatusChart } from "@/components/dashboard/order-status-chart";
 import { PageHeader } from "@/components/dashboard/page-header";
@@ -11,29 +10,15 @@ import { icons } from "@/components/ui/app-icon";
 import { formatCurrency } from "@/lib/utils/format";
 
 export function DashboardPageClient() {
-  const { data: orders, isLoading: ordersLoading } = useGetAllOrders();
-  const { data: products, isLoading: productsLoading } = useGetAllProducts();
-  const isLoading = ordersLoading || productsLoading;
-  const totalRevenue = orders.reduce(
-    (total, order) =>
-      total +
-      order.orderItems.reduce(
-        (orderTotal, item) =>
-          orderTotal + Number(item.priceAtOrder) * item.quantity,
-        0,
-      ),
-    0,
-  );
-  const pendingOrders = orders.filter(
-    (order) => order.status === "pending",
-  ).length;
-  const lowStockProducts = products.filter(
-    (product) => product.quantityInStock <= 5,
-  );
-  const outOfStockCount = products.filter(
-    (product) => product.quantityInStock <= 0,
-  ).length;
+  const { data, isLoading } = useGetDashboard();
 
+  const totalOrders = data?.summary.totalOrders ?? 0;
+  const totalRevenue = data?.summary.totalRevenue ?? 0;
+  const pendingOrders = data?.ordersByStatus.pending ?? 0;
+  const lowStockProducts = data?.lowStockProducts ?? [];
+  const outOfStockCount =
+    data?.lowStockProducts.filter((product) => product.quantityInStock <= 0)
+      .length ?? 0;
   return (
     <>
       <PageHeader
@@ -44,7 +29,7 @@ export function DashboardPageClient() {
         <StatCard
           index={0}
           label="Total Orders"
-          value={isLoading ? "..." : String(orders.length)}
+          value={isLoading ? "..." : String(totalOrders)}
           icon={icons.receipt}
         />
         <StatCard
@@ -71,8 +56,11 @@ export function DashboardPageClient() {
         />
       </StatGrid>
       <div className="grid gap-4 lg:grid-cols-2">
-        <OrderStatusChart orders={orders} />
-        <TopProductsChart orders={orders} />
+        <OrderStatusChart
+          ordersByStatus={data?.ordersByStatus ?? {}}
+          total={totalOrders}
+        />
+        <TopProductsChart products={data?.topProducts ?? []} />
       </div>
       <LowStockTable products={lowStockProducts} />
     </>

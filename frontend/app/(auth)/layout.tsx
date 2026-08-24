@@ -7,7 +7,7 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
       <aside className="hidden lg:flex lg:flex-col lg:items-center lg:justify-center lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden lg:bg-canvas lg:p-12 lg:max-w-[35%]">
         <div className="animate-fade-up relative  mb-10 flex flex-col items-center justify-normal text-center">
           <h1 className="text-3xl text-white font-bold ">INVENTREE</h1>
-          <p className="text-black"> Know what you have, where it is, and when to reorder</p>
+          <p className="text-white"> Know what you have, where it is, and when to reorder</p>
         </div>
 
         {/* Soft radial wash behind the artwork */}
@@ -16,7 +16,7 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
           className=" absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.28),transparent_60%)]"
         />
 
-        <div className="animate-fade-up relative ">
+        <div className="animate-fade-up relative bg-danger-400">
           <Image
             src="/auth-image.png"
             alt="Auth Illustration"

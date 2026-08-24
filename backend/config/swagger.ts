@@ -16,6 +16,7 @@ const options: swaggerJSDoc.Options = {
       { name: 'Users', description: 'User management (admin only)' },
       { name: 'Products', description: 'Product catalogue and inventory' },
       { name: 'Orders', description: 'Customer orders and fulfilment' },
+      { name: 'Dashboard', description: 'Aggregated inventory and order metrics (admin only)' },
     ],
     components: {
       securitySchemes: {

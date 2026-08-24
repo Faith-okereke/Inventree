@@ -15,6 +15,7 @@ import { downloadCsv, toCsv } from "@/lib/utils/csv";
 import { formatCurrency } from "@/lib/utils/format";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { resetFilters, setFilter } from "@/store/slices/filters.slice";
+import { RequireRole } from "@/components/auth/require-role";
 
 const stockOptions = [
   { value: "all", label: "All stock" },
@@ -121,10 +122,12 @@ export function ProductsPageClient() {
           Export
         </Button>
 
-        <Button size="sm" className="h-9" onClick={() => setCreateOpen(true)}>
-          <AppIcon name={icons.plus} className="size-4" />
-          Create Product
-        </Button>
+        <RequireRole roles={["admin"]}>
+          <Button size="sm" className="h-9" onClick={() => setCreateOpen(true)}>
+            <AppIcon name={icons.plus} className="size-4" />
+            Create Product
+          </Button>
+        </RequireRole>
       </PageHeader>
 
       <div className="relative pb-24">
@@ -143,7 +146,9 @@ export function ProductsPageClient() {
         <ProductsTable products={products} pagination={pagination} />
       </div>
 
-      <ProductFormModal open={createOpen} onOpenChange={setCreateOpen} />
+      <RequireRole roles={["admin"]}>
+        <ProductFormModal open={createOpen} onOpenChange={setCreateOpen} />
+      </RequireRole>
     </>
   );
 }
