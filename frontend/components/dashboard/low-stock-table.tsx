@@ -2,15 +2,25 @@ import { StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableScroll, Td, Th, Tr } from "@/components/ui/table";
-import type { ProductResponse } from "@/lib/data/types";
 import { formatNumber } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
+
+type DashboardLowStockProduct = {
+  id: string;
+  name: string;
+  sku: string;
+  quantityInStock: number;
+};
 
 /**
  * Server Component — this table has no filters or pagination, so unlike the three
  * registry tables it crosses no client boundary at all.
  */
-export function LowStockTable({ products }: { products: ProductResponse[] }) {
+export function LowStockTable({
+  products,
+}: {
+  products: DashboardLowStockProduct[];
+}) {
   return (
     <Card className="animate-fade-up overflow-hidden">
       <CardHeader>
