@@ -23,9 +23,9 @@ import type { ProductResponse } from "@/lib/data/types";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import { useAppSelector } from "@/store/hooks";
-import { useDeleteProducts } from "@/api/hooks/useProducts";
+import { useDeleteProducts } from "@/api-services/hooks/useProducts";
 import { TableFooter } from "../dashboard/table-footer";
-import type { Pagination } from "@/api/hooks/types";
+import type { Pagination } from "@/api-services/hooks/types";
 import { RequireRole } from "@/components/auth/require-role";
 import { ProductDetailsModal } from "@/components/products/product-details-modal";
 

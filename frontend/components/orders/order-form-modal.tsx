@@ -8,8 +8,8 @@ import {
 } from "@/components/dashboard/dashboard-modal";
 import { Button } from "@/components/ui/button";
 import type { OrderStatus, ProductResponse } from "@/lib/data/types";
-import { useGetAllProducts } from "@/api/hooks/useProducts";
-import { useCreateOrder } from "@/api/hooks/useOrders";
+import { useGetAllProducts } from "@/api-services/hooks/useProducts";
+import { useCreateOrder } from "@/api-services/hooks/useOrders";
 
 interface OrderFormValues {
   product: string;

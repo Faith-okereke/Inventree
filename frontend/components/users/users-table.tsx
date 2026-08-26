@@ -15,7 +15,7 @@ import {
 import { formatDate } from "@/lib/utils/format";
 import { useAppSelector } from "@/store/hooks";
 // import { setUserActive } from "@/store/slices/access.slice";
-import { useGetAllUsers } from "@/api/hooks/useUser";
+import { useGetAllUsers } from "@/api-services/hooks/useUser";
 
 const COLUMN_COUNT = 5;
 

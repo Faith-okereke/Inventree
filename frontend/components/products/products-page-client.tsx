@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { useGetAllProducts } from "@/api/hooks/useProducts";
+import { useGetAllProducts } from "@/api-services/hooks/useProducts";
 import { FilterPopover } from "@/components/dashboard/filter-popover";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { StatCard, StatGrid } from "@/components/dashboard/stat-card";

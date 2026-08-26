@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetDashboard } from "@/api/hooks/useDashboard";
+import { useGetDashboard } from "@/api-services/hooks/useDashboard";
 import { LowStockTable } from "@/components/dashboard/low-stock-table";
 import { OrderStatusChart } from "@/components/dashboard/order-status-chart";
 import { PageHeader } from "@/components/dashboard/page-header";

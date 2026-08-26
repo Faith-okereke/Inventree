@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 import type { OrderListResponse } from "@/lib/data/types";
-import { useGetAllOrders } from "@/api/hooks/useOrders";
+import { useGetAllOrders } from "@/api-services/hooks/useOrders";
 import { TableFooter } from "@/components/dashboard/table-footer";
 import { useAppSelector } from "@/store/hooks";
 import { useState } from "react";

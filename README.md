@@ -110,6 +110,3 @@ Once the server is running, the following API endpoints will be available:
 ## 📜 License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
-"# Inventree" 

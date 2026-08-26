@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useResetPassword, useVerifyResetPassword } from "@/api/hooks/useAuth";
+import { useResetPassword, useVerifyResetPassword } from "@/api-services/hooks/useAuth";
 import type { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";

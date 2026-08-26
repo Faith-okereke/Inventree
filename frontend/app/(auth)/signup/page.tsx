@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useRegister } from "@/api/hooks/useAuth";
+import { useRegister } from "@/api-services/hooks/useAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

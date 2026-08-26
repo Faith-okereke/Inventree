@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-import type { ProductMutationInput } from "@/api/services/product.service";
-import { useCreateProduct, useUpdateProduct } from "@/api/hooks/useProducts";
+import type { ProductMutationInput } from "@/api-services/services/product.service";
+import { useCreateProduct, useUpdateProduct } from "@/api-services/hooks/useProducts";
 import {
   ConfirmModal,
   DashboardModal,

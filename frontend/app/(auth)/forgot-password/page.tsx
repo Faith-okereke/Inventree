@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useForgotPassword } from "@/api/hooks/useAuth";
+import { useForgotPassword } from "@/api-services/hooks/useAuth";
 import type { AxiosError } from "axios";
 import Link from "next/link";
 import { useState } from "react";

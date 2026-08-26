@@ -11,7 +11,7 @@ import { filterOrders } from "@/lib/data/filters";
 import { downloadCsv, toCsv } from "@/lib/utils/csv";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setFilter } from "@/store/slices/filters.slice";
-import { useGetAllOrders } from "@/api/hooks/useOrders";
+import { useGetAllOrders } from "@/api-services/hooks/useOrders";
 import { RequireRole } from "@/components/auth/require-role";
 
 const statusOptions = [
