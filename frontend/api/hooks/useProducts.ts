@@ -55,12 +55,12 @@ export const useCreateProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation<T_ApiResponse<ProductResponse>, unknown, ProductMutationInput>({
-    mutationFn: (productData) => createProduct(productData),
+    mutationFn: (productData: ProductMutationInput) => createProduct(productData),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["getAllProducts"] });
       toast.success("Product created successfully");
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       const errorMessage = getErrorMessage(error);
       console.error("API ERROR DETAILS:", error);
       toast.error(errorMessage);
@@ -72,7 +72,7 @@ export const useUpdateProduct = (id: string | undefined) => {
   const queryClient = useQueryClient();
 
   return useMutation<T_ApiResponse<ProductResponse>, unknown, ProductMutationInput>({
-    mutationFn: (productData) => {
+    mutationFn: (productData: ProductMutationInput) => {
       if (!id) throw new Error("Missing product id");
       return updateProduct(id, productData);
     },
@@ -80,7 +80,7 @@ export const useUpdateProduct = (id: string | undefined) => {
       await queryClient.invalidateQueries({ queryKey: ["getAllProducts"] });
       toast.success("Product updated successfully");
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       const errorMessage = getErrorMessage(error);
       console.error("API ERROR DETAILS:", error);
       toast.error(errorMessage);
@@ -98,7 +98,7 @@ export const useDeleteProducts = (id: string) => {
       queryClient.invalidateQueries({ queryKey: ["getAllProducts"] });
       toast.success("Product deleted successfully");
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       const errorMessage = getErrorMessage(error);
       console.error("API ERROR DETAILS:", error);
       toast.error(errorMessage);

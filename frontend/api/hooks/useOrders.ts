@@ -31,12 +31,12 @@ export const useCreateOrder = () => {
   const queryClient = useQueryClient();
 
   return useMutation<T_ApiResponse<OrderListResponse>, unknown, OrderMutationInput>({
-    mutationFn: (orderData) => createOrder(orderData),
+    mutationFn: (orderData: OrderMutationInput) => createOrder(orderData),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["getAllOrders"] });
       toast.success("Order created successfully");
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       const errorMessage = getErrorMessage(error);
       console.error("API ERROR DETAILS:", error);
       toast.error(errorMessage);

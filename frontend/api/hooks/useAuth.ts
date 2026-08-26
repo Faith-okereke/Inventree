@@ -42,7 +42,7 @@ export const useLogin = () => {
 
   return useMutation<LoginResponse, unknown, LoginCredentials>({
     mutationFn: loginService,
-    onSuccess: (res) => {
+    onSuccess: (res: LoginResponse) => {
       const authData = { token: res.token, user: res.user };
       saveAuthSession(authData);
       dispatch(setAuth(authData));
@@ -84,7 +84,7 @@ export const useVerifyResetPassword = () => {
 export const useForgotPassword = () => {
   return useMutation<ForgotPasswordResponse, unknown, string>({
     mutationFn: forgotPasswordService,
-    onSuccess: (res) => {
+    onSuccess: (res: ForgotPasswordResponse) => {
       toast.success(`Verification code sent! ${res.message}`);
     },
     onError: (error: unknown) => {
@@ -95,7 +95,8 @@ export const useForgotPassword = () => {
 
 export const useResetPassword = () => {
   return useMutation<ResetPasswordResponse, unknown, ResetPasswordRequest>({
-    mutationFn: ({ token, newPassword }) => resetPasswordService(token, newPassword),
+    mutationFn: ({ token, newPassword }: ResetPasswordRequest) =>
+      resetPasswordService(token, newPassword),
     onSuccess: () => {
       toast.success("Password reset successful!");
     },
