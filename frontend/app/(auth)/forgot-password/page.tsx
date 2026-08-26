@@ -1,12 +1,10 @@
-
-"use client";
+﻿"use client";
 
 import { useForgotPassword } from "@/api/hooks/useAuth";
 import type { AxiosError } from "axios";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
-
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -34,16 +32,20 @@ export default function ForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <div className="w-full max-w-md space-y-8 text-center">
-        <h1 className="text-3xl font-bold text-ink-900">Check your email</h1>
-        <p className="text-sm text-ink-600">
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-600">
+            Password reset
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
+            Check your email
+          </h1>
+        </div>
+        <p className="text-sm leading-6 text-stone-600">
           If an account with that email exists, we have sent a password reset
           link to it. Please click the link to reset your password.
         </p>
-        <Link
-          href="/login"
-          className="font-bold text-brand-600 hover:underline"
-        >
+        <Link href="/login" className="font-semibold text-brand-700 hover:underline">
           Back to Log in
         </Link>
       </div>
@@ -51,19 +53,24 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="w-full max-w-md space-y-8">
-      <div className="space-y-3 text-center">
-        <h1 className="text-3xl font-bold text-ink-900">Forgot Password?</h1>
-        <p className="text-sm text-ink-600">
-          No worries, we&apos;ll send you reset instructions.
+    <div className="space-y-8">
+      <div className="space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-600">
+          Reset access
+        </p>
+        <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
+          Forgot your password?
+        </h1>
+        <p className="max-w-sm text-sm leading-6 text-stone-600">
+          No worries. We&apos;ll send reset instructions to your email address.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-4 bg-white p-6">
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <div className="space-y-2">
           <label
             htmlFor="email"
-            className="block text-sm font-semibold text-ink-800"
+            className="block text-sm font-medium text-stone-700"
           >
             Email Address
           </label>
@@ -74,13 +81,17 @@ export default function ForgotPasswordPage() {
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             placeholder="Enter your email"
-            className="h-12 w-full rounded-lg bg-ink-200/70 px-4 text-sm text-ink-900 placeholder:text-ink-500 transition-[background-color,box-shadow] duration-200 ease-out-soft hover:bg-ink-200 focus:bg-white focus:ring-2 focus:ring-brand-500/60 focus:outline-none"
+            className="h-12 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 text-sm text-stone-900 placeholder:text-stone-400 transition-colors duration-200 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-600"
           />
         </div>
 
-        {apiError && <p className="text-sm font-medium text-danger-600">{apiError}</p>}
+        {apiError ? <p className="text-sm font-medium text-red-600">{apiError}</p> : null}
 
-        <button type="submit" disabled={isPending} className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-brand-600 px-6 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60">
+        <button
+          type="submit"
+          disabled={isPending}
+          className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgba(37,99,235,0.75)] transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-300"
+        >
           {isPending ? "Sending..." : "Send Reset Link"}
         </button>
       </form>

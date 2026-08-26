@@ -33,26 +33,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-8">
-      <div className="space-y-3 text-center">
-        <h1 className="text-3xl font-bold text-ink-900">
-          Login to your Account
+    <div className="space-y-8">
+      <div className="space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-600">
+          Welcome back
+        </p>
+        <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
+          Log in to your account
         </h1>
-        <p className="text-sm text-ink-600">
-          Sign in to your Inventree account.
+        <p className="max-w-sm text-sm leading-6 text-stone-600">
+          Sign in to keep inventory, orders, and team workflows moving.
         </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        method="post"
-        noValidate
-        className="space-y-4   bg-white p-6 "
-      >
+      <form onSubmit={handleSubmit} method="post" noValidate className="space-y-5">
         <div className="space-y-2">
           <label
             htmlFor="email"
-            className="block text-sm font-semibold text-ink-800"
+            className="block text-sm font-medium text-stone-700"
           >
             Email Address
           </label>
@@ -63,14 +61,14 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             placeholder="Enter your email"
-            className="h-12 w-full rounded-lg bg-ink-200/70 px-4 text-sm text-ink-900 placeholder:text-ink-500 transition-[background-color,box-shadow] duration-200 ease-out-soft hover:bg-ink-200 focus:bg-white focus:ring-2 focus:ring-brand-500/60 focus:outline-none"
+            className="h-12 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 text-sm text-stone-900 placeholder:text-stone-400 transition-colors duration-200 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-600"
           />
         </div>
 
         <div className="space-y-2">
           <label
             htmlFor="password"
-            className="block text-sm font-semibold text-ink-800"
+            className="block text-sm font-medium text-stone-700"
           >
             Password
           </label>
@@ -82,48 +80,41 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               placeholder="Enter your password"
-              className="h-12 w-full rounded-lg bg-ink-200/70 px-4 pr-28 text-sm text-ink-900 placeholder:text-ink-500 transition-[background-color,box-shadow] duration-200 ease-out-soft hover:bg-ink-200 focus:bg-white focus:ring-2 focus:ring-brand-500/60 focus:outline-none"
+              className="h-12 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 pr-28 text-sm text-stone-900 placeholder:text-stone-400 transition-colors duration-200 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-600"
             />
             <button
               type="button"
               onClick={() => setShowPassword((value) => !value)}
-              className="absolute inset-y-0 right-2 my-auto rounded-md px-3 text-xs font-semibold text-ink-600 hover:bg-ink-100 hover:text-ink-900"
+              className="absolute inset-y-0 right-2 my-auto px-3 text-xs font-semibold text-stone-700 hover:text-stone-900"
             >
               {showPassword ? "Hide" : "Show"}
             </button>
           </div>
         </div>
 
-        {error ? (
-          <p className="text-sm font-medium text-danger-600">{error}</p>
-        ) : null}
+        {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
 
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-brand-600 px-6 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgba(37,99,235,0.75)] transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-300"
         >
           {isPending ? "Signing in..." : "Log in"}
         </button>
       </form>
 
-      <p className="text-center text-sm text-ink-600">
-        Don&apos;t have an account?{" "}
-        <Link
-          href="/signup"
-          className="font-bold text-brand-600 hover:underline"
-        >
-          Sign up
-        </Link>
-      </p>
-      <p className="text-center text-sm">
-        <Link
-          href={"/forgot-password" as Route}
-          className="font-bold text-brand-600 hover:underline "
-        >
+      <div className="flex flex-col text-sm text-stone-600 sm:flex-row sm:items-center sm:justify-between">
+        <p>
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="font-semibold text-brand-700 hover:underline">
+            Sign up
+          </Link>
+        </p>
+       
+      </div>
+       <Link href={"/forgot-password" as Route} className="text-center text-sm font-semibold text-brand-700 hover:underline flex justify-center items-center">
           Forgot Password?
         </Link>
-      </p>
     </div>
   );
 }

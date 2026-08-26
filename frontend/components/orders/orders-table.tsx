@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { StatusBadge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -19,6 +19,7 @@ import { useState } from "react";
 import { IconButton } from "@/components/ui/icon-button";
 import { icons } from "@/components/ui/app-icon";
 import { OrderDetailsModal } from "@/components/orders/order-details-modal";
+import { filterOrders } from "@/lib/data/filters";
 
 const COLUMN_COUNT = 7;
 
@@ -30,6 +31,7 @@ export function OrdersTable() {
     10,
     filters.status,
   );
+  const filteredOrders = filterOrders(orders, filters);
   return (
     <Card className="animate-fade-up overflow-hidden">
       <TableScroll>
@@ -38,7 +40,7 @@ export function OrdersTable() {
             <tr>
               <Th>Order ID</Th>
               <Th className="hidden md:table-cell">Date</Th>
-              <Th>Customer Name</Th>
+              <Th>Completed by Staff</Th>
               <Th className="hidden sm:table-cell">Items</Th>
               <Th className="text-right">Total</Th>
               <Th>Status</Th>
@@ -46,12 +48,12 @@ export function OrdersTable() {
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(orders) && orders.length === 0 ? (
+            {filteredOrders.length === 0 ? (
               <TableEmpty colSpan={COLUMN_COUNT}>
                 No orders match the current filters.
               </TableEmpty>
             ) : (
-              orders.map((order, index) => {
+              filteredOrders.map((order, index) => {
                 const quantity = order.orderItems.reduce(
                   (total, item) => total + item.quantity,
                   0,

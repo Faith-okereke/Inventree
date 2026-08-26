@@ -13,10 +13,12 @@ import type {
 } from "@/types/auth";
 import { api } from "./client";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 
 export const loginService = async (credentials: LoginCredentials): Promise<LoginResponse> => {
   const response = await axios.post<LoginResponse>(`${API_BASE_URL}/auth/login`, credentials);
+
   return response.data;
 };
 

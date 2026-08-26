@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useResetPassword, useVerifyResetPassword } from "@/api/hooks/useAuth";
 import type { AxiosError } from "axios";
@@ -77,26 +77,28 @@ function ResetPasswordForm() {
   if (isVerifying) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 text-center">
-        <AppIcon name={icons.loader} className="size-8 animate-spin text-ink-500" />
-        <p className="text-ink-600">Verifying token...</p>
+        <AppIcon name={icons.loader} className="size-8 animate-spin text-stone-500" />
+        <p className="text-stone-600">Verifying token...</p>
       </div>
     );
   }
 
   if (!token || isVerificationError) {
     return (
-      <div className="w-full max-w-md space-y-6 text-center">
-        <h1 className="text-2xl font-bold text-danger-600">
-          Invalid or Expired Link
-        </h1>
-        <p className="text-sm text-ink-600">
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-600">
+            Reset access
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
+            Invalid or expired link
+          </h1>
+        </div>
+        <p className="text-sm leading-6 text-stone-600">
           {apiVerificationError ||
             "The password reset link is either invalid or has expired. Please request a new one."}
         </p>
-        <Link
-          href={"/forgot-password" as Route}
-          className="font-bold text-brand-600 hover:underline"
-        >
+        <Link href={"/forgot-password" as Route} className="font-semibold text-brand-700 hover:underline">
           Request a new link
         </Link>
       </div>
@@ -105,69 +107,81 @@ function ResetPasswordForm() {
 
   if (isTokenValid) {
     return (
-      <div className="w-full max-w-md space-y-8">
-        <div className="space-y-3 text-center">
-          <h1 className="text-3xl font-bold text-ink-900">Reset Your Password</h1>
-          <p className="text-sm text-ink-600">
-            Please enter your new password below.
+      <div className="space-y-8">
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-600">
+            Reset access
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
+            Set a new password
+          </h1>
+          <p className="max-w-sm text-sm leading-6 text-stone-600">
+            Choose a new password to finish resetting your account.
           </p>
         </div>
 
-        <form onSubmit={handleResetSubmit} noValidate className="space-y-4 bg-white p-6">
+        <form onSubmit={handleResetSubmit} noValidate className="space-y-5">
           <div className="space-y-2">
             <label
               htmlFor="new-password"
-              className="block text-sm font-semibold text-ink-800"
+              className="block text-sm font-medium text-stone-700"
             >
               New Password
             </label>
-           <div className="relative">
-            <input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              autoComplete="current-password"
-              placeholder="Enter your password"
-              className="h-12 w-full rounded-lg bg-ink-200/70 px-4 pr-28 text-sm text-ink-900 placeholder:text-ink-500 transition-[background-color,box-shadow] duration-200 ease-out-soft hover:bg-ink-200 focus:bg-white focus:ring-2 focus:ring-brand-500/60 focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((value) => !value)}
-              className="absolute inset-y-0 right-2 my-auto rounded-md px-3 text-xs font-semibold text-ink-600 hover:bg-ink-100 hover:text-ink-900"
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
+            <div className="relative">
+              <input
+                id="new-password"
+                type={showPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                autoComplete="new-password"
+                placeholder="Enter your new password"
+                className="h-12 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 pr-28 text-sm text-stone-900 placeholder:text-stone-400 transition-colors duration-200 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-600"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                className="absolute inset-y-0 right-2 my-auto rounded-md border border-stone-200 bg-white px-3 text-xs font-semibold text-stone-700 hover:border-stone-300 hover:text-stone-900"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
-          </div>
+
           <div className="space-y-2">
             <label
               htmlFor="confirm-password"
-              className="block text-sm font-semibold text-ink-800"
+              className="block text-sm font-medium text-stone-700"
             >
               Confirm New Password
             </label>
             <div className="relative">
-            <input
-              id="confirm-password"
-              type={showPassword ? "text" : "password"}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              autoComplete="current-password"
-              placeholder="Confirm new password"
-              className="h-12 w-full rounded-lg bg-ink-200/70 px-4 pr-28 text-sm text-ink-900 placeholder:text-ink-500 transition-[background-color,box-shadow] duration-200 ease-out-soft hover:bg-ink-200 focus:bg-white focus:ring-2 focus:ring-brand-500/60 focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((value) => !value)}
-              className="absolute inset-y-0 right-2 my-auto rounded-md px-3 text-xs font-semibold text-ink-600 hover:bg-ink-100 hover:text-ink-900"
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
+              <input
+                id="confirm-password"
+                type={showPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                autoComplete="new-password"
+                placeholder="Confirm your new password"
+                className="h-12 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 pr-28 text-sm text-stone-900 placeholder:text-stone-400 transition-colors duration-200 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-600"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                className="absolute inset-y-0 right-2 my-auto rounded-md border border-stone-200 bg-white px-3 text-xs font-semibold text-stone-700 hover:border-stone-300 hover:text-stone-900"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
-          </div>
-          {apiResetError && <p className="text-sm font-medium text-danger-600">{apiResetError}</p>}
-          <button type="submit" disabled={isResetting} className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-brand-600 px-6 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60">
+
+          {apiResetError ? <p className="text-sm font-medium text-red-600">{apiResetError}</p> : null}
+
+          <button
+            type="submit"
+            disabled={isResetting}
+            className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgba(37,99,235,0.75)] transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-300"
+          >
             {isResetting ? "Resetting..." : "Reset Password"}
           </button>
         </form>
@@ -180,7 +194,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<p className="text-center text-ink-600">Loading...</p>}>
+    <Suspense fallback={<p className="text-center text-stone-600">Loading...</p>}>
       <ResetPasswordForm />
     </Suspense>
   );

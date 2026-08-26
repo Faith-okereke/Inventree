@@ -127,7 +127,7 @@ function ProductActions({ product }: { product: ProductResponse }) {
                   left: position.left,
                   width: MENU_WIDTH,
                 }}
-                className="fixed z-[999] overflow-hidden rounded-xl border border-ink-200 bg-white p-1.5 shadow-2xl shadow-ink-900/15"
+                className="fixed z-999 overflow-hidden rounded-xl border border-ink-200 bg-white p-1.5 shadow-2xl shadow-ink-900/15"
               >
                 <button
                   type="button"
@@ -204,7 +204,7 @@ export function ProductsTable({
   const filteredProducts = filterProducts(products, filters);
 
   return (
-    <div className="pt-24">
+    <div className="pt-8">
       <Card className="animate-fade-up overflow-visible">
         <TableScroll className="max-h-[60vh] overflow-y-auto pb-6">
           <Table>

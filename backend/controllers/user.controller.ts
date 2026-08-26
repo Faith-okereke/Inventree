@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+﻿import { Request, Response } from "express"
 import { hashPassword } from "../utils/password"
 import {
     getAllUsersService,
@@ -15,12 +15,15 @@ const paginationParams = (req: Request) => {
     100,
   );
 
-  return { page, pageSize };
+  return { page, pageSize }
 }
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
         const { page, pageSize } = paginationParams(req);
-        const users = await getAllUsersService(page, pageSize);
+        const role = typeof req.query.role === "string" ? req.query.role : undefined;
+        const status = typeof req.query.status === "string" ? req.query.status : undefined;
+        const search = typeof req.query.search === "string" ? req.query.search : undefined;
+        const users = await getAllUsersService(page, pageSize, { role, status, search });
         return res.status(200).json({
             status: 200,
             data: users.data,

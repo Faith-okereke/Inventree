@@ -1,18 +1,47 @@
-import { prisma } from "../database/prisma"
+﻿import { prisma } from "../database/prisma"
 import { Prisma } from "../generated/prisma/client"
 
-export const getAllUsersService = async (page: number, pageSize: number) => {
+export type UserListFilters = {
+    role?: string
+    status?: string
+    search?: string
+}
+
+export const getAllUsersService = async (
+    page: number,
+    pageSize: number,
+    filters: UserListFilters = {},
+) => {
     const skip = (page - 1) * pageSize;
+    const where: Prisma.UserWhereInput = {};
+
+    if (filters.role && filters.role !== "all") {
+        where.role = filters.role;
+    }
+
+    if (filters.status === "active") {
+        where.deletedAt = null;
+    } else if (filters.status === "inactive") {
+        where.deletedAt = { not: null };
+    }
+
+    if (filters.search?.trim()) {
+        const search = filters.search.trim();
+        where.OR = [
+            { name: { contains: search, mode: "insensitive" } },
+            { email: { contains: search, mode: "insensitive" } },
+        ];
+    }
 
     const [data, total] = await Promise.all([
         prisma.user.findMany({
-            where: { deletedAt: null },
+            where,
             skip,
             take: pageSize,
             orderBy: { createdAt: "desc" },
             omit: { password: true },
         }),
-        prisma.user.count(),
+        prisma.user.count({ where }),
     ]);
     return {
         data,

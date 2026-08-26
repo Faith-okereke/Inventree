@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getAllUsers, getUsersById } from "../services/user.service";
 import { T_ApiResponse } from "./types";
 import toast from "react-hot-toast";
@@ -13,10 +13,16 @@ function getErrorMessage(error: unknown): string {
   return "Something went wrong, Please check connection";
 }
 
-export const useGetAllUsers = (page = 1, pageSize = 10) => {
+export const useGetAllUsers = (
+  page = 1,
+  pageSize = 10,
+  search?: string,
+  role?: string,
+  status?: string,
+) => {
   const query = useQuery<T_ApiResponse<User[]>>({
-    queryKey: ["getAllUsers", page, pageSize],
-    queryFn: () => getAllUsers(page, pageSize),
+    queryKey: ["getAllUsers", page, pageSize, search, role, status],
+    queryFn: () => getAllUsers(page, pageSize, { search, role, status }),
   });
 
   if (query.isError) {

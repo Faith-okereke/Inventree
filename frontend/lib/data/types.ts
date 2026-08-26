@@ -1,4 +1,4 @@
-export type StockStatus = "In Stock" | "Low Stock" | "Out of Stock";
+﻿export type StockStatus = "In Stock" | "Low Stock" | "Out of Stock";
 export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
 export type UserRole = "Admin" | "Staff";
 
@@ -62,8 +62,8 @@ export interface User {
   role: UserRole;
   active: boolean;
   createdAt: string;
-  deletedAt:string;
-  updatedAt:string
+  deletedAt: string | null;
+  updatedAt: string;
 }
 
 export interface StatCard {

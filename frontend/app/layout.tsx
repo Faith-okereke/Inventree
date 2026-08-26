@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+﻿import type { Metadata } from "next";
+import { Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./provider";
 import { Toaster } from "react-hot-toast";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -19,8 +20,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   // Each page sets its own title; this template frames it.
   title: {
-    default: "Inventree — Industrial Inventory",
-    template: "%s · Inventree",
+    default: "Inventree Industrial Inventory",
+    template: "%s | Inventree",
   },
   description:
     "Inventree is an industrial inventory system for tracking products, stock levels, orders, and system access.",
@@ -32,7 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${poppins.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <Providers>

@@ -18,7 +18,7 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        "flex animate-fade-up flex-wrap items-end justify-between gap-x-4 gap-y-3",
+        "relative z-30 flex animate-fade-up flex-wrap items-end justify-between gap-x-4 gap-y-3",
         className,
       )}
     >

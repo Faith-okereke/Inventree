@@ -1,7 +1,7 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 @theme {
-  /* Brand — sampled from the Figma frames */
+  /* Brand â€” sampled from the Figma frames */
   --color-brand-50: #eff4ff;
   --color-brand-100: #dbe6ff;
   --color-brand-200: #bfd3ff;
@@ -28,7 +28,7 @@
   --color-ink-800: #1e293b;
   --color-ink-900: #0f172a;
 
-  /* Status — badges, stat deltas, stock levels */
+  /* Status â€” badges, stat deltas, stock levels */
   --color-success-50: #ecfdf5;
   --color-success-500: #10b981;
   --color-success-600: #059669;
@@ -42,10 +42,10 @@
   --color-danger-600: #dc2626;
   --color-danger-700: #b91c1c;
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
-  /* Motion — shared curve so every transition feels like one system */
+  /* Motion â€” shared curve so every transition feels like one system */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --animate-fade-up: fade-up 0.32s var(--ease-out-soft) both;
   --animate-fade-in: fade-in 0.24s var(--ease-out-soft) both;
@@ -85,7 +85,7 @@
 
 /*
  * Donut slices carry `pathLength="100"`, so `stroke-dasharray` is expressed in
- * percent. Only `from` is declared — the implicit `to` resolves to each slice's
+ * percent. Only `from` is declared â€” the implicit `to` resolves to each slice's
  * own dasharray, so one keyframe draws every slice to its correct length.
  * Pure CSS: the chart stays a Server Component and ships no JS.
  */
@@ -126,7 +126,7 @@
   /*
    * Pointer cursor on everything clickable. Done here rather than as a
    * `cursor-pointer` class on each component so it cannot be forgotten on the
-   * next one — and `:not(:disabled)` keeps inert controls from claiming to be
+   * next one â€” and `:not(:disabled)` keeps inert controls from claiming to be
    * clickable, which a per-component class would have to undo every time.
    */
   button:not(:disabled),

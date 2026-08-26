@@ -13,7 +13,7 @@ import { useCreateOrder } from "@/api/hooks/useOrders";
 
 interface OrderFormValues {
   product: string;
-  customer: string;
+  // customer: string;
   quantity: number;
   total: string;
   status: OrderStatus;
@@ -21,7 +21,7 @@ interface OrderFormValues {
 
 const emptyValues: OrderFormValues = {
   product: ``,
-  customer: "",
+  // customer: "",
   quantity: 0,
   total: "",
   status: "pending",
@@ -102,6 +102,9 @@ function OrderFormContent({
         </label>
       </div>
 
+      {/* Customer input is intentionally disabled because the backend derives
+          the order user from the authenticated creator. */}
+      {/*
       <label className="block space-y-1.5 text-sm font-medium text-ink-700">
         <span>Customer</span>
         <input
@@ -114,6 +117,7 @@ function OrderFormContent({
           required
         />
       </label>
+      */}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-1.5 text-sm font-medium text-ink-700">
@@ -213,7 +217,7 @@ export function OrderFormModal({
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
         title="Confirm order creation"
-        description={`Create order ${pendingValues?.product || "this order"} for ${pendingValues?.customer || "this customer"}?`}
+        description={`Create order ${pendingValues?.product || "this order"}?`}
         confirmLabel="Create Order"
         onConfirm={createOrder}
         loading={isPending}

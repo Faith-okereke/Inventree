@@ -53,7 +53,7 @@ export function FilterPopover({
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative ">
+    <div ref={rootRef} className="relative z-20">
       <button
         ref={triggerRef}
         type="button"

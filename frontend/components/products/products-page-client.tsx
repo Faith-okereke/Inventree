@@ -16,6 +16,7 @@ import { formatCurrency } from "@/lib/utils/format";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { resetFilters, setFilter } from "@/store/slices/filters.slice";
 import { RequireRole } from "@/components/auth/require-role";
+import { filterProducts } from "@/lib/data/filters";
 
 const stockOptions = [
   { value: "all", label: "All stock" },
@@ -31,6 +32,7 @@ export function ProductsPageClient() {
   const { data: products = [], pagination, isLoading } = useGetAllProducts(
     filters.page,
   );
+  const filteredProducts = filterProducts(products, filters);
 
   const stats = useMemo(() => {
     const lowStockCount = products.filter(
@@ -62,7 +64,7 @@ export function ProductsPageClient() {
   }, [products]);
 
   function exportCsv() {
-    const rows = products.map((product) => [
+    const rows = filteredProducts.map((product) => [
       product.sku,
       product.name,
       product.description,
@@ -130,7 +132,7 @@ export function ProductsPageClient() {
         </RequireRole>
       </PageHeader>
 
-      <div className="relative pb-24">
+      <div className="relative">
         <StatGrid>
           {stats.map((stat, index) => (
             <StatCard

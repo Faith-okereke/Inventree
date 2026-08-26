@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { TableFooter } from "@/components/dashboard/table-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,12 +23,18 @@ function RoleBadge({ role, active }: { role: string; active: boolean }) {
   if (!active) {
     return <Badge tone="neutral">{role} (Inactive)</Badge>;
   }
-  return <Badge tone={role === "Admin" ? "brand" : "neutral"}>{role}</Badge>;
+  return <Badge tone={role.toLowerCase() === "admin" ? "brand" : "neutral"}>{role}</Badge>;
 }
 
 export function UsersTable() {
   const filters = useAppSelector((s) => s.filters.users);
-  const { data: users, pagination } = useGetAllUsers(filters.page, 10);
+  const { data: users, pagination } = useGetAllUsers(
+    filters.page,
+    10,
+    filters.search,
+    filters.role,
+    filters.status,
+  );
 
   return (
     <Card className="animate-fade-up overflow-hidden">
@@ -57,7 +63,7 @@ export function UsersTable() {
                 >
                   <Td className="font-medium text-ink-900">
                     {user.name}
-                    {/* Email is hidden as a column below sm — keep it reachable. */}
+                    {/* Email is hidden as a column below sm â€” keep it reachable. */}
                     <span className="block text-xs font-normal text-ink-500 sm:hidden">
                       {user.email}
                     </span>
@@ -66,7 +72,7 @@ export function UsersTable() {
                     {user.email}
                   </Td>
                   <Td>
-                    <RoleBadge role={user.role} active={!user.active} />
+                    <RoleBadge role={user.role} active={user.active} />
                   </Td>
                   <Td className="hidden text-ink-500 whitespace-nowrap md:table-cell">
                     {formatDate(user.createdAt)}
@@ -87,7 +93,7 @@ export function UsersTable() {
                       //   )
                       // }
                     >
-                      {user.deletedAt ? "Deactivated" : "Active"}
+                      {user.active ? "Active" : "Inactive"}
                     </Button>
                   </Td>
                 </Tr>

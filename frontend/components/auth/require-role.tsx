@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useSyncExternalStore } from "react";
 
 import type { AuthRole } from "@/types/auth";
 import { useAppSelector } from "@/store/hooks";
@@ -13,7 +14,12 @@ export function RequireRole({
   children: ReactNode;
 }) {
   const role = useAppSelector((state) => state.auth.user?.role);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
-  if (!role || !roles.includes(role as AuthRole)) return null;
+  if (!mounted || !role || !roles.includes(role as AuthRole)) return null;
   return <>{children}</>;
 }
