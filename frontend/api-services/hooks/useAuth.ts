@@ -1,7 +1,8 @@
 ﻿"use client";
 
 import toast from "react-hot-toast";
-import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 
 import {
@@ -10,8 +11,9 @@ import {
   registerService,
   resetPasswordService,
   verifyPasswordService,
+  getMeService,
 } from "../services/auth.service";
-import { clearAuthSession, saveAuthSession } from "@/lib/auth/session";
+import { clearAuthSession, loadAuthSession, saveAuthSession } from "@/lib/auth/session";
 import type {
   ForgotPasswordResponse,
   LoginCredentials,
@@ -66,6 +68,32 @@ export const useRegister = () => {
       toast.error(getErrorMessage(error));
     },
   });
+};
+
+export const useGetMeProfile = () => {
+  const dispatch = useAppDispatch();
+  const session = typeof window !== "undefined" ? loadAuthSession() : undefined;
+  const query = useQuery({
+    queryKey: ["auth", "me"],
+    queryFn: getMeService,
+    enabled: Boolean(session?.token),
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (query.data && session?.token) {
+      const authData = { token: session.token, user: query.data.data };
+      saveAuthSession(authData);
+      dispatch(setAuth(authData));
+    }
+
+    if (query.isError) {
+      clearAuthSession();
+      dispatch(clearAuth());
+    }
+  }, [dispatch, query.data, query.isError, session?.token]);
+
+  return query;
 };
 
 

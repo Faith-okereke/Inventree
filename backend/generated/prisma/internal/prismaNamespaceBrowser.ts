@@ -80,6 +80,9 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  provider: 'provider',
+  providerId: 'providerId',
+  avatar: 'avatar',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -106,7 +109,10 @@ export const ProductScalarFieldEnum = {
   image: 'image',
   sku: 'sku',
   price: 'price',
-  quantityInStock: 'quantityInStock'
+  quantityInStock: 'quantityInStock',
+  supplierEmail: 'supplierEmail',
+  lowStockThreshold: 'lowStockThreshold',
+  lowStockAlertSentAt: 'lowStockAlertSentAt'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]

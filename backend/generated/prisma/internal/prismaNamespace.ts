@@ -836,6 +836,9 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  provider: 'provider',
+  providerId: 'providerId',
+  avatar: 'avatar',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -862,7 +865,10 @@ export const ProductScalarFieldEnum = {
   image: 'image',
   sku: 'sku',
   price: 'price',
-  quantityInStock: 'quantityInStock'
+  quantityInStock: 'quantityInStock',
+  supplierEmail: 'supplierEmail',
+  lowStockThreshold: 'lowStockThreshold',
+  lowStockAlertSentAt: 'lowStockAlertSentAt'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -930,6 +936,20 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'String[]'
  */
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AuthProvider'
+ */
+export type EnumAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuthProvider'>
+    
+
+
+/**
+ * Reference to a field of type 'AuthProvider[]'
+ */
+export type ListEnumAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuthProvider[]'>
     
 
 

@@ -1,10 +1,14 @@
 export type AuthRole = "admin" | "staff";
+export type AuthProvider = "local" | "google";
 
 export interface AuthUser {
   id: string;
   email: string;
   name: string;
   role: string;
+  provider: AuthProvider;
+  providerId: string | null;
+  avatar: string | null;
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;

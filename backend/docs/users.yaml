@@ -17,6 +17,16 @@ components:
           type: string
           enum: [admin, staff]
           example: "staff"
+        provider:
+          type: string
+          nullable: true
+          example: "local"
+          description: Identity provider for the user account. May be `local`, `google`, or other configured providers.
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+          example: "https://example.com/avatar.png"
         deletedAt:
           type: string
           format: date-time
@@ -49,6 +59,15 @@ components:
           type: string
           enum: [admin, staff]
           example: "staff"
+        provider:
+          type: string
+          nullable: true
+          example: "local"
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+          example: "https://example.com/avatar.png"
     UpdateUserInput:
       type: object
       minProperties: 1
@@ -64,6 +83,15 @@ components:
           type: string
           enum: [admin, staff]
           example: "admin"
+        provider:
+          type: string
+          nullable: true
+          example: "google"
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+          example: "https://example.com/avatar.png"
 
 paths:
   /api/users/all:

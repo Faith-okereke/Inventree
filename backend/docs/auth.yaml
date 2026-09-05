@@ -26,6 +26,15 @@ components:
           enum: [admin, staff]
           description: Optional. Defaults to `staff` when omitted.
           example: "staff"
+        provider:
+          type: string
+          nullable: true
+          example: "local"
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+          example: "https://example.com/avatar.png"
     LoginUserInput:
       type: object
       required:
@@ -80,6 +89,15 @@ components:
           type: string
           enum: [admin, staff]
           example: "staff"
+        provider:
+          type: string
+          nullable: true
+          example: "local"
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+          example: "https://example.com/avatar.png"
         deletedAt:
           type: string
           format: date-time

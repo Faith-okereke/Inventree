@@ -26,6 +26,20 @@ components:
         quantityInStock:
           type: integer
           example: 120
+        supplierEmail:
+          type: string
+          format: email
+          nullable: true
+          example: "supplier@example.com"
+        lowStockThreshold:
+          type: integer
+          minimum: 0
+          example: 10
+        lowStockAlertSentAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2026-09-04T18:20:00.000Z"
     ProductInput:
       type: object
       required:
@@ -56,6 +70,15 @@ components:
           type: integer
           minimum: 0
           example: 120
+        supplierEmail:
+          type: string
+          format: email
+          nullable: true
+          example: "supplier@example.com"
+        lowStockThreshold:
+          type: integer
+          minimum: 0
+          example: 10
 
 paths:
   /api/products/all:

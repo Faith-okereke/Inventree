@@ -3,7 +3,44 @@ import { Prisma } from "../generated/prisma/client"
 import type { RegisterRequest } from "../types/auth"
 
 export const registerService = async (data: RegisterRequest) => {
-  return prisma.user.create({ data })
+  return prisma.user.create({
+    data: {
+      ...data,
+      provider: "local",
+    },
+  })
+}
+
+export const upsertGoogleUser = async (data: {
+  email: string
+  name: string
+  providerId: string
+  avatar?: string | null
+}) => {
+  const existingUser = await prisma.user.findUnique({ where: { email: data.email } })
+
+  if (existingUser) {
+    return prisma.user.update({
+      where: { id: existingUser.id },
+      data: {
+        name: data.name,
+        provider: "google",
+        providerId: data.providerId,
+        avatar: data.avatar ?? existingUser.avatar,
+      },
+    })
+  }
+
+  return prisma.user.create({
+    data: {
+      name: data.name,
+      email: data.email,
+      password: null,
+      provider: "google",
+      providerId: data.providerId,
+      avatar: data.avatar ?? null,
+    },
+  })
 }
 
 export const getUserService = async (data: { email: string }) => {

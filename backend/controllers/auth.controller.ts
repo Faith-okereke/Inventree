@@ -12,6 +12,7 @@ import {
   softDeleteUser,
   updateUserPassword,
   verifyPasswordResetToken,
+  upsertGoogleUser,
 } from "../services/auth.service";
 import type {
   LoginRequest,
@@ -50,6 +51,10 @@ export const loginUser = async (req: Request, res: Response) => {
             })
         }
 
+        if (!existingUser.password) {
+            return res.status(401).json({ message: "This account uses Google sign-in." })
+        }
+
         const passwordMatches = await verifyPassword(password, existingUser.password)
         if (!passwordMatches) {
             return res.status(401).json({ message: 'Invalid email or password' })
@@ -66,6 +71,106 @@ export const loginUser = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error)
         return res.status(500).json({ message: "Internal server error" })
+    }
+
+}
+
+export const startGoogleLogin = (_req: Request, res: Response) => {
+    const clientId = process.env.GOOGLE_CLIENT_ID
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI ??
+        `${process.env.SERVER_URL ?? "http://localhost:3000"}/api/auth/google/callback`
+
+    if (!clientId) {
+        return res.status(500).json({ message: "Google sign-in is not configured." })
+    }
+
+    const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: "code",
+        scope: "openid email profile",
+        access_type: "online",
+        prompt: "select_account",
+    })
+
+    return res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`)
+}
+
+export const handleGoogleCallback = async (req: Request, res: Response) => {
+    const code = typeof req.query.code === "string" ? req.query.code : null
+    const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3001"
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI ??
+        `${process.env.SERVER_URL ?? "http://localhost:3000"}/api/auth/google/callback`
+
+    if (!code) {
+        return res.redirect(`${frontendUrl}/login?error=google_callback_failed`)
+    }
+
+    try {
+        const clientId = process.env.GOOGLE_CLIENT_ID
+        const clientSecret = process.env.GOOGLE_CLIENT_SECRET
+        if (!clientId || !clientSecret) {
+            throw new Error("Google sign-in is not configured.")
+        }
+
+        const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                code,
+                client_id: clientId,
+                client_secret: clientSecret,
+                redirect_uri: redirectUri,
+                grant_type: "authorization_code",
+            }),
+        })
+
+        if (!tokenResponse.ok) {
+            throw new Error(`Google token exchange failed with status ${tokenResponse.status}.`)
+        }
+
+        const tokenData = await tokenResponse.json() as { access_token?: string }
+        if (!tokenData.access_token) {
+            throw new Error("Google did not return an access token.")
+        }
+
+        const profileResponse = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+            headers: { Authorization: `Bearer ${tokenData.access_token}` },
+        })
+
+        if (!profileResponse.ok) {
+            throw new Error(`Google profile request failed with status ${profileResponse.status}.`)
+        }
+
+        const profile = await profileResponse.json() as {
+            sub?: string
+            email?: string
+            name?: string
+            picture?: string
+            email_verified?: boolean
+        }
+
+        if (!profile.sub || !profile.email || profile.email_verified === false) {
+            throw new Error("Google profile did not contain a verified email.")
+        }
+
+        const user = await upsertGoogleUser({
+            email: profile.email,
+            name: profile.name ?? profile.email,
+            providerId: profile.sub,
+            avatar: profile.picture,
+        })
+
+        const token = jwt.sign(
+            { id: user.id, email: user.email, role: user.role, name: user.name },
+            process.env.JWT_SECRET as string,
+            { expiresIn: "1d" },
+        )
+
+        return res.redirect(`${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}`)
+    } catch (error) {
+        console.error(error)
+        return res.redirect(`${frontendUrl}/login?error=google_callback_failed`)
     }
 }
 

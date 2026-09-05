@@ -1,10 +1,14 @@
 export type AuthRole = "admin" | "staff";
+export type AuthProvider = "local" | "google";
 
 export interface AuthUser {
   id: string;
   email: string;
   name: string;
   role: AuthRole;
+  provider: AuthProvider;
+  providerId: string | null;
+  avatar: string | null;
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -12,7 +16,7 @@ export interface AuthUser {
 
 export interface AuthSession {
   token: string;
-  user: AuthUser;
+  user: AuthUser | null;
 }
 
 export interface LoginCredentials {

@@ -1,5 +1,6 @@
 import { prisma } from "../database/prisma"
 import { Prisma } from "../generated/prisma/client"
+import { sendLowStockAlertEmail } from "../emails/low-stock-alert"
 import { CreateOrderInput, UpdateOrderInput } from "../types/order"
 
 const orderInclude = {
@@ -112,10 +113,41 @@ export const createOrder = async (data: CreateOrderInput) => {
         await tx.orderItem.createMany({ data: orderItemsData })
 
         for (const item of items) {
-            await tx.product.update({
+            const productBeforeUpdate = await tx.product.findUnique({ where: { id: item.productId } })
+            const updatedProduct = await tx.product.update({
                 where: { id: item.productId },
                 data: { quantityInStock: { decrement: item.quantity } },
             })
+
+            if (
+                productBeforeUpdate &&
+                productBeforeUpdate.supplierEmail &&
+                productBeforeUpdate.quantityInStock > (productBeforeUpdate.lowStockThreshold ?? 0) &&
+                updatedProduct.quantityInStock <= (productBeforeUpdate.lowStockThreshold ?? 0) &&
+                !productBeforeUpdate.lowStockAlertSentAt
+            ) {
+                await sendLowStockAlertEmail({
+                    name: updatedProduct.name,
+                    sku: updatedProduct.sku,
+                    quantityInStock: updatedProduct.quantityInStock,
+                    lowStockThreshold: updatedProduct.lowStockThreshold,
+                    supplierEmail: updatedProduct.supplierEmail,
+                })
+
+                await tx.product.update({
+                    where: { id: item.productId },
+                    data: {
+                        lowStockAlertSentAt: new Date(),
+                    },
+                })
+            }
+
+            if (updatedProduct.quantityInStock > (productBeforeUpdate?.lowStockThreshold ?? 0)) {
+                await tx.product.update({
+                    where: { id: item.productId },
+                    data: { lowStockAlertSentAt: null },
+                })
+            }
         }
 
         return tx.order.findUnique({

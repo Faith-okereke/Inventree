@@ -4,7 +4,7 @@ import { getOrderDashboard } from "../services/dashboard.service"
 import { requireAuth } from "../middleware/require-auth.middleware"
 
 const router = Router()
-router.get('/', requireAuth, requireRole('admin'), async (req: Request, res: Response) => {
+router.get('/', requireAuth, async (req: Request, res: Response) => {
     try {
         const dashboard = await getOrderDashboard()
         return res.status(200).json({ status: 200, data: dashboard })
