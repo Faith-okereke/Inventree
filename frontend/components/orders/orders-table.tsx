@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 import type { OrderListResponse } from "@/lib/data/types";
-import { useGetAllOrders } from "@/api-services/hooks/useOrders";
+import {
+  useEditOrderStatus,
+  useGetAllOrders,
+} from "@/api-services/hooks/useOrders";
 import { TableFooter } from "@/components/dashboard/table-footer";
 import { useAppSelector } from "@/store/hooks";
 import { useState } from "react";
@@ -20,18 +23,23 @@ import { IconButton } from "@/components/ui/icon-button";
 import { icons } from "@/components/ui/app-icon";
 import { OrderDetailsModal } from "@/components/orders/order-details-modal";
 import { filterOrders } from "@/lib/data/filters";
+import toast from "react-hot-toast";
 
 const COLUMN_COUNT = 7;
 
 export function OrdersTable() {
-  const [selectedOrder, setSelectedOrder] = useState<OrderListResponse | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderListResponse | null>(
+    null,
+  );
   const filters = useAppSelector((s) => s.filters.orders);
   const { data: orders, pagination } = useGetAllOrders(
     filters.page,
-    10,
+    5,
     filters.status,
   );
   const filteredOrders = filterOrders(orders, filters);
+  const { mutate } = useEditOrderStatus();
+  const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
   return (
     <Card className="animate-fade-up overflow-hidden">
       <TableScroll>
@@ -85,7 +93,31 @@ export function OrdersTable() {
                     <Td className="text-right font-semibold text-ink-900 tabular-nums whitespace-nowrap">
                       {formatCurrency(total)}
                     </Td>
-                    <Td>
+                    <Td
+                      className={`${pendingOrderId === order.id ? "opacity-70 cursor-not-allowed" : "cursor-pointer"} whitespace-nowrap`}
+                      onClick={() => {
+                        if (pendingOrderId === order.id) return;
+                        const nextStatus =
+                          order.status === "pending"
+                            ? "fulfilled"
+                            : order.status === "fulfilled"
+                              ? "cancelled"
+                              : "pending";
+                        setPendingOrderId(order.id);
+                        mutate(
+                          {
+                            id: order.id,
+                            status: nextStatus,
+                          },
+                          {
+                            onSuccess: () => {
+                              toast.success(`Order is now ${nextStatus}`);
+                            },
+                            onSettled: () => setPendingOrderId(null),
+                          },
+                        );
+                      }}
+                    >
                       <StatusBadge status={order.status} />
                     </Td>
                     <Td className="text-right">

@@ -6,24 +6,34 @@ type LowStockAlertProduct = {
     quantityInStock: number
     lowStockThreshold: number | null
     supplierEmail: string | null
+    baseStock: number
 }
 
 export const sendLowStockAlertEmail = async (product: LowStockAlertProduct) => {
     if (!product.supplierEmail) return false
 
-    const threshold = product.lowStockThreshold ?? 0
-    const subject = `Low stock alert for ${product.name}`
-    const html = `
+    const supplierSubject = `Urgent Order needed for  ${product.name}`
+    const supplierHtml = `
         <p>Hello,</p>
-        <p>This is an automated alert that <strong>${product.name}</strong> is running low in stock.</p>
-        <p>
-            <strong>SKU:</strong> ${product.sku}<br />
-            <strong>Current stock:</strong> ${product.quantityInStock}<br />
-            <strong>Low stock threshold:</strong> ${threshold}
-        </p>
-        <p>Please review the inventory and reorder as needed.</p>
+        <p> <strong>${product.name}</strong> is running low in stock.</p>
+        <strong>SKU:</strong> ${product.sku}<br />
+     
+        <p>Please deliver ${product.name} in ${product.baseStock} quantities as soon as possible.</p>
     `
 
-    await sendEmail(product.supplierEmail, subject, html)
+    const ownerSubject = `Low Stock Alert for ${product.name}`
+    const ownerHtml = `
+        <p>Hello,</p>
+        <p> <strong>${product.name}</strong> is running low in stock.</p>
+        <strong>SKU:</strong> ${product.sku}<br />
+        <strong>Current stock:</strong> ${product.quantityInStock}<br />
+        <p>Please take necessary action to restock ${product.name}.</p>
+    `
+
+    const ownerEmail = process.env.EMAIL_FROM
+    if (!ownerEmail) return false
+
+    await sendEmail(product.supplierEmail, supplierSubject, supplierHtml)
+    await sendEmail(ownerEmail, ownerSubject, ownerHtml)
     return true
 }

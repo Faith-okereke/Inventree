@@ -2,7 +2,7 @@ import { OrderMutationInput } from "@/lib/data/types";
 import { api } from "./client";
 
 
-export const getOrders = async (page = 1, pageSize = 10, status?: string) => {
+export const getOrders = async (page = 1, pageSize = 5, status?: string) => {
   const response = await api.get("/orders/all", {
     params: { page, pageSize, ...(status && status !== "all" ? { status } : {}) },
   });
@@ -21,9 +21,9 @@ export const createOrder = async (orderData: OrderMutationInput) => {
 
 export const updateOrder = async (
   id: string,
-  orderData: OrderMutationInput,
+  status:string
 ) => {
-  const response = await api.patch(`/orders/${id}`, orderData);
+  const response = await api.patch(`/orders/${id}/status`, { status });
   return response.data;
 };
 

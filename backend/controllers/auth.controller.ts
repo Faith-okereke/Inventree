@@ -167,7 +167,7 @@ export const handleGoogleCallback = async (req: Request, res: Response) => {
             { expiresIn: "1d" },
         )
 
-        return res.redirect(`${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}`)
+        return res.redirect(`${frontendUrl}/callback?token=${encodeURIComponent(token)}`)
     } catch (error) {
         console.error(error)
         return res.redirect(`${frontendUrl}/login?error=google_callback_failed`)

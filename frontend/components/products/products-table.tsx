@@ -214,8 +214,10 @@ export function ProductsTable({
                 <Th>SKU</Th>
                 <Th>Product Name</Th>
                 <Th className="hidden md:table-cell">Description</Th>
-                <Th className="text-right">Price</Th>
-                <Th className="hidden text-right sm:table-cell">Stock</Th>
+                 <Th className="hidden md:table-cell">Supplier Email</Th>
+                <Th className="hidden md:table-cell">Price</Th>
+                <Th className="text-right">Stock</Th>
+                <Th className="hidden text-right sm:table-cell">Low stock Threshold</Th>
                 <Th className="text-right">Action</Th>
               </tr>
             </thead>
@@ -247,11 +249,16 @@ export function ProductsTable({
                       {product.name}
                     </Td>
                     <Td className="hidden whitespace-nowrap text-ink-500 md:table-cell">
-                      {product.description}
+                      {product.description.slice(0, 5) + "...."}
                     </Td>
+                    <Td className="hidden whitespace-nowrap text-ink-500 md:table-cell">
+                      {product.supplierEmail}
+                    </Td>
+
                     <Td className="whitespace-nowrap text-right font-semibold text-ink-900 tabular-nums">
                       {formatCurrency(Number(product.price))}
                     </Td>
+
                     <Td
                       className={cn(
                         "hidden text-right font-semibold tabular-nums sm:table-cell",
@@ -259,6 +266,9 @@ export function ProductsTable({
                       )}
                     >
                       {formatNumber(product.quantityInStock)}
+                    </Td>
+                    <Td className="whitespace-nowrap text-right font-semibold text-ink-900 tabular-nums">
+                      {product.lowStockThreshold}
                     </Td>
                     <Td className="text-right">
                       <ProductActions product={product} />

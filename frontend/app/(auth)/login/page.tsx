@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useLogin } from "@/api-services/hooks/useAuth";
 import Link from "next/link";
 import { Route } from "next";
+import { AppIcon, icons } from "@/components/ui/app-icon";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -105,8 +106,9 @@ export default function LoginPage() {
 
       <a
         href={`${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api"}/auth/google`}
-        className="inline-flex h-12 w-full items-center justify-center rounded-xl border border-stone-200 px-6 text-sm font-semibold text-stone-700 transition-colors hover:bg-stone-50"
+        className="inline-flex gap-2 h-12 w-full items-center justify-center rounded-xl border border-stone-200 px-6 text-sm font-semibold text-stone-700 transition-colors hover:bg-stone-50"
       >
+        <AppIcon name={icons.google} label="Google"/>
         Continue with Google
       </a>
 

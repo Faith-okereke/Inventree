@@ -92,6 +92,7 @@ export const updateProducts = async (id: string, data: Partial<ProductRequest>) 
             quantityInStock: updatedProduct.quantityInStock,
             lowStockThreshold: updatedProduct.lowStockThreshold,
             supplierEmail: updatedProduct.supplierEmail,
+            baseStock: 20,
         })
 
         await prisma.product.update({

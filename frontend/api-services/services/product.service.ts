@@ -8,9 +8,11 @@ export interface ProductMutationInput {
   price: number;
   quantityInStock: number;
   image: string;
+  supplierEmail:string;
+  lowStockThreshold:number;
 }
 
-export const getProducts = async (page=1, pageSize=10) => {
+export const getProducts = async (page=1, pageSize=5) => {
   const response = await api.get("/products/all", {
     params: { page, pageSize }
   });

@@ -1,6 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import { hydrateFromStorage } from "@/store/hydrate";
 import type { AuthSession, AuthUser } from "@/lib/auth/session";
 
 export interface AuthState {
@@ -25,14 +24,6 @@ const authSlice = createSlice({
       state.token = "";
       state.user = null;
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(hydrateFromStorage, (state, action) => {
-      const saved = action.payload.auth;
-      if (!saved) return;
-      state.token = saved.token ?? state.token;
-      state.user = saved.user ?? state.user;
-    });
   },
 });
 

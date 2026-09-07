@@ -32,7 +32,7 @@ type InventoryProduct = {
     quantityInStock: number
 }
 
-export const getOrders = async (status?: string, page: number = 1, pageSize: number = 10) => {
+export const getOrders = async (status?: string, page: number = 1, pageSize: number = 5) => {
     const skip = (page - 1) * pageSize;
 
     const [data, total] = await Promise.all([
@@ -132,6 +132,7 @@ export const createOrder = async (data: CreateOrderInput) => {
                     quantityInStock: updatedProduct.quantityInStock,
                     lowStockThreshold: updatedProduct.lowStockThreshold,
                     supplierEmail: updatedProduct.supplierEmail,
+                    baseStock:20,
                 })
 
                 await tx.product.update({

@@ -21,7 +21,7 @@ export const getErrorMessage = (error: unknown): string => {
   return "Something went wrong, Please check connection";
 }
 
-export const useGetAllProducts = (page = 1, pageSize = 10) => {
+export const useGetAllProducts = (page = 1, pageSize = 5) => {
   const query = useQuery<T_ApiResponse<ProductResponse[]>>({
     queryKey: ["getAllProducts", page, pageSize],
     queryFn: () => getProducts(page, pageSize),

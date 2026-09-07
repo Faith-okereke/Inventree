@@ -6,6 +6,8 @@ import { Provider } from "react-redux";
 import { makeStore } from "@/store";
 import { hydrateFromStorage } from "@/store/hydrate";
 import { loadPersistedState } from "@/store/persist";
+import { loadAuthSession } from "@/lib/auth/session";
+import { setAuth } from "@/store/slices/auth.slice";
 
 /**
  * Client boundary for Redux. Kept as a leaf provider so pages and layouts above
@@ -21,7 +23,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   // disagree with the server HTML and trip a hydration mismatch.
   useEffect(() => {
     const persisted = loadPersistedState();
-    if (persisted) store.dispatch(hydrateFromStorage(persisted));
+    if (persisted) {
+      store.dispatch(hydrateFromStorage(persisted));
+    }
+    const authSession = loadAuthSession();
+    if (authSession) {
+      store.dispatch(setAuth(authSession));
+    }
   }, [store]);
 
   return <Provider store={store}>{children}</Provider>;

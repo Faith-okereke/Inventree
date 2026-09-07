@@ -39,11 +39,19 @@ export function ProductDetailsModal({
             <dt className="text-xs font-semibold tracking-wide text-ink-500 uppercase">Price</dt>
             <dd className="mt-1 text-sm font-semibold text-ink-900">{formatCurrency(Number(product.price))}</dd>
           </div>
+          <div className="sm:col-span-2">
+            <dt className="text-xs font-semibold tracking-wide text-ink-500 uppercase">Supplier&apos;s Email</dt>
+            <dd className="mt-1 text-sm text-ink-900">{product.supplierEmail}</dd>
+          </div>
           <div>
             <dt className="text-xs font-semibold tracking-wide text-ink-500 uppercase">Stock</dt>
             <dd className="mt-1 text-sm text-ink-900">{formatNumber(product.quantityInStock)}</dd>
           </div>
-          <div className="sm:col-span-2">
+          <div className="">
+            <dt className="text-xs font-semibold tracking-wide text-ink-500 uppercase text-nowrap"> Threshold</dt>
+            <dd className="mt-1 text-sm text-ink-900">{formatNumber(product.lowStockThreshold )}</dd>
+          </div>
+          <div >
             <dt className="text-xs font-semibold tracking-wide text-ink-500 uppercase">Description</dt>
             <dd className="mt-1 text-sm leading-6 text-ink-700">{product.description}</dd>
           </div>

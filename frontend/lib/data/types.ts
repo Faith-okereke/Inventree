@@ -1,5 +1,5 @@
 ﻿export type StockStatus = "In Stock" | "Low Stock" | "Out of Stock";
-export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+export type OrderStatus = "pending" | "fulfilled"| "cancelled";
 export type UserRole = "Admin" | "Staff";
 
 export interface ProductResponse {
@@ -10,6 +10,8 @@ export interface ProductResponse {
   price: number | string;
   quantityInStock: number;
   image: string;
+  supplierEmail:string;
+  lowStockThreshold:number
 }
 
 export interface OrderUser {
@@ -27,6 +29,9 @@ export interface OrderListResponse {
   orderItems: OrderItem[];
 }
 
+export interface OrderUpdate{
+  status: OrderStatus;
+}
 /**
  * Represents the API response for a list of orders.
  */

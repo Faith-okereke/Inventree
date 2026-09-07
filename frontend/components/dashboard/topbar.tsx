@@ -92,9 +92,13 @@ export function Topbar() {
             onClick={() => setOpen((value) => !value)}
             className="flex items-center gap-3 rounded-full border border-ink-200 bg-white px-2.5 py-1.5 text-left transition-colors hover:border-ink-300 hover:bg-ink-50"
           >
-            <span className="grid size-8 place-items-center rounded-full bg-brand-600 text-sm font-semibold text-white">
-              {initials}
-            </span>
+            {user?.avatar ? (
+              <img src={user.avatar} className="size-8 rounded-full" />
+            ) : (
+              <span className="grid size-8 place-items-center rounded-full bg-brand-600 text-sm font-semibold text-white">
+                {initials}
+              </span>
+            )}
             <span className="hidden min-w-0 flex-col sm:flex">
               <span className="max-w-40 truncate text-sm font-semibold text-ink-900">
                 {user?.name || "Account"}
@@ -113,9 +117,13 @@ export function Topbar() {
             <div className="absolute right-0 top-[calc(100%+0.75rem)] w-72 overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.12)]">
               <div className="border-b border-ink-100 px-4 py-4">
                 <div className="flex items-center gap-3">
-                  <span className="grid size-11 place-items-center rounded-full bg-brand-600 text-base font-semibold text-white">
-                    {initials}
-                  </span>
+                   {user?.avatar ? (
+              <img src={user.avatar} className="size-8 rounded-full" />
+            ) : (
+              <span className="grid size-11 place-items-center rounded-full bg-brand-600 text-sm font-semibold text-white">
+                {initials}
+              </span>
+            )}
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-ink-900">
                       {user?.name || "Account"}

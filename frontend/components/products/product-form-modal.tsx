@@ -3,7 +3,10 @@
 import { useState } from "react";
 
 import type { ProductMutationInput } from "@/api-services/services/product.service";
-import { useCreateProduct, useUpdateProduct } from "@/api-services/hooks/useProducts";
+import {
+  useCreateProduct,
+  useUpdateProduct,
+} from "@/api-services/hooks/useProducts";
 import {
   ConfirmModal,
   DashboardModal,
@@ -18,6 +21,8 @@ const emptyValues: ProductMutationInput = {
   price: 0,
   quantityInStock: 0,
   image: "",
+  supplierEmail: "",
+  lowStockThreshold: 0,
 };
 
 function inputClassName() {
@@ -46,6 +51,8 @@ function ProductFormContent({
           price: Number(product.price),
           quantityInStock: Number(product.quantityInStock),
           image: product.image,
+          supplierEmail: product.supplierEmail,
+          lowStockThreshold: product.lowStockThreshold,
         }
       : emptyValues,
   );
@@ -103,7 +110,7 @@ function ProductFormContent({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-1.5 text-sm font-medium text-ink-700">
-          <span>Price</span>
+          <span>Price (₦)</span>
           <input
             type="number"
             step="0.01"
@@ -137,20 +144,53 @@ function ProductFormContent({
             required
           />
         </label>
+        <label className="space-y-1.5 text-sm font-medium text-ink-700">
+          <span>Low-stock threshold</span>
+          <input
+            type="number"
+            min="0"
+            value={values.lowStockThreshold}
+            onChange={(e) =>
+              setValues((current) => ({
+                ...current,
+                lowStockThreshold: Number(e.target.value),
+              }))
+            }
+            className={inputClassName()}
+            placeholder="10"
+            required
+          />
+        </label>
       </div>
-
-      <label className="block space-y-1.5 text-sm font-medium text-ink-700">
-        <span>Image URL</span>
-        <input
-          value={values.image}
-          onChange={(e) =>
-            setValues((current) => ({ ...current, image: e.target.value }))
-          }
-          className={inputClassName()}
-          placeholder="https://..."
-          required
-        />
-      </label>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block space-y-1.5 text-sm font-medium text-ink-700">
+          <span>SupplierEmail</span>
+          <input
+            value={values.supplierEmail}
+            onChange={(e) =>
+              setValues((current) => ({
+                ...current,
+                supplierEmail: e.target.value,
+              }))
+            }
+            className={inputClassName()}
+            placeholder=" Enter nil if none"
+            required
+          />
+        </label>
+        <label className="block space-y-1.5 text-sm font-medium text-ink-700">
+          <span>Image URL</span>
+          <input
+            value={values.image}
+            onChange={(e) =>
+              setValues((current) => ({ ...current, image: e.target.value }))
+            }
+            className={inputClassName()}
+            placeholder="https://..."
+            required
+          />
+        </label>
+      </div>
 
       <div className="flex flex-wrap items-center justify-end gap-2 pt-2">
         <Button variant="secondary" type="button" onClick={onCancel}>
@@ -172,6 +212,8 @@ function toProductPayload(values: ProductMutationInput): ProductMutationInput {
     price: Number(values.price),
     quantityInStock: Number(values.quantityInStock),
     image: values.image.trim() || "https://placehold.co/80x80",
+    supplierEmail: values.supplierEmail.trim() || "nil",
+    lowStockThreshold: Number(values.lowStockThreshold),
   };
 }
 
@@ -186,9 +228,8 @@ export function ProductFormModal({
 }) {
   const isEdit = Boolean(product);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [pendingValues, setPendingValues] = useState<ProductMutationInput | null>(
-    null,
-  );
+  const [pendingValues, setPendingValues] =
+    useState<ProductMutationInput | null>(null);
   const { mutate: create, isPending: loadCreate } = useCreateProduct();
   const { mutate: edit, isPending: loadEdit } = useUpdateProduct(product?.id);
 

@@ -1,6 +1,6 @@
-import { OrderListResponse, OrderMutationInput,   } from "@/lib/data/types";
+import { OrderListResponse, OrderMutationInput, } from "@/lib/data/types";
 import { T_ApiResponse } from "./types";
-import { createOrder, getOrders } from "../services/order.service";
+import { createOrder, getOrders, updateOrder } from "../services/order.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
@@ -13,7 +13,7 @@ function getErrorMessage(error: unknown): string {
   return "Something went wrong, Please check connection";
 }
 
-export const useGetAllOrders = (page = 1, pageSize = 10, status?: string) => {
+export const useGetAllOrders = (page = 1, pageSize = 5, status?: string) => {
   const query = useQuery<T_ApiResponse<OrderListResponse[]>>({
     queryKey: ["getAllOrders", page, pageSize, status],
     queryFn: () => getOrders(page, pageSize, status),
@@ -43,3 +43,19 @@ export const useCreateOrder = () => {
     },
   });
 };
+
+export const useEditOrderStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<T_ApiResponse<OrderListResponse>, unknown, { id: string, status: string }>({
+    mutationFn: ({ id, status }) => updateOrder(id, status),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["getAllOrders"] });
+    },
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error);
+      console.error("API ERROR DETAILS:", error);
+      toast.error(errorMessage);
+    }
+  })
+}
