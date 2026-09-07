@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -18,16 +13,20 @@ enum AuthProvider {
   facebook
 }
 
+enum Role {
+  admin
+  staff
+}
+
 model User {
   id                 String              @id @default(uuid())
   name               String
   email              String              @unique
   password           String?
-  role               String              @default("staff")
   provider           AuthProvider?       @default(local)
   providerId         String?             @unique
   avatar             String?
-  orders             Order[]
+  memberships        Membership[]
   passwordResetToken PasswordResetToken?
   deletedAt          DateTime?
   createdAt          DateTime            @default(now())
@@ -35,7 +34,7 @@ model User {
 }
 
 model PasswordResetToken {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   userId    String   @unique
   tokenHash String   @unique
   expiresAt DateTime
@@ -44,27 +43,59 @@ model PasswordResetToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Business {
+  id          String       @id @default(uuid())
+  name        String
+  memberships Membership[]
+  products    Product[]
+  orders      Order[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
+}
+
+model Membership {
+  id         String   @id @default(uuid())
+  role       Role     @default(staff)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  orders     Order[]
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, businessId])
+  @@index([businessId])
+}
+
 model Product {
   id                  String      @id @default(uuid())
-  name                String      @unique
+  name                String
   description         String
   image               String
-  sku                 String      @unique
+  sku                 String
   price               Decimal
   quantityInStock     Int         @default(0)
   supplierEmail       String?     @map("SupplierEmail")
   lowStockThreshold   Int         @default(0)
   lowStockAlertSentAt DateTime?
+  businessId          String
+  business            Business    @relation(fields: [businessId], references: [id], onDelete: Cascade)
   orderItems          OrderItem[]
+
+  @@unique([businessId, name])
+  @@unique([businessId, sku])
+  @@index([businessId])
 }
 
 model Order {
-  id         String      @id @default(uuid())
-  userId     String
-  user       User        @relation(fields: [userId], references: [id])
-  status     String      @default("pending")
-  createdAt  DateTime    @default(now())
-  orderItems OrderItem[]
+  id           String      @id @default(uuid())
+  status       String      @default("pending")
+  businessId   String
+  business     Business    @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  membershipId String
+  membership   Membership  @relation(fields: [membershipId], references: [id])
+  orderItems   OrderItem[]
+  createdAt    DateTime    @default(now())
 }
 
 model OrderItem {
