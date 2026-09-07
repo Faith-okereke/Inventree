@@ -25,19 +25,7 @@ import type {
 } from "@/types/auth";
 import { useAppDispatch } from "@/store/hooks";
 import { clearAuth, setAuth } from "@/store/slices/auth.slice";
-
-const getErrorMessage = (error: unknown): string => {
-  if (error instanceof Error) return error.message;
-
-  if (typeof error === "object" && error !== null) {
-    const response = (error as { response?: { data?: { message?: unknown } } }).response;
-    if (typeof response?.data?.message === "string") {
-      return response.data.message;
-    }
-  }
-
-  return "Something went wrong";
-};
+import { getApiErrorMessage } from "@/lib/api/errors";
 
 export const useLogin = () => {
   const dispatch = useAppDispatch();
@@ -51,7 +39,7 @@ export const useLogin = () => {
       toast.success("Login successful!");
     },
     onError: (error: unknown) => {
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
       clearAuthSession();
       dispatch(clearAuth());
     },
@@ -65,7 +53,7 @@ export const useRegister = () => {
       toast.success("Account created successfully!");
     },
     onError: (error: unknown) => {
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
     },
   });
 };
@@ -104,7 +92,7 @@ export const useVerifyResetPassword = () => {
       toast.success("Code verified successfully!");
     },
     onError: (error: unknown) => {
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
     },
   });
 };
@@ -116,7 +104,7 @@ export const useForgotPassword = () => {
       toast.success(`Verification code sent! ${res.message}`);
     },
     onError: (error: unknown) => {
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
     },
   });
 };
@@ -129,7 +117,7 @@ export const useResetPassword = () => {
       toast.success("Password reset successful!");
     },
     onError: (error: unknown) => {
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
     },
   });
 };

@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import { getDashboardData } from "../services/dashboard.service";
 import { T_ApiResponse } from "./types";
-import { getErrorMessage } from "./useProducts";
+import { getApiErrorMessage } from "@/lib/api/errors";
 import { useQuery } from "@tanstack/react-query";
 
 export interface DashboardData {
@@ -31,7 +31,7 @@ export const useGetDashboard = () => {
   });
 
   if (query.isError) {
-    const errorMessage = getErrorMessage(query.error);
+    const errorMessage = getApiErrorMessage(query.error);
     toast.error(errorMessage);
   }
 

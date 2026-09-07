@@ -3,15 +3,7 @@ import { T_ApiResponse } from "./types";
 import { createOrder, getOrders, updateOrder } from "../services/order.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
-function getErrorMessage(error: unknown): string {
-  const response = error as { response?: { data?: { message?: unknown } } };
-  const message = response?.response?.data?.message;
-
-  if (typeof message === "string") return message;
-  if (error instanceof Error) return error.message;
-  return "Something went wrong, Please check connection";
-}
+import { getApiErrorMessage } from "@/lib/api/errors";
 
 export const useGetAllOrders = (page = 1, pageSize = 5, status?: string) => {
   const query = useQuery<T_ApiResponse<OrderListResponse[]>>({
@@ -20,7 +12,7 @@ export const useGetAllOrders = (page = 1, pageSize = 5, status?: string) => {
   });
 
   if (query.isError) {
-    const errorMessage = getErrorMessage(query.error);
+    const errorMessage = getApiErrorMessage(query.error);
     toast.error(errorMessage);
   }
 
@@ -37,7 +29,7 @@ export const useCreateOrder = () => {
       toast.success("Order created successfully");
     },
     onError: (error: unknown) => {
-      const errorMessage = getErrorMessage(error);
+      const errorMessage = getApiErrorMessage(error);
       console.error("API ERROR DETAILS:", error);
       toast.error(errorMessage);
     },
@@ -53,7 +45,7 @@ export const useEditOrderStatus = () => {
       await queryClient.invalidateQueries({ queryKey: ["getAllOrders"] });
     },
     onError: (error: unknown) => {
-      const errorMessage = getErrorMessage(error);
+      const errorMessage = getApiErrorMessage(error);
       console.error("API ERROR DETAILS:", error);
       toast.error(errorMessage);
     }

@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useForgotPassword } from "@/api-services/hooks/useAuth";
-import type { AxiosError } from "axios";
+import { getApiErrorMessage } from "@/lib/api/errors";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -11,10 +11,7 @@ export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
   const { mutate, isPending, error } = useForgotPassword();
 
-  const apiError = error
-    ? (error as AxiosError<{ message?: string }>).response?.data?.message ||
-      "An unexpected error occurred."
-    : null;
+  const apiError = error ? getApiErrorMessage(error) : null;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

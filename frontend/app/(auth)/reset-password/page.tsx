@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useResetPassword, useVerifyResetPassword } from "@/api-services/hooks/useAuth";
-import type { AxiosError } from "axios";
+import { getApiErrorMessage } from "@/lib/api/errors";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Route } from "next";
@@ -65,13 +65,11 @@ function ResetPasswordForm() {
   };
 
   const apiVerificationError = verificationError
-    ? (verificationError as AxiosError<{ message?: string }>).response?.data
-        ?.message || "An unexpected error occurred during verification."
+    ? getApiErrorMessage(verificationError)
     : null;
 
   const apiResetError = resetError
-    ? (resetError as AxiosError<{ message?: string }>).response?.data
-        ?.message || "An unexpected error occurred while resetting."
+    ? getApiErrorMessage(resetError)
     : null;
 
   if (isVerifying) {

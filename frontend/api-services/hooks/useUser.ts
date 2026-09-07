@@ -3,15 +3,7 @@ import { getAllUsers, getUsersById } from "../services/user.service";
 import { T_ApiResponse } from "./types";
 import toast from "react-hot-toast";
 import { User } from "@/lib/data/types";
-
-function getErrorMessage(error: unknown): string {
-  const response = error as { response?: { data?: { message?: unknown } } };
-  const message = response?.response?.data?.message;
-
-  if (typeof message === "string") return message;
-  if (error instanceof Error) return error.message;
-  return "Something went wrong, Please check connection";
-}
+import { getApiErrorMessage } from "@/lib/api/errors";
 
 export const useGetAllUsers = (
   page = 1,
@@ -26,7 +18,7 @@ export const useGetAllUsers = (
   });
 
   if (query.isError) {
-    const errorMessage = getErrorMessage(query.error);
+    const errorMessage = getApiErrorMessage(query.error);
     toast.error(errorMessage);
   }
 
@@ -42,7 +34,7 @@ export const useGetUsersById = (userId: string | undefined) => {
   });
 
   if (query.isError) {
-    const errorMessage = getErrorMessage(query.error);
+    const errorMessage = getApiErrorMessage(query.error);
     toast.error(errorMessage);
   }
 

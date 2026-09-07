@@ -11,15 +11,7 @@ import {
 } from "../services/product.service";
 import { T_ApiResponse } from "./types";
 import { ProductResponse } from "@/lib/data/types";
-
-export const getErrorMessage = (error: unknown): string => {
-  const response = error as { response?: { data?: { message?: unknown } } };
-  const message = response?.response?.data?.message;
-
-  if (typeof message === "string") return message;
-  if (error instanceof Error) return error.message;
-  return "Something went wrong, Please check connection";
-}
+import { getApiErrorMessage } from "@/lib/api/errors";
 
 export const useGetAllProducts = (page = 1, pageSize = 5) => {
   const query = useQuery<T_ApiResponse<ProductResponse[]>>({
@@ -28,7 +20,7 @@ export const useGetAllProducts = (page = 1, pageSize = 5) => {
   });
 
   if (query.isError) {
-    const errorMessage = getErrorMessage(query.error);
+    const errorMessage = getApiErrorMessage(query.error);
     toast.error(errorMessage);
   }
 
@@ -44,7 +36,7 @@ export const useGetProductsById = (productId: string | undefined) => {
   });
 
   if (query.isError) {
-    const errorMessage = getErrorMessage(query.error);
+    const errorMessage = getApiErrorMessage(query.error);
     toast.error(errorMessage);
   }
 
@@ -61,7 +53,7 @@ export const useCreateProduct = () => {
       toast.success("Product created successfully");
     },
     onError: (error: unknown) => {
-      const errorMessage = getErrorMessage(error);
+      const errorMessage = getApiErrorMessage(error);
       console.error("API ERROR DETAILS:", error);
       toast.error(errorMessage);
     },
@@ -81,7 +73,7 @@ export const useUpdateProduct = (id: string | undefined) => {
       toast.success("Product updated successfully");
     },
     onError: (error: unknown) => {
-      const errorMessage = getErrorMessage(error);
+      const errorMessage = getApiErrorMessage(error);
       console.error("API ERROR DETAILS:", error);
       toast.error(errorMessage);
     },
@@ -99,7 +91,7 @@ export const useDeleteProducts = (id: string) => {
       toast.success("Product deleted successfully");
     },
     onError: (error: unknown) => {
-      const errorMessage = getErrorMessage(error);
+      const errorMessage = getApiErrorMessage(error);
       console.error("API ERROR DETAILS:", error);
       toast.error(errorMessage);
     },

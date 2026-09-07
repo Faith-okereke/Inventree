@@ -1,112 +1,339 @@
-# Inventree API
+# Inventree
 
-A robust and scalable REST API for an inventory management system, built with Node.js, Express, and TypeScript.
+Inventree is a full-stack inventory management platform for small and
+medium-sized businesses. It gives staff and administrators a central place to
+manage products, monitor stock, process orders, manage users, and receive
+supplier notifications when inventory reaches a configured low-stock level.
 
-## ✨ Features
+The application is split into a Next.js frontend and a TypeScript/Express
+backend. The backend exposes a REST API backed by PostgreSQL through Prisma,
+while the frontend provides the authenticated dashboard used to operate the
+inventory system.
 
-*   **Authentication:** Secure user registration and login using JWT.
-*   **Product Management:** Full CRUD operations for products.
-*   **Order Processing:** Create and manage customer orders.
-*   **Dashboard Analytics:** Endpoints to provide summary data for a frontend dashboard.
-*   **Validation:** Robust request validation using [Zod](https://zod.dev/).
-*   **API Documentation:** Interactive API documentation available via Swagger.
-*   **Health Checks:** A dedicated endpoint to monitor application status.
+## Live application
 
-## 🛠️ Tech Stack
+- Frontend: https://inventree-crud.vercel.app
 
-*   **Backend:** Node.js, Express.js
-*   **Language:** TypeScript
-*   **Validation:** Zod
-*   **API Documentation:** Swagger UI
-*   **Database:** (Requires a database like PostgreSQL or MongoDB)
+## Core capabilities
 
-## 🚀 Getting Started
+### Authentication and access control
 
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+- User registration and password login
+- JWT-based authentication
+- Google OAuth sign-in
+- Password reset flow using emailed verification links
+- Authenticated profile retrieval
+- Role-aware access for administrative and staff workflows
+- Persistent client sessions with logout and token cleanup
 
-### Prerequisites
+### Product and inventory management
 
-*   [Node.js](https://nodejs.org/) (v18 or later recommended)
-*   [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-*   A running database instance (e.g., PostgreSQL, MongoDB)
+- Create, view, update, and delete products
+- Product names, descriptions, SKUs, prices, images, and stock quantities
+- Supplier email addresses associated with products
+- Configurable low-stock thresholds
+- Product search, pagination, filtering, and detailed views
+- Low-stock inventory visibility in the dashboard
 
-### Installation
+### Automated low-stock alerts
 
-1.  **Clone the repository**
+When a product's stock changes from above its configured threshold to at or
+below that threshold, the backend sends an email to the product's supplier.
+Alerts are deliberately transition-based rather than repeatedly sending an
+email every time the product is read or updated.
 
-    ```bash
-    git clone <your-repository-url>
-    cd Inventree
-    ```
+- Alerts require a supplier email address.
+- Duplicate alerts are suppressed while the product remains below its
+  threshold.
+- Raising stock above the threshold resets the alert state.
+- A later threshold crossing can then send a new alert.
+- Stock changes caused directly by product updates and indirectly by orders
+  use the same alert behavior.
 
-2.  **Install dependencies**
+Email delivery is implemented with Nodemailer and SMTP configuration.
 
-    ```bash
-    npm install
-    ```
+### Order management
 
-3.  **Set up environment variables**
+- Create customer orders from available inventory
+- Track order items and the price recorded at the time of ordering
+- Automatically decrement product stock when an order is created
+- Cycle order statuses through pending, fulfilled, and cancelled states
+- View order details, quantities, totals, and the staff member who created the
+  order
+- Refresh order data after status or inventory changes
 
-    Create a `.env` file in the root of the project and add the necessary configuration.
+### Dashboard and reporting
 
-    ```bash
-    cp .env.example .env
-    ```
+The dashboard provides an operational overview of the inventory system,
+including:
 
-    Then, update the `.env` file with your specific settings.
+- Total orders
+- Total revenue
+- Order counts grouped by status
+- Top-selling products
+- Products currently at or below their low-stock thresholds
 
-    ```ini
-    # Server Configuration
-    SERVER_PORT=3000
+### User administration
 
-    # Database Connection
-    # Example for PostgreSQL: DATABASE_URL="postgresql://user:password@localhost:5432/inventree?schema=public"
-    DATABASE_URL=
+Administrators can view and manage users, search and filter the user list, and
+review account roles and status information.
 
-    # JWT Secret for Authentication
-    JWT_SECRET=your-super-secret-jwt-key
-    ```
+### API documentation and reliability
 
-## 🏃‍♀️ Running the Project
+- Interactive Swagger documentation
+- Health-check endpoint for deployment monitoring
+- Request validation with Zod and Express validation middleware
+- Centralized backend error handling
+- Rate limiting middleware
+- CORS configuration for local and deployed frontend clients
+- Centralized frontend Axios error handling with HTTP status codes and API
+  messages
 
-*   **For development (with hot-reloading):**
+## Architecture
 
-    ```bash
-    npm run dev
-    ```
+```text
+Next.js frontend
+  |
+  | Axios REST requests with JWT authorization
+  v
+Express and TypeScript API
+  |
+  | Prisma Client
+  v
+PostgreSQL database
+  |
+  +-- SMTP email delivery for password reset and low-stock alerts
+```
 
-*   **For production:**
+### Frontend
 
-    ```bash
-    npm run build
-    npm start
-    ```
+The frontend is a Next.js application using the App Router. It uses:
 
-The server will start on the port specified in your `.env` file (default is `3000`).
+- React and TypeScript
+- TanStack Query for server-state fetching and mutations
+- Redux Toolkit for in-memory application state
+- Axios for API communication
+- React Hot Toast for user feedback
+- Tailwind CSS for styling
+- Zod and typed request models for client-side validation
 
-## API Endpoints
+The frontend stores the canonical authenticated session in
+`inventree:auth`. Non-authentication UI state, filters, and access preferences
+are persisted separately under `inventree:state:v1`.
 
-Once the server is running, the following API endpoints will be available:
+### Backend
 
-*   **Authentication:** `/api/auth`
-    *   `POST /api/auth/register`
-    *   `POST /api/auth/login`
-*   **Products:** `/api/products`
-    *   `GET /api/products`
-    *   `POST /api/products`
-    *   `GET /api/products/:id`
-    *   `PUT /api/products/:id`
-    *   `DELETE /api/products/:id`
-*   **Orders:** `/api/orders`
-    *   `GET /api/orders`
-    *   `POST /api/orders`
-*   **Dashboard:** `/api/dashboard`
-    *   `GET /api/dashboard/summary`
-*   **API Documentation:**
-    *   Navigate to `http://localhost:3000/api-docs` in your browser to view the interactive Swagger documentation.
-*   **Health Check:**
-    *   `GET /health` - Returns a JSON object indicating the application's status.
+The backend is an Express REST API written in TypeScript. Its main layers are:
 
-## 📜 License
+- Routes for HTTP endpoint definitions
+- Controllers for request and response handling
+- Services for application and business logic
+- Middleware for authentication, validation, rate limiting, and errors
+- Prisma for database access
+- Email services and templates for transactional notifications
+- Swagger configuration and OpenAPI documentation
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+### Database model
+
+The PostgreSQL database contains the following main entities:
+
+- `User`: accounts, roles, authentication provider metadata, and profile data
+- `PasswordResetToken`: short-lived password reset tokens
+- `Product`: inventory records, prices, suppliers, and low-stock state
+- `Order`: customer orders and order status
+- `OrderItem`: products and quantities belonging to an order
+
+## Repository structure
+
+```text
+Inventree/
+├── backend/
+│   ├── controllers/       HTTP request handlers
+│   ├── docs/              OpenAPI documentation
+│   ├── emails/            Email templates and notification logic
+│   ├── middleware/        Authentication, validation, errors, and rate limits
+│   ├── prisma/            Prisma schema and database configuration
+│   ├── routes/            API route definitions
+│   ├── services/          Business logic and database operations
+│   ├── types/             Backend request and domain types
+│   └── index.ts           Express application entry point
+├── frontend/
+│   ├── api-services/      Axios services and TanStack Query hooks
+│   ├── app/               Next.js routes and layouts
+│   ├── components/        Reusable dashboard and form components
+│   ├── lib/               Shared client utilities and session handling
+│   ├── store/             Redux store and persisted UI state
+│   └── types/             Frontend domain and auth types
+└── README.md
+```
+
+## Technology stack
+
+### Frontend
+
+- Next.js 16
+- React 19
+- TypeScript
+- Redux Toolkit
+- TanStack Query
+- Axios
+- Tailwind CSS
+
+### Backend
+
+- Node.js
+- Express
+- TypeScript
+- Prisma
+- PostgreSQL
+- Zod
+- JSON Web Tokens
+- Nodemailer
+- Swagger UI and OpenAPI
+- Express Rate Limit
+
+### Deployment
+
+- Frontend deployment: Vercel
+- Backend deployment: Render
+- Database: PostgreSQL
+- Email transport: SMTP
+
+## Prerequisites
+
+Install the following before running the project locally:
+
+- Node.js 18 or later
+- pnpm 10 or later
+- A PostgreSQL database
+- SMTP credentials for email features
+- Google OAuth credentials if Google sign-in is enabled
+
+## Local setup
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd Inventree
+```
+
+### 2. Install backend dependencies
+
+```bash
+cd backend
+pnpm install
+```
+
+Create `backend/.env` and configure the database, server, authentication,
+Google OAuth, and SMTP values. Do not commit this file or any credentials.
+
+Typical variables include:
+
+```ini
+SERVER_PORT=3000
+PORT=3000
+DATABASE_URL=postgresql://user:password@host:5432/database?schema=public
+JWT_SECRET=replace-with-a-long-random-secret
+CLIENT_URL=http://localhost:3001
+FRONTEND_URL=http://localhost:3001
+SERVER_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=your-email@example.com
+SMTP_PASS=your-email-app-password
+```
+
+Generate the Prisma client:
+
+```bash
+pnpm prisma generate
+```
+
+Start the backend in development mode:
+
+```bash
+pnpm dev
+```
+
+The local API is available at `http://localhost:3000/api`.
+
+### 3. Install frontend dependencies
+
+Open another terminal:
+
+```bash
+cd frontend
+pnpm install
+```
+
+Create `frontend/.env.local`:
+
+```ini
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
+```
+
+Start the frontend:
+
+```bash
+pnpm dev
+```
+
+The local dashboard is available at `http://localhost:3000` unless another
+port is selected by Next.js.
+
+## Useful commands
+
+### Backend
+
+```bash
+pnpm dev
+pnpm build
+pnpm start
+pnpm prisma generate
+pnpm prisma studio
+```
+
+### Frontend
+
+```bash
+pnpm dev
+pnpm build
+pnpm start
+pnpm typecheck
+pnpm lint
+```
+
+## API overview
+
+The API is rooted at `/api` and includes:
+
+- `/api/auth`: registration, login, Google OAuth, profile, and password reset
+- `/api/products`: product CRUD, product search, and inventory data
+- `/api/orders`: order creation, retrieval, status updates, and deletion
+- `/api/users`: user administration
+- `/api/dashboard`: summary and inventory reporting data
+- `/api-docs`: interactive Swagger documentation
+- `/health`: service health status
+
+For complete request schemas, authorization requirements, and response
+examples, use the deployed Swagger documentation or the files in
+`backend/docs/`.
+
+## Security notes
+
+- Keep `.env` and `.env.local` files out of version control.
+- Use a strong, unique JWT secret in every deployed environment.
+- Use a Gmail app password or another dedicated SMTP credential instead of a
+  personal account password.
+- Configure Google OAuth redirect URIs exactly for each environment.
+- Restrict CORS origins to trusted frontend URLs.
+- Never expose database connection strings or SMTP credentials in frontend
+  code.
+
+## License
+
+This project is licensed under the MIT License. See `LICENSE` if present.
