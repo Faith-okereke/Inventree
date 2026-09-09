@@ -34,20 +34,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <div className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-600">
-          Welcome back
-        </p>
-        <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
-          Log in to your account
+        <h1 className="text-2xl lg:text-3xl uppercase font-bold lg:font-semibold tracking-tight text-black-500">
+          Welcome Back
         </h1>
         <p className="max-w-sm text-sm leading-6 text-stone-600">
           Sign in to keep inventory, orders, and team workflows moving.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} method="post" noValidate className="space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        method="post"
+        noValidate
+        className="space-y-5"
+      >
         <div className="space-y-2">
           <label
             htmlFor="email"
@@ -93,7 +95,9 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
+        {error ? (
+          <p className="text-sm font-medium text-red-600">{error}</p>
+        ) : null}
 
         <button
           type="submit"
@@ -105,25 +109,30 @@ export default function LoginPage() {
       </form>
 
       <a
-        href={`${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api"}/auth/google`}
+        href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google`}
         className="inline-flex gap-2 h-12 w-full items-center justify-center rounded-xl border border-stone-200 px-6 text-sm font-semibold text-stone-700 transition-colors hover:bg-stone-50"
       >
-        <AppIcon name={icons.google} label="Google"/>
+        <AppIcon name={icons.google} label="Google" />
         Continue with Google
       </a>
 
       <div className="flex flex-col text-sm text-stone-600 sm:flex-row sm:items-center sm:justify-between">
         <p>
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-semibold text-brand-700 hover:underline">
+          <Link
+            href="/signup"
+            className="font-semibold text-brand-700 hover:underline"
+          >
             Sign up
           </Link>
         </p>
-       
       </div>
-       <Link href={"/forgot-password" as Route} className="text-center text-sm font-semibold text-brand-700 hover:underline flex justify-center items-center">
-          Forgot Password?
-        </Link>
+      <Link
+        href={"/forgot-password" as Route}
+        className="text-center text-sm font-semibold text-brand-700 hover:underline flex justify-center items-center"
+      >
+        Forgot Password?
+      </Link>
     </div>
   );
 }

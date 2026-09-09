@@ -26,6 +26,21 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
           />
         </div>
       </aside>
+      <aside
+        style={{ backgroundColor: "var(--color-brand-600)" }}
+        className="lg:hidden relative bg-brand-600 min-h-34 w-full block"
+      >
+        
+          <Image
+            src="/auth-image.png"
+            alt="Auth Illustration"
+            width={420}
+            height={420}
+            className="absolute -bottom-58 left-0"
+            priority
+          />
+       
+      </aside>
 
       <main className="flex-1 min-h-0 overflow-auto flex items-center justify-center bg-white px-5 py-10 sm:px-8 lg:min-w-[70%]">
         {children}

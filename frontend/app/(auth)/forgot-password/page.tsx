@@ -31,10 +31,7 @@ export default function ForgotPasswordPage() {
     return (
       <div className="space-y-6">
         <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-600">
-            Password reset
-          </p>
-          <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
+          <h1 className="lg:text-3xl text-2xl lg:font-semibold font-bold uppercase tracking-tight text-stone-900">
             Check your email
           </h1>
         </div>
@@ -42,7 +39,10 @@ export default function ForgotPasswordPage() {
           If an account with that email exists, we have sent a password reset
           link to it. Please click the link to reset your password.
         </p>
-        <Link href="/login" className="font-semibold text-brand-700 hover:underline">
+        <Link
+          href="/login"
+          className="font-semibold text-brand-700 hover:underline"
+        >
           Back to Log in
         </Link>
       </div>
@@ -52,11 +52,8 @@ export default function ForgotPasswordPage() {
   return (
     <div className="space-y-8">
       <div className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-600">
-          Reset access
-        </p>
-        <h1 className="text-3xl font-semibold tracking-tight text-stone-900">
-          Forgot your password?
+        <h1 className="lg:text-3xl text-2xl lg:font-semibold font-bold uppercase tracking-tight text-stone-900">
+          Forgot password
         </h1>
         <p className="max-w-sm text-sm leading-6 text-stone-600">
           No worries. We&apos;ll send reset instructions to your email address.
@@ -82,7 +79,9 @@ export default function ForgotPasswordPage() {
           />
         </div>
 
-        {apiError ? <p className="text-sm font-medium text-red-600">{apiError}</p> : null}
+        {apiError ? (
+          <p className="text-sm font-medium text-red-600">{apiError}</p>
+        ) : null}
 
         <button
           type="submit"
