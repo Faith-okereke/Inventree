@@ -72,7 +72,7 @@ export function UsersTable() {
                     {user.email}
                   </Td>
                   <Td>
-                    <RoleBadge role={user.role} active={user.active} />
+                    <RoleBadge role={user.memberships[0]?.role} active={user.active} />
                   </Td>
                   <Td className="hidden text-ink-500 whitespace-nowrap md:table-cell">
                     {formatDate(user.createdAt)}

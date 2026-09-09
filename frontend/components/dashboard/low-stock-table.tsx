@@ -4,13 +4,7 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableScroll, Td, Th, Tr } from "@/components/ui/table";
 import { formatNumber } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
-
-type DashboardLowStockProduct = {
-  id: string;
-  name: string;
-  sku: string;
-  quantityInStock: number;
-};
+import type { DashboardLowStockProduct } from "@/types/dashboard";
 
 /**
  * Server Component — this table has no filters or pagination, so unlike the three

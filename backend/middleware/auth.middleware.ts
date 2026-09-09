@@ -14,10 +14,9 @@ export const registerRequestSchema = z.object({
     email: emailSchema,
     password: passwordSchema,
     name: z.string({ message: 'Name is required!' }).trim().min(1, 'Name is required!'),
-    role: z.string().optional(),
-});
+}).strict();
 
 export const loginRequestSchema = z.object({
     email: emailSchema,
     password: z.string({ message: 'Password is required!' }).min(1, 'Password is required!'),
-});
+}).strict();

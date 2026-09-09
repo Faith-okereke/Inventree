@@ -10,6 +10,8 @@
  */
 export type * from './models/User.ts'
 export type * from './models/PasswordResetToken.ts'
+export type * from './models/Business.ts'
+export type * from './models/Membership.ts'
 export type * from './models/Product.ts'
 export type * from './models/Order.ts'
 export type * from './models/OrderItem.ts'

@@ -1,8 +1,8 @@
 ﻿import { useQuery } from "@tanstack/react-query";
 import { getAllUsers, getUsersById } from "../services/user.service";
-import { T_ApiResponse } from "./types";
+import type { ApiResponse } from "@/types/api";
 import toast from "react-hot-toast";
-import { User } from "@/lib/data/types";
+import type { UserResponse } from "@/types/users";
 import { getApiErrorMessage } from "@/lib/api/errors";
 
 export const useGetAllUsers = (
@@ -12,7 +12,7 @@ export const useGetAllUsers = (
   role?: string,
   status?: string,
 ) => {
-  const query = useQuery<T_ApiResponse<User[]>>({
+  const query = useQuery<ApiResponse<UserResponse[]>>({
     queryKey: ["getAllUsers", page, pageSize, search, role, status],
     queryFn: () => getAllUsers(page, pageSize, { search, role, status }),
   });
@@ -26,7 +26,7 @@ export const useGetAllUsers = (
 };
 
 export const useGetUsersById = (userId: string | undefined) => {
-  const query = useQuery<T_ApiResponse<User>>({
+  const query = useQuery<ApiResponse<UserResponse>>({
     queryKey: ["getUsersById", userId],
     queryFn: () => getUsersById(userId),
     enabled: Boolean(userId),

@@ -133,39 +133,7 @@ The backend is an Express REST API written in TypeScript. Its main layers are:
 - Email services and templates for transactional notifications
 - Swagger configuration and OpenAPI documentation
 
-### Database model
 
-The PostgreSQL database contains the following main entities:
-
-- `User`: accounts, roles, authentication provider metadata, and profile data
-- `PasswordResetToken`: short-lived password reset tokens
-- `Product`: inventory records, prices, suppliers, and low-stock state
-- `Order`: customer orders and order status
-- `OrderItem`: products and quantities belonging to an order
-
-## Repository structure
-
-```text
-Inventree/
-├── backend/
-│   ├── controllers/       HTTP request handlers
-│   ├── docs/              OpenAPI documentation
-│   ├── emails/            Email templates and notification logic
-│   ├── middleware/        Authentication, validation, errors, and rate limits
-│   ├── prisma/            Prisma schema and database configuration
-│   ├── routes/            API route definitions
-│   ├── services/          Business logic and database operations
-│   ├── types/             Backend request and domain types
-│   └── index.ts           Express application entry point
-├── frontend/
-│   ├── api-services/      Axios services and TanStack Query hooks
-│   ├── app/               Next.js routes and layouts
-│   ├── components/        Reusable dashboard and form components
-│   ├── lib/               Shared client utilities and session handling
-│   ├── store/             Redux store and persisted UI state
-│   └── types/             Frontend domain and auth types
-└── README.md
-```
 
 ## Technology stack
 
@@ -199,16 +167,6 @@ Inventree/
 - Database: PostgreSQL
 - Email transport: SMTP
 
-## Prerequisites
-
-Install the following before running the project locally:
-
-- Node.js 18 or later
-- pnpm 10 or later
-- A PostgreSQL database
-- SMTP credentials for email features
-- Google OAuth credentials if Google sign-in is enabled
-
 ## Local setup
 
 ### 1. Clone the repository
@@ -225,27 +183,6 @@ cd backend
 pnpm install
 ```
 
-Create `backend/.env` and configure the database, server, authentication,
-Google OAuth, and SMTP values. Do not commit this file or any credentials.
-
-Typical variables include:
-
-```ini
-SERVER_PORT=3000
-PORT=3000
-DATABASE_URL=postgresql://user:password@host:5432/database?schema=public
-JWT_SECRET=replace-with-a-long-random-secret
-CLIENT_URL=http://localhost:3001
-FRONTEND_URL=http://localhost:3001
-SERVER_URL=http://localhost:3000
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=465
-SMTP_USER=your-email@example.com
-SMTP_PASS=your-email-app-password
-```
 
 Generate the Prisma client:
 
@@ -285,54 +222,6 @@ pnpm dev
 The local dashboard is available at `http://localhost:3000` unless another
 port is selected by Next.js.
 
-## Useful commands
-
-### Backend
-
-```bash
-pnpm dev
-pnpm build
-pnpm start
-pnpm prisma generate
-pnpm prisma studio
-```
-
-### Frontend
-
-```bash
-pnpm dev
-pnpm build
-pnpm start
-pnpm typecheck
-pnpm lint
-```
-
-## API overview
-
-The API is rooted at `/api` and includes:
-
-- `/api/auth`: registration, login, Google OAuth, profile, and password reset
-- `/api/products`: product CRUD, product search, and inventory data
-- `/api/orders`: order creation, retrieval, status updates, and deletion
-- `/api/users`: user administration
-- `/api/dashboard`: summary and inventory reporting data
-- `/api-docs`: interactive Swagger documentation
-- `/health`: service health status
-
-For complete request schemas, authorization requirements, and response
-examples, use the deployed Swagger documentation or the files in
-`backend/docs/`.
-
-## Security notes
-
-- Keep `.env` and `.env.local` files out of version control.
-- Use a strong, unique JWT secret in every deployed environment.
-- Use a Gmail app password or another dedicated SMTP credential instead of a
-  personal account password.
-- Configure Google OAuth redirect URIs exactly for each environment.
-- Restrict CORS origins to trusted frontend URLs.
-- Never expose database connection strings or SMTP credentials in frontend
-  code.
 
 ## License
 

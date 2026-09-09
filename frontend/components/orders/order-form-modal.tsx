@@ -7,7 +7,8 @@ import {
   DashboardModal,
 } from "@/components/dashboard/dashboard-modal";
 import { Button } from "@/components/ui/button";
-import type { OrderStatus, ProductResponse } from "@/lib/data/types";
+import type { OrderStatus } from "@/types/orders";
+import type { ProductResponse } from "@/types/products";
 import { useGetAllProducts } from "@/api-services/hooks/useProducts";
 import { useCreateOrder } from "@/api-services/hooks/useOrders";
 

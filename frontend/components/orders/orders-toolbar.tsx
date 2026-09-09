@@ -32,7 +32,7 @@ export function OrdersToolbar() {
     const rows = filterOrders(orders, filters).map((order) => [
       order.id,
       order.createdAt,
-      order.user.name,
+      order.membership.user.name,
       order.orderItems.reduce((total, item) => total + item.quantity, 0),
       order.orderItems.reduce(
         (total, item) => total + Number(item.priceAtOrder) * item.quantity,

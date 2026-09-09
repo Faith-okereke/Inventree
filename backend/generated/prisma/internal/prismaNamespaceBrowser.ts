@@ -53,6 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   PasswordResetToken: 'PasswordResetToken',
+  Business: 'Business',
+  Membership: 'Membership',
   Product: 'Product',
   Order: 'Order',
   OrderItem: 'OrderItem'
@@ -79,7 +81,6 @@ export const UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   password: 'password',
-  role: 'role',
   provider: 'provider',
   providerId: 'providerId',
   avatar: 'avatar',
@@ -102,6 +103,27 @@ export const PasswordResetTokenScalarFieldEnum = {
 export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
+export const BusinessScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BusinessScalarFieldEnum = (typeof BusinessScalarFieldEnum)[keyof typeof BusinessScalarFieldEnum]
+
+
+export const MembershipScalarFieldEnum = {
+  id: 'id',
+  role: 'role',
+  userId: 'userId',
+  businessId: 'businessId',
+  createdAt: 'createdAt'
+} as const
+
+export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]
+
+
 export const ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -112,7 +134,8 @@ export const ProductScalarFieldEnum = {
   quantityInStock: 'quantityInStock',
   supplierEmail: 'supplierEmail',
   lowStockThreshold: 'lowStockThreshold',
-  lowStockAlertSentAt: 'lowStockAlertSentAt'
+  lowStockAlertSentAt: 'lowStockAlertSentAt',
+  businessId: 'businessId'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -120,8 +143,9 @@ export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeo
 
 export const OrderScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
   status: 'status',
+  businessId: 'businessId',
+  membershipId: 'membershipId',
   createdAt: 'createdAt'
 } as const
 

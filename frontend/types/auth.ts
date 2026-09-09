@@ -1,17 +1,28 @@
 export type AuthRole = "admin" | "staff";
 export type AuthProvider = "local" | "google";
 
+export interface AuthMembership {
+  id: string;
+  role: AuthRole;
+  businessId: string;
+  business?: {
+    id: string;
+    name: string;
+  };
+}
+
 export interface AuthUser {
   id: string;
   email: string;
   name: string;
-  role: AuthRole;
+  role?: AuthRole;
   provider: AuthProvider;
   providerId: string | null;
   avatar: string | null;
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  memberships: AuthMembership[];
 }
 
 export interface AuthSession {
@@ -28,7 +39,6 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   name: string;
-  role?: AuthRole;
 }
 
 export interface LoginResponse {
@@ -36,7 +46,10 @@ export interface LoginResponse {
   user: AuthUser;
 }
 
-export type RegisterResponse = AuthUser;
+export interface RegisterResponse {
+  user: AuthUser;
+  membership: AuthMembership;
+}
 
 export interface CurrentUserResponse {
   status: number;

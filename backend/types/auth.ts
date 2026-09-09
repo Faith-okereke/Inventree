@@ -1,6 +1,13 @@
 export type AuthRole = "admin" | "staff";
 export type AuthProvider = "local" | "google";
 
+export interface Memberships {
+  id: string;
+  role: AuthRole;
+  businessId:string
+  createdAt:string
+  updatedAt:string
+}
 export interface AuthUser {
   id: string;
   email: string;
@@ -12,6 +19,7 @@ export interface AuthUser {
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  memberships:Memberships[]
 }
 
 export interface LoginRequest {
@@ -23,7 +31,6 @@ export interface RegisterRequest {
   email: string;
   password: string;
   name: string;
-  role?: AuthRole;
 }
 
 export interface LoginResponse {

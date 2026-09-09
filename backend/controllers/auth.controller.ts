@@ -5,19 +5,19 @@ import jwt from "jsonwebtoken";
 import { sendPasswordResetEmail } from "../emails/reset-password";
 import { AuthenticatedRequest } from "../middleware/require-auth.middleware";
 import {
-  consumePasswordResetToken,
-  createPasswordResetToken,
-  getUserService,
-  registerService,
-  softDeleteUser,
-  updateUserPassword,
-  verifyPasswordResetToken,
-  upsertGoogleUser,
+    consumePasswordResetToken,
+    createPasswordResetToken,
+    getUserService,
+    registerService,
+    softDeleteUser,
+    updateUserPassword,
+    verifyPasswordResetToken,
+    upsertGoogleUser,
 } from "../services/auth.service";
 import type {
-  LoginRequest,
-  RegisterRequest,
-  ResetPasswordRequest,
+    LoginRequest,
+    RegisterRequest,
+    ResetPasswordRequest,
 } from "../types/auth";
 import { hashPassword, verifyPassword } from "../utils/password";
 
@@ -32,9 +32,18 @@ export const registerUser = async (req: Request, res: Response) => {
         }
 
         const hashedPassword = await hashPassword(password)
-        const user = await registerService({ email, name, password: hashedPassword })
-        const { password: _, ...safeUser } = user
-        return res.status(201).json(safeUser)
+        
+        const user = await registerService({
+            email,
+            name,
+            password: hashedPassword,
+        })
+        const { password: _, memberships, ...safeUser } = user
+        const membership = memberships[0]
+        return res.status(201).json({
+            user: safeUser,
+            membership,
+        })
     } catch (error) {
         console.error(error)
         return res.status(500).json({ message: "Internal server error" })
@@ -59,11 +68,14 @@ export const loginUser = async (req: Request, res: Response) => {
         if (!passwordMatches) {
             return res.status(401).json({ message: 'Invalid email or password' })
         }
-
+        const membership = existingUser.memberships[0];
+        if (!membership) {
+            return res.status(403).json({ error: 'No business membership found' });
+        }
         const token = jwt.sign(
-            { id: existingUser.id, email: existingUser.email, role: existingUser.role, name: existingUser.name },
+            { id: existingUser.id, role: membership.role, businessId: membership.businessId },
             process.env.JWT_SECRET as string,
-            { expiresIn: '1d' }
+            { expiresIn: '7d' }
         )
 
         const { password: _, ...safeUser } = existingUser
@@ -161,8 +173,13 @@ export const handleGoogleCallback = async (req: Request, res: Response) => {
             avatar: profile.picture,
         })
 
+        const membership = user.memberships[0]
+        if (!membership) {
+            throw new Error("Google account has no business membership.")
+        }
+
         const token = jwt.sign(
-            { id: user.id, email: user.email, role: user.role, name: user.name },
+            { id: user.id, email: user.email, role: membership.role, businessId: membership.businessId, name: user.name },
             process.env.JWT_SECRET as string,
             { expiresIn: "1d" },
         )
@@ -243,7 +260,7 @@ export const resetUserPassword = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Internal server error" })
     }
 }
-export const getUserProfile =  async (req: Request, res: Response) => {
+export const getUserProfile = async (req: Request, res: Response) => {
     const authReq = req as AuthenticatedRequest
     try {
         const user = await getUserService({ email: authReq?.auth?.email as string })

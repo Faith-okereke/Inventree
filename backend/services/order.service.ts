@@ -1,14 +1,18 @@
 import { prisma } from "../database/prisma"
 import { Prisma } from "../generated/prisma/client"
 import { sendLowStockAlertEmail } from "../emails/low-stock-alert"
-import { CreateOrderInput, UpdateOrderInput } from "../types/order"
-
 const orderInclude = {
-    user: {
+    membership: {
         select: {
             id: true,
-            name: true,
-            email: true,
+            role: true,
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                },
+            },
         },
     },
     orderItems: {
@@ -32,19 +36,23 @@ type InventoryProduct = {
     quantityInStock: number
 }
 
-export const getOrders = async (status?: string, page: number = 1, pageSize: number = 5) => {
+export const getOrders = async (businessId: string, status?: string, page: number = 1, pageSize: number = 5) => {
     const skip = (page - 1) * pageSize;
+    const where = {
+        businessId,
+        ...(status ? { status } : {}),
+    };
 
     const [data, total] = await Promise.all([
         prisma.order.findMany({
-            where: status ? { status } : undefined,
+            where,
             skip,
             take: pageSize,
             orderBy: { createdAt: "desc" },
             include: orderInclude,
         }),
         prisma.order.count({
-            where: status ? { status } : undefined,
+            where,
         }),
     ]);
     return {
@@ -58,21 +66,38 @@ export const getOrders = async (status?: string, page: number = 1, pageSize: num
     };
 }
 
-export const getOrderById = async (id: string) => {
-    return await prisma.order.findUnique({
-        where: { id },
+export const getOrderById = async (id: string, businessId: string) => {
+    return await prisma.order.findFirst({
+        where: { id, businessId },
         include: orderInclude,
     })
 }
 
+type CreateOrderInput = {
+    userId: string
+    businessId: string
+    status?: string
+    items: { productId: string; quantity: number }[]
+}
+
 export const createOrder = async (data: CreateOrderInput) => {
-    const { userId, status, items } = data
+    const { userId, businessId, status, items } = data
 
     return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        const membership = await tx.membership.findFirst({
+            where: { userId, businessId },
+            select: { id: true },
+        })
+
+        if (!membership) {
+            throw new Error("User is not a member of this business.")
+        }
+
         const productIds = items.map(item => item.productId)
         const products = await tx.product.findMany({
             where: {
                 id: { in: productIds },
+                businessId,
             },
         }) as InventoryProduct[]
 
@@ -94,7 +119,8 @@ export const createOrder = async (data: CreateOrderInput) => {
 
         const newOrder = await tx.order.create({
             data: {
-                userId,
+                businessId,
+                membershipId: membership.id,
                 status: status || 'pending',
                 createdAt: new Date(),
             },
@@ -113,7 +139,9 @@ export const createOrder = async (data: CreateOrderInput) => {
         await tx.orderItem.createMany({ data: orderItemsData })
 
         for (const item of items) {
-            const productBeforeUpdate = await tx.product.findUnique({ where: { id: item.productId } })
+            const productBeforeUpdate = await tx.product.findFirst({
+                where: { id: item.productId, businessId },
+            })
             const updatedProduct = await tx.product.update({
                 where: { id: item.productId },
                 data: { quantityInStock: { decrement: item.quantity } },
@@ -158,17 +186,17 @@ export const createOrder = async (data: CreateOrderInput) => {
     })
 }
 
-export const updateOrder = async (id: string, data: UpdateOrderInput) => {
-    return await prisma.order.update({
-        where: { id },
-        data: {
-            status: data.status,
-        },
-    })
-}
-
-export const deleteOrder = async (id: string) => {
+export const deleteOrder = async (id: string, businessId: string) => {
     return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        const order = await tx.order.findFirst({
+            where: { id, businessId },
+            select: { id: true },
+        })
+
+        if (!order) {
+            return null
+        }
+
         await tx.orderItem.deleteMany({
             where: { orderId: id },
         })
@@ -176,9 +204,18 @@ export const deleteOrder = async (id: string) => {
     })
 }
 
-export const updateOrderStatus = async (id: string, status: string) => {
+export const updateOrderStatus = async (id: string, businessId: string, status: string) => {
+    const order = await prisma.order.findFirst({
+        where: { id, businessId },
+        select: { id: true },
+    })
+
+    if (!order) {
+        return null
+    }
+
     return prisma.order.update({
-        where: { id },
+        where: { id: order.id },
         data: { status },
         include: orderInclude,
     })

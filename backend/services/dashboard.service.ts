@@ -25,14 +25,20 @@ type LowStockProduct = {
     quantityInStock: number
 }
 
-export const getOrderDashboard = async () => {
+export const getOrderDashboard = async (businessId: string) => {
     const [orders, orderItems, lowStockProducts] = await prisma.$transaction([
         prisma.order.findMany({
+            where: { businessId },
             select: {
                 status: true,
             },
         }),
         prisma.orderItem.findMany({
+            where: {
+                order: {
+                    businessId,
+                },
+            },
             select: {
                 quantity: true,
                 priceAtOrder: true,
@@ -48,6 +54,7 @@ export const getOrderDashboard = async () => {
         }),
         prisma.product.findMany({
             where: {
+                businessId,
                 quantityInStock: {
                     lte: dashboardLowStockThreshold,
                 },
@@ -68,11 +75,11 @@ export const getOrderDashboard = async () => {
         acc[order.status] = (acc[order.status] ?? 0) + 1
         return acc
     }, {})
-
-    const revenue = orderItems.reduce((total: number, item: DashboardOrderItem) => {
+    const revenue = orderItems.filter(item => ordersByStatus['fulfilled'] > 0).reduce((total: number, item: DashboardOrderItem) => {
         const price = Number(item.priceAtOrder)
         return total + (price * item.quantity)
     }, 0)
+
 
     const productStats = orderItems.reduce<Map<string, { productId: string; name: string; sku: string; totalQuantity: number }>>((acc, item) => {
         const existing = acc.get(item.productId)

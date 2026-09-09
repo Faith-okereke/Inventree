@@ -7,14 +7,13 @@ import {
   getProductById,
   getProducts,
   updateProduct,
-  type ProductMutationInput,
 } from "../services/product.service";
-import { T_ApiResponse } from "./types";
-import { ProductResponse } from "@/lib/data/types";
+import type { ApiResponse } from "@/types/api";
+import type { ProductMutationInput, ProductResponse } from "@/types/products";
 import { getApiErrorMessage } from "@/lib/api/errors";
 
 export const useGetAllProducts = (page = 1, pageSize = 5) => {
-  const query = useQuery<T_ApiResponse<ProductResponse[]>>({
+  const query = useQuery<ApiResponse<ProductResponse[]>>({
     queryKey: ["getAllProducts", page, pageSize],
     queryFn: () => getProducts(page, pageSize),
   });
@@ -28,7 +27,7 @@ export const useGetAllProducts = (page = 1, pageSize = 5) => {
 };
 
 export const useGetProductsById = (productId: string | undefined) => {
-  const query = useQuery<T_ApiResponse<ProductResponse>>({
+  const query = useQuery<ApiResponse<ProductResponse>>({
     queryKey: ["getProductsById", productId],
     queryFn: () => getProductById(productId),
     enabled: Boolean(productId),
@@ -46,7 +45,7 @@ export const useGetProductsById = (productId: string | undefined) => {
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<T_ApiResponse<ProductResponse>, unknown, ProductMutationInput>({
+  return useMutation<ApiResponse<ProductResponse>, unknown, ProductMutationInput>({
     mutationFn: (productData: ProductMutationInput) => createProduct(productData),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["getAllProducts"] });
@@ -63,7 +62,7 @@ export const useCreateProduct = () => {
 export const useUpdateProduct = (id: string | undefined) => {
   const queryClient = useQueryClient();
 
-  return useMutation<T_ApiResponse<ProductResponse>, unknown, ProductMutationInput>({
+  return useMutation<ApiResponse<ProductResponse>, unknown, ProductMutationInput>({
     mutationFn: (productData: ProductMutationInput) => {
       if (!id) throw new Error("Missing product id");
       return updateProduct(id, productData);

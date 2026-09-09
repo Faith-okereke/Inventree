@@ -1,12 +1,12 @@
-import { OrderListResponse, OrderMutationInput, } from "@/lib/data/types";
-import { T_ApiResponse } from "./types";
+import type { ApiResponse } from "@/types/api";
+import type { OrderListResponse, OrderMutationInput } from "@/types/orders";
 import { createOrder, getOrders, updateOrder } from "../services/order.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { getApiErrorMessage } from "@/lib/api/errors";
 
 export const useGetAllOrders = (page = 1, pageSize = 5, status?: string) => {
-  const query = useQuery<T_ApiResponse<OrderListResponse[]>>({
+  const query = useQuery<ApiResponse<OrderListResponse[]>>({
     queryKey: ["getAllOrders", page, pageSize, status],
     queryFn: () => getOrders(page, pageSize, status),
   });
@@ -22,7 +22,7 @@ export const useGetAllOrders = (page = 1, pageSize = 5, status?: string) => {
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<T_ApiResponse<OrderListResponse>, unknown, OrderMutationInput>({
+  return useMutation<ApiResponse<OrderListResponse>, unknown, OrderMutationInput>({
     mutationFn: (orderData: OrderMutationInput) => createOrder(orderData),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["getAllOrders"] });
@@ -39,7 +39,7 @@ export const useCreateOrder = () => {
 export const useEditOrderStatus = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<T_ApiResponse<OrderListResponse>, unknown, { id: string, status: string }>({
+  return useMutation<ApiResponse<OrderListResponse>, unknown, { id: string, status: string }>({
     mutationFn: ({ id, status }) => updateOrder(id, status),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["getAllOrders"] });

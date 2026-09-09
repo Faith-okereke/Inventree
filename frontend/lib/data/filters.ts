@@ -1,4 +1,6 @@
-﻿import {  OrderListResponse, ProductResponse, User } from "@/lib/data/types";
+import type { OrderListResponse } from "@/types/orders";
+import type { ProductResponse } from "@/types/products";
+import type { UserResponse } from "@/types/users";
 import type { TableFilters } from "@/store/slices/filters.slice";
 
 /** Case-insensitive "any field contains" match. Empty query matches everything. */
@@ -16,7 +18,7 @@ function matches(fields: readonly string[], query: string) {
 export function filterOrders(rows: readonly OrderListResponse[], f: TableFilters) {
   return rows.filter(
     (order) =>
-      matches([order.id, order.user.name], f.search) &&
+      matches([order.id, order.membership.user.name], f.search) &&
       (f.status === "all" || order.status.toLowerCase() === f.status),
   );
 }
@@ -37,12 +39,12 @@ export function filterProducts(rows: readonly ProductResponse[], f: TableFilters
   });
 }
 
-export function filterUsers(rows: readonly User[], f: TableFilters) {
+export function filterUsers(rows: readonly UserResponse[], f: TableFilters) {
   return rows.filter((user) => {
     const status = user.active ? "active" : "inactive";
     return (
       matches([user.name, user.email], f.search) &&
-      (f.role === "all" || user.role.toLowerCase() === f.role) &&
+      (f.role === "all" || user.memberships[0]?.role.toLowerCase() === f.role) &&
       (f.status === "all" || status === f.status)
     );
   });

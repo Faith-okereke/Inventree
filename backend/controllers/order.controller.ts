@@ -15,12 +15,16 @@ export const getAllOrders = async (req: Request, res: Response) => {
     const allowedStatuses = new Set(['pending', 'fulfilled', 'cancelled'])
     try {
         const { page, pageSize } = paginationParams(req);
+        const businessId = (req as AuthenticatedRequest).auth?.businessId
+        if (!businessId) {
+            return res.status(401).json({ message: "Unauthorized" })
+        }
         const status = typeof req.query.status === 'string' ? req.query.status : undefined
         if (status && !allowedStatuses.has(status)) {
             return res.status(400).json({ message: 'Invalid status filter.' })
         }
 
-        const orders = await getOrders(status, page, pageSize)
+        const orders = await getOrders(businessId, status, page, pageSize)
         return res.status(200).json({
             status: 200,
             data: orders.data,
@@ -34,17 +38,16 @@ export const getAllOrders = async (req: Request, res: Response) => {
 
 export const getTheOrder = async (req: Request, res: Response) => {
     const { id: orderId } = req.params
-    const user = (req as AuthenticatedRequest).auth
+    const businessId = (req as AuthenticatedRequest).auth?.businessId
+    if (!businessId) {
+        return res.status(401).json({ message: "Unauthorized" })
+    }
 
     try {
-        const order = await getOrderById(orderId)
+        const order = await getOrderById(orderId, businessId)
 
         if (!order) {
             return res.status(404).json({ message: "Order not found" })
-        }
-
-        if (user?.role !== 'admin' && order.userId !== user?.id) {
-            return res.status(403).json({ message: "Forbidden: You do not have permission to view this order." })
         }
 
         return res.status(200).json({ status: 200, data: order })
@@ -57,10 +60,15 @@ export const getTheOrder = async (req: Request, res: Response) => {
 export const createTheOrder = async (req: Request, res: Response) => {
     const user = (req as AuthenticatedRequest).auth
     const { items } = req.body
+    const businessId = user?.businessId
+    if (!user?.id || !businessId) {
+        return res.status(401).json({ message: "Unauthorized" })
+    }
 
     try {
         const newOrder = await createOrder({
-            userId: user!.id,
+            userId: user.id,
+            businessId,
             items,
             status: 'pending',
         })
@@ -80,14 +88,21 @@ export const createTheOrder = async (req: Request, res: Response) => {
 export const updateTheOrder = async (req: Request, res: Response) => {
     const { id: orderId } = req.params
     const { status } = req.body
+    const businessId = (req as AuthenticatedRequest).auth?.businessId
+    if (!businessId) {
+        return res.status(401).json({ message: "Unauthorized" })
+    }
 
     try {
-        const existingOrder = await getOrderById(orderId)
+        const existingOrder = await getOrderById(orderId, businessId)
         if (!existingOrder) {
             return res.status(404).json({ message: "Order not found" })
         }
 
-        const updatedOrder = await updateOrderStatus(orderId, status)
+        const updatedOrder = await updateOrderStatus(orderId, businessId, status)
+        if (!updatedOrder) {
+            return res.status(404).json({ message: "Order not found" })
+        }
         return res.status(200).json({ status: 200, data: updatedOrder })
     } catch (error) {
         console.error(error)
@@ -96,14 +111,18 @@ export const updateTheOrder = async (req: Request, res: Response) => {
 }
 export const deleteTheOrder = async (req: Request, res: Response) => {
     const { id: orderId } = req.params
+    const businessId = (req as AuthenticatedRequest).auth?.businessId
+    if (!businessId) {
+        return res.status(401).json({ message: "Unauthorized" })
+    }
 
     try {
-        const existingOrder = await getOrderById(orderId)
+        const existingOrder = await getOrderById(orderId, businessId)
         if (!existingOrder) {
             return res.status(404).json({ message: "Order not found" })
         }
 
-        await deleteOrder(orderId)
+        await deleteOrder(orderId, businessId)
         return res.status(204).send()
     } catch (error) {
         console.error(error)

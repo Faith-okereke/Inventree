@@ -1,4 +1,4 @@
-import { OrderMutationInput } from "@/lib/data/types";
+import type { OrderMutationInput } from "@/types/orders";
 import { api } from "./client";
 
 

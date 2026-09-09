@@ -1,6 +1,6 @@
 ﻿import { api } from "./client";
-import type { User } from "@/lib/data/types";
-import type { T_ApiResponse } from "../hooks/types";
+import type { ApiResponse } from "@/types/api";
+import type { UserResponse } from "@/types/users";
 
 type UserFilters = {
     search?: string;
@@ -23,12 +23,12 @@ const normalizeUser = <T extends UserLike>(user: T) => ({
     active: (user.active ?? user.deletedAt) === null || user.deletedAt === undefined,
 });
 
-type UsersResponse = T_ApiResponse<User[]>;
-type UserResponse = T_ApiResponse<User>;
+type UsersResponse = ApiResponse<UserResponse[]>;
+type SingleUserResponse = ApiResponse<UserResponse>;
 
 function normalizeResponse(payload: UsersResponse): UsersResponse;
-function normalizeResponse(payload: UserResponse): UserResponse;
-function normalizeResponse(payload: unknown): UsersResponse | UserResponse | unknown {
+function normalizeResponse(payload: SingleUserResponse): SingleUserResponse;
+function normalizeResponse(payload: unknown): UsersResponse | SingleUserResponse | unknown {
     if (!isRecord(payload)) return payload;
 
     if (Array.isArray(payload.data)) {
@@ -44,7 +44,7 @@ function normalizeResponse(payload: unknown): UsersResponse | UserResponse | unk
         return {
             ...payload,
             data: normalizeUser(payload.data as UserLike),
-        } as unknown as UserResponse;
+        } as unknown as SingleUserResponse;
     }
 
     return payload;
@@ -69,7 +69,7 @@ export const getAllUsers = async (page = 1, pageSize = 10, filters: UserFilters 
 
 export const getUsersById = async (userId: string | undefined) => {
     const response = await api.get(`users/${userId}`);
-    return normalizeResponse(response.data as UserResponse);
+    return normalizeResponse(response.data as SingleUserResponse);
 };
 
 export const deleteUser = async (userId: string | undefined) => {

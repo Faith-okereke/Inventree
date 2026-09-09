@@ -19,13 +19,13 @@ import {
   Tr,
 } from "@/components/ui/table";
 import { filterProducts } from "@/lib/data/filters";
-import type { ProductResponse } from "@/lib/data/types";
+import type { ProductResponse } from "@/types/products";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import { useAppSelector } from "@/store/hooks";
 import { useDeleteProducts } from "@/api-services/hooks/useProducts";
 import { TableFooter } from "../dashboard/table-footer";
-import type { Pagination } from "@/api-services/hooks/types";
+import type { Pagination } from "@/types/api";
 import { RequireRole } from "@/components/auth/require-role";
 import { ProductDetailsModal } from "@/components/products/product-details-modal";
 

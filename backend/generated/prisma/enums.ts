@@ -16,3 +16,11 @@ export const AuthProvider = {
 } as const
 
 export type AuthProvider = (typeof AuthProvider)[keyof typeof AuthProvider]
+
+
+export const Role = {
+  admin: 'admin',
+  staff: 'staff'
+} as const
+
+export type Role = (typeof Role)[keyof typeof Role]

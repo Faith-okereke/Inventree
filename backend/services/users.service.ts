@@ -7,7 +7,18 @@ export type UserListFilters = {
     search?: string
 }
 
+const userInclude = {
+    memberships: {
+        select: {
+            id: true,
+            role: true,
+            businessId: true,
+        },
+    },
+} as const
+
 export const getAllUsersService = async (
+    businessId: string,
     page: number,
     pageSize: number,
     filters: UserListFilters = {},
@@ -15,8 +26,11 @@ export const getAllUsersService = async (
     const skip = (page - 1) * pageSize;
     const where: Prisma.UserWhereInput = {};
 
-    if (filters.role && filters.role !== "all") {
-        where.role = filters.role;
+    where.memberships = {
+        some: {
+            businessId,
+            ...(filters.role && filters.role !== "all" ? { role: filters.role as "admin" | "staff" } : {}),
+        },
     }
 
     if (filters.status === "active") {
@@ -40,6 +54,7 @@ export const getAllUsersService = async (
             take: pageSize,
             orderBy: { createdAt: "desc" },
             omit: { password: true },
+            include: userInclude,
         }),
         prisma.user.count({ where }),
     ]);
@@ -53,13 +68,15 @@ export const getAllUsersService = async (
         }
     }
 }
-export const getUserByIdService = (id: string) => {
+export const getUserByIdService = (id: string, businessId: string) => {
     return prisma.user.findFirst({
         where: {
             id,
-            deletedAt: null
+            deletedAt: null,
+            memberships: { some: { businessId } },
         },
-        omit: { password: true }
+        omit: { password: true },
+        include: userInclude,
     })
 }
 export const getUserByEmailService = (email: string) => {
@@ -70,20 +87,52 @@ export const getUserByEmailService = (email: string) => {
         }
     })
 }
-export const createUserService = (data: { email: string, name: string, password: string, role?: string }) => {
+export const createUserService = (data: { email: string, name: string, password: string, role?: "admin" | "staff", businessId: string }) => {
+    const { businessId, role, ...userData } = data
     return prisma.user.create({
-        data,
-        omit: { password: true }
+        data: {
+            ...userData,
+            memberships: {
+                create: {
+                    businessId,
+                    role: role || "staff",
+                },
+            },
+        },
+        omit: { password: true },
+        include: userInclude,
     })
 }
-export const updateUserService = (id: string, data: { email?: string, name?: string, role?: string }) => {
+export const updateUserService = async (id: string, businessId: string, data: { email?: string, name?: string, role?: "admin" | "staff" }) => {
+    const existingUser = await getUserByIdService(id, businessId)
+    if (!existingUser) {
+        return null
+    }
+
+    const { role, ...userData } = data
     return prisma.user.update({
         where: { id },
-        data,
-        omit: { password: true }
+        data: {
+            ...userData,
+            ...(role ? {
+                memberships: {
+                    update: {
+                        where: { userId_businessId: { userId: id, businessId } },
+                        data: { role },
+                    },
+                },
+            } : {}),
+        },
+        omit: { password: true },
+        include: userInclude,
     })
 }
-export const deleteUserService = (id: string) => {
+export const deleteUserService = async (id: string, businessId: string) => {
+    const existingUser = await getUserByIdService(id, businessId)
+    if (!existingUser) {
+        return null
+    }
+
     return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         await tx.user.update({
             where: { id },
@@ -91,5 +140,6 @@ export const deleteUserService = (id: string) => {
                 deletedAt: new Date()
             }
         })
+        return true
     })
 }

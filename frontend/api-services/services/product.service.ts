@@ -1,16 +1,5 @@
-﻿import { api } from "./client";
-
-
-export interface ProductMutationInput {
-  sku: string;
-  name: string;
-  description: string;
-  price: number;
-  quantityInStock: number;
-  image: string;
-  supplierEmail:string;
-  lowStockThreshold:number;
-}
+import { api } from "./client";
+import type { ProductMutationInput } from "@/types/products";
 
 export const getProducts = async (page=1, pageSize=5) => {
   const response = await api.get("/products/all", {

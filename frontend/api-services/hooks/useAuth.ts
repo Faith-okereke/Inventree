@@ -18,6 +18,7 @@ import type {
   ForgotPasswordResponse,
   LoginCredentials,
   LoginResponse,
+  RegisterCredentials,
   RegisterResponse,
   ResetPasswordRequest,
   ResetPasswordResponse,
@@ -47,7 +48,7 @@ export const useLogin = () => {
 };
 
 export const useRegister = () => {
-  return useMutation<RegisterResponse, unknown, { name: string; email: string; password: string; role?: "admin" | "staff" }>({
+  return useMutation<RegisterResponse, unknown, RegisterCredentials>({
     mutationFn: registerService,
     onSuccess: () => {
       toast.success("Account created successfully!");

@@ -93,7 +93,7 @@ export function Topbar() {
             className="flex items-center gap-3 rounded-full border border-ink-200 bg-white px-2.5 py-1.5 text-left transition-colors hover:border-ink-300 hover:bg-ink-50"
           >
             {user?.avatar ? (
-              <img src={user.avatar} className="size-8 rounded-full" />
+              <img src={user?.avatar} className="size-8 rounded-full" />
             ) : (
               <span className="grid size-8 place-items-center rounded-full bg-brand-600 text-sm font-semibold text-white">
                 {initials}
@@ -103,8 +103,8 @@ export function Topbar() {
               <span className="max-w-40 truncate text-sm font-semibold text-ink-900">
                 {user?.name || "Account"}
               </span>
-              <span className="max-w-40 truncate text-xs text-ink-500">
-                {user?.role || "Logged in"}
+              <span className="max-w-40 truncate text-xs text-ink-500 capitalize">
+                {user?.memberships[0]?.role || "Logged in"}
               </span>
             </span>
             <AppIcon
@@ -132,7 +132,7 @@ export function Topbar() {
                       {user?.email || "No email available"}
                     </p>
                     <p className="mt-1 inline-flex rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
-                      {user?.role || "User"}
+                      {user?.memberships[0]?.role || "User"}
                     </p>
                   </div>
                 </div>

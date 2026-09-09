@@ -12,7 +12,6 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const role = "staff";
 
   const router = useRouter();
 
@@ -30,7 +29,7 @@ export default function SignupPage() {
       return;
     }
     mutate(
-      { name: fullName, email, password, role },
+      { name: fullName, email, password },
       {
         onSuccess: () => {
           router.push("/login");

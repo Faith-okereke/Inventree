@@ -16,13 +16,7 @@ export function Logo({
         className,
       )}
     >
-      {tight ? (
-        <>
-          Inven<span className="text-brand-800">Tree</span>
-        </>
-      ) : (
-        "Inventree"
-      )}
+      INVENTREE
     </span>
   );
 }

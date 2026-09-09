@@ -4,7 +4,7 @@ import { FilterPopover } from "@/components/dashboard/filter-popover";
 import { AppIcon, icons } from "@/components/ui/app-icon";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import type { ProductResponse } from "@/lib/data/types";
+import type { ProductResponse } from "@/types/products";
 import { downloadCsv, toCsv } from "@/lib/utils/csv";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { resetFilters, setFilter } from "@/store/slices/filters.slice";

@@ -11,7 +11,7 @@ import {
   Tr,
 } from "@/components/ui/table";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
-import type { OrderListResponse } from "@/lib/data/types";
+import type { OrderListResponse } from "@/types/orders";
 import {
   useEditOrderStatus,
   useGetAllOrders,
@@ -85,7 +85,7 @@ export function OrdersTable() {
                       {new Date(order.createdAt).toLocaleDateString()}
                     </Td>
                     <Td className="font-medium text-ink-800">
-                      {order.user.name}
+                      {order.membership.user.name}
                     </Td>
                     <Td className="hidden tabular-nums sm:table-cell">
                       {formatNumber(quantity)}

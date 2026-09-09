@@ -13,7 +13,7 @@ export function RequireRole({
   roles: readonly AuthRole[];
   children: ReactNode;
 }) {
-  const role = useAppSelector((state) => state.auth.user?.role);
+  const role = useAppSelector((state) => state.auth.user?.memberships[0].role);
   const mounted = useSyncExternalStore(
     () => () => {},
     () => true,

@@ -3,9 +3,8 @@ import jwt, { JwtPayload } from "jsonwebtoken"
 
 export interface AuthTokenPayload extends JwtPayload {
     id: string
-    email: string
-    role: string
-    name:string
+    role: "admin" | "staff";
+    businessId: string
 }
 
 export type AuthenticatedRequest = Request & {
@@ -31,7 +30,7 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
             return res.status(401).json({ error: "Invalid or expired token" })
         }
 
-        ;(req as AuthenticatedRequest).auth = decoded as AuthTokenPayload
+        ; (req as AuthenticatedRequest).auth = decoded as AuthTokenPayload
         next()
     } catch {
         return res.status(401).json({ error: "Invalid or expired token" })

@@ -24,16 +24,17 @@ export const shouldSendLowStockAlert = (
     return crossedIntoLowStock && !alreadySentRecently
 }
 
-export const getProducts = async (page: number, pageSize: number) => {
+export const getProducts = async (businessId: string, page: number, pageSize: number) => {
     const skip = (page - 1) * pageSize;
 
     const [data, total] = await Promise.all([
         prisma.product.findMany({
+            where: { businessId },
             skip,
             take: pageSize,
             orderBy: { name: "asc" },
         }),
-        prisma.product.count(),
+        prisma.product.count({ where: { businessId } }),
     ]);
 
     return {
@@ -46,9 +47,10 @@ export const getProducts = async (page: number, pageSize: number) => {
         },
     };
 };
-export const searchProducts = async (query: string) => {
+export const searchProducts = async (query: string, businessId:string) => {
     return await prisma.product.findMany({
         where: {
+            businessId,
             OR: [
                 { name: { contains: query, mode: 'insensitive' } },
                 { sku: { contains: query, mode: 'insensitive' } },
@@ -59,28 +61,28 @@ export const searchProducts = async (query: string) => {
     })
 }
 
-export const getProductById = async (id: string) => {
-    return await prisma.product.findUnique({ where: { id } })
+export const getProductById = async (id: string, businessId: string) => {
+    return await prisma.product.findFirst({ where: { id, businessId } })
 }
 
-export const getProductByName = async (name: string) => {
-    return await prisma.product.findFirst({ where: { name } })
+export const getProductByName = async (name: string, businessId: string) => {
+    return await prisma.product.findFirst({ where: { name, businessId } })
 }
 
-export const postProducts = async (data: ProductRequest) => {
-    return await prisma.product.create({ data })
+export const postProducts = async (data: ProductRequest, businessId: string) => {
+    return await prisma.product.create({ data: { ...data, businessId } })
 }
 
-export const updateProducts = async (id: string, data: Partial<ProductRequest>) => {
-    const previousProduct = await prisma.product.findUnique({ where: { id } })
+export const updateProducts = async (id: string, businessId: string, data: Partial<ProductRequest>) => {
+    const previousProduct = await prisma.product.findFirst({ where: { id, businessId } })
 
-    const updatedProduct = await prisma.product.update({ where: { id }, data })
+    const updatedProduct = await prisma.product.update({ where: { id, businessId }, data })
 
     const threshold = updatedProduct.lowStockThreshold ?? previousProduct?.lowStockThreshold ?? 0
 
     if (updatedProduct.quantityInStock > threshold) {
         await prisma.product.update({
-            where: { id },
+            where: { id, businessId },
             data: { lowStockAlertSentAt: null },
         })
     }
@@ -96,7 +98,7 @@ export const updateProducts = async (id: string, data: Partial<ProductRequest>) 
         })
 
         await prisma.product.update({
-            where: { id },
+            where: { id, businessId },
             data: {
                 lowStockAlertSentAt: new Date(),
             },
@@ -108,6 +110,7 @@ export const updateProducts = async (id: string, data: Partial<ProductRequest>) 
 
 export const deleteProducts = async (data: {
     id: string
+    businessId: string
 }) => {
-    return await prisma.product.delete({ where: { id: data.id } })
+    return await prisma.product.delete({ where: { id: data.id, businessId: data.businessId } })
 }

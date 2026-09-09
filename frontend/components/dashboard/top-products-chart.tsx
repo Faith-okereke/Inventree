@@ -1,12 +1,6 @@
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatNumber } from "@/lib/utils/format";
-
-type DashboardTopProduct = {
-  productId: string;
-  name: string;
-  sku: string;
-  totalQuantity: number;
-};
+import type { DashboardTopProduct } from "@/types/dashboard";
 
 export function TopProductsChart({
   products,

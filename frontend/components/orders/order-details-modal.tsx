@@ -1,7 +1,7 @@
 "use client";
 
 import { DashboardModal } from "@/components/dashboard/dashboard-modal";
-import type { OrderListResponse } from "@/lib/data/types";
+import type { OrderListResponse } from "@/types/orders";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 
 export function OrderDetailsModal({
@@ -35,7 +35,7 @@ export function OrderDetailsModal({
           <dt className="text-xs font-semibold tracking-wide text-ink-500 uppercase">
             Customer
           </dt>
-          <dd className="mt-1 text-sm text-ink-900">{order.user.name}</dd>
+          <dd className="mt-1 text-sm text-ink-900">{order.membership.user.name}</dd>
         </div>
         <div>
           <dt className="text-xs font-semibold tracking-wide text-ink-500 uppercase">

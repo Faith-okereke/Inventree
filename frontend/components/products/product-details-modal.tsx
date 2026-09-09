@@ -1,7 +1,7 @@
 "use client";
 
 import { DashboardModal } from "@/components/dashboard/dashboard-modal";
-import type { ProductResponse } from "@/lib/data/types";
+import type { ProductResponse } from "@/types/products";
 import { formatCurrency, formatNumber } from "@/lib/utils/format";
 
 export function ProductDetailsModal({

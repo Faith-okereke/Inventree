@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import type { ProductMutationInput } from "@/api-services/services/product.service";
+import type { ProductMutationInput, ProductResponse } from "@/types/products";
 import {
   useCreateProduct,
   useUpdateProduct,
@@ -12,7 +12,6 @@ import {
   DashboardModal,
 } from "@/components/dashboard/dashboard-modal";
 import { Button } from "@/components/ui/button";
-import type { ProductResponse } from "@/lib/data/types";
 
 const emptyValues: ProductMutationInput = {
   sku: "",
@@ -51,7 +50,7 @@ function ProductFormContent({
           price: Number(product.price),
           quantityInStock: Number(product.quantityInStock),
           image: product.image,
-          supplierEmail: product.supplierEmail,
+          supplierEmail: product.supplierEmail ?? "",
           lowStockThreshold: product.lowStockThreshold,
         }
       : emptyValues,

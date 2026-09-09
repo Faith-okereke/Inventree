@@ -1,31 +1,12 @@
 import toast from "react-hot-toast";
 import { getDashboardData } from "../services/dashboard.service";
-import { T_ApiResponse } from "./types";
+import type { ApiResponse } from "@/types/api";
+import type { DashboardData } from "@/types/dashboard";
 import { getApiErrorMessage } from "@/lib/api/errors";
 import { useQuery } from "@tanstack/react-query";
 
-export interface DashboardData {
-  summary: {
-    totalOrders: number;
-    totalRevenue: number;
-  };
-  ordersByStatus: Record<string, number>;
-  topProducts: Array<{
-    productId: string;
-    name: string;
-    sku: string;
-    totalQuantity: number;
-  }>;
-  lowStockProducts: Array<{
-    id: string;
-    name: string;
-    sku: string;
-    quantityInStock: number;
-  }>;
-}
-
 export const useGetDashboard = () => {
-  const query = useQuery<T_ApiResponse<DashboardData>>({
+  const query = useQuery<ApiResponse<DashboardData>>({
     queryKey: ["getDashboardData"],
     queryFn: () => getDashboardData(),
   });
