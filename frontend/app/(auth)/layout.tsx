@@ -34,8 +34,8 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
           <Image
             src="/auth-image.png"
             alt="Auth Illustration"
-            width={420}
-            height={420}
+            width={350}
+            height={350}
             className="absolute -bottom-58 left-0"
             priority
           />

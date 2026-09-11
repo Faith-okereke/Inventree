@@ -35,8 +35,8 @@ export default function LoginPage() {
 
   return (
     <div className="space-y-5">
-      <div className="space-y-3">
-        <h1 className="text-2xl lg:text-3xl uppercase font-bold lg:font-semibold tracking-tight text-black-500">
+      <div className="space-y-3 z-99">
+        <h1 className="text-2xl lg:text-3xl uppercase font-bold lg:font-semibold tracking-tight text-black-500 ">
           Welcome Back
         </h1>
         <p className="max-w-sm text-sm leading-6 text-stone-600">

@@ -15,7 +15,7 @@ import { useCreateOrder } from "@/api-services/hooks/useOrders";
 interface OrderFormValues {
   product: string;
   // customer: string;
-  quantity: number;
+  quantity: number|string;
   total: string;
   status: OrderStatus;
 }
@@ -23,7 +23,7 @@ interface OrderFormValues {
 const emptyValues: OrderFormValues = {
   product: ``,
   // customer: "",
-  quantity: 0,
+  quantity: "",
   total: "",
   status: "pending",
 };
@@ -49,7 +49,7 @@ function OrderFormContent({
   const totalPrice = products.find((p) => p.id === values?.product)?.price
     ? (
         Number(products.find((p) => p.id === values?.product)?.price) *
-        values?.quantity
+        Number(values?.quantity)
       ).toFixed(2)
     : "0.00";
   const productOptions = products?.map((product) => ({
@@ -114,7 +114,7 @@ function OrderFormContent({
             onChange={(e) =>
               setValues((current) => ({
                 ...current,
-                quantity: Number(e.target.value),
+                quantity: e.target.value,
               }))
             }
             className={inputClassName()}
@@ -166,7 +166,7 @@ export function OrderFormModal({
   const createOrder = () => {
     mutate(
       {
-        items: [{ productId, quantity: pendingValues?.quantity ?? 0 }],
+        items: [{ productId, quantity: Number(pendingValues?.quantity) ?? 0 }],
       },
       {
         onSuccess: () => {
@@ -202,7 +202,7 @@ export function OrderFormModal({
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
         title="Confirm order creation"
-        description={`Create order ${pendingValues?.product || "this order"}?`}
+        description={`Create order for ${pendingValues?.product || "this order"}?`}
         confirmLabel="Create Order"
         onConfirm={createOrder}
         loading={isPending}

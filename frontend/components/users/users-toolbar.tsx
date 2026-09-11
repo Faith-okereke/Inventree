@@ -1,7 +1,5 @@
 "use client";
 
-// import { AppIcon, icons } from "@/components/ui/app-icon";
-// import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setFilter } from "@/store/slices/filters.slice";
@@ -20,7 +18,7 @@ const statusOptions = [
   { value: "inactive", label: "Inactive" },
 ] as const;
 
-/** ROLE and STATUS sit inline in this design rather than behind a Filter button. */
+
 export function UsersToolbar() {
   const filters = useAppSelector((s) => s.filters.users);
   const dispatch = useAppDispatch();

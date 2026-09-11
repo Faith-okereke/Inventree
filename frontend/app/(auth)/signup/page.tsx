@@ -41,7 +41,7 @@ export default function SignupPage() {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-3">
+      <div className="space-y-3 z-99">
        
         <h1 className="text-2xl lg:text-3xl uppercase lg:font-semibold font-bold tracking-tight text-stone-900">
           Get started
