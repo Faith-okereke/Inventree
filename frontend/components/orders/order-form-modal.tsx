@@ -103,22 +103,6 @@ function OrderFormContent({
         </label>
       </div>
 
-      {/* Customer input is intentionally disabled because the backend derives
-          the order user from the authenticated creator. */}
-      {/*
-      <label className="block space-y-1.5 text-sm font-medium text-ink-700">
-        <span>Customer</span>
-        <input
-          value={values.customer}
-          onChange={(e) =>
-            setValues((current) => ({ ...current, customer: e.target.value }))
-          }
-          className={inputClassName()}
-          placeholder="Acme Manufacturing Corp."
-          required
-        />
-      </label>
-      */}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-1.5 text-sm font-medium text-ink-700">

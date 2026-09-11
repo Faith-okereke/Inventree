@@ -5,6 +5,8 @@
 import { Select } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setFilter } from "@/store/slices/filters.slice";
+import { Button } from "../ui/button";
+import { AppIcon, icons } from "../ui/app-icon";
 
 const roleOptions = [
   { value: "all", label: "All roles" },
@@ -22,6 +24,7 @@ const statusOptions = [
 export function UsersToolbar() {
   const filters = useAppSelector((s) => s.filters.users);
   const dispatch = useAppDispatch();
+  // const { mutate } = useInviteUser();
 
   return (
     <>
@@ -31,7 +34,9 @@ export function UsersToolbar() {
         options={roleOptions}
         value={filters.role}
         onChange={(e) =>
-          dispatch(setFilter({ table: "users", patch: { role: e.target.value } }))
+          dispatch(
+            setFilter({ table: "users", patch: { role: e.target.value } }),
+          )
         }
       />
 
@@ -46,13 +51,10 @@ export function UsersToolbar() {
           )
         }
       />
-
-      {/* No "add user" frame in the Figma set — the affordance is here, the
-          form it should open is not designed yet. */}
-      {/* <Button size="sm" className="h-9">
+      <Button size="sm" className="h-9" >
         <AppIcon name={icons.plus} className="size-4" />
-        Add New User
-      </Button> */}
+        Invite User
+      </Button>
     </>
   );
 }

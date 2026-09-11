@@ -13,15 +13,24 @@ import {
 } from "@/components/dashboard/dashboard-modal";
 import { Button } from "@/components/ui/button";
 
-const emptyValues: ProductMutationInput = {
+type ProductFormValues = Omit<
+  ProductMutationInput,
+  "price" | "quantityInStock" | "lowStockThreshold"
+> & {
+  price: string;
+  quantityInStock: string;
+  lowStockThreshold: string;
+};
+
+const emptyValues: ProductFormValues = {
   sku: "",
   name: "",
   description: "",
-  price: 0,
-  quantityInStock: 0,
+  price: "",
+  quantityInStock: "",
   image: "",
   supplierEmail: "",
-  lowStockThreshold: 0,
+  lowStockThreshold: "",
 };
 
 function inputClassName() {
@@ -38,23 +47,24 @@ function ProductFormContent({
   onCancel,
 }: {
   product?: ProductResponse;
-  onSubmit: (values: ProductMutationInput) => void;
+  onSubmit: (values: ProductFormValues) => void;
   onCancel: () => void;
 }) {
-  const [values, setValues] = useState<ProductMutationInput>(
+  const [values, setValues] = useState<ProductFormValues>(
     product
       ? {
           sku: product.sku,
           name: product.name,
           description: product.description,
-          price: Number(product.price),
-          quantityInStock: Number(product.quantityInStock),
+          price: String(product.price),
+          quantityInStock: String(product.quantityInStock),
           image: product.image,
           supplierEmail: product.supplierEmail ?? "",
-          lowStockThreshold: product.lowStockThreshold,
+          lowStockThreshold: String(product.lowStockThreshold),
         }
       : emptyValues,
   );
+
 
   return (
     <form
@@ -118,7 +128,7 @@ function ProductFormContent({
             onChange={(e) =>
               setValues((current) => ({
                 ...current,
-                price: Number(e.target.value),
+                price: e.target.value,
               }))
             }
             className={inputClassName()}
@@ -135,7 +145,7 @@ function ProductFormContent({
             onChange={(e) =>
               setValues((current) => ({
                 ...current,
-                quantityInStock: Number(e.target.value),
+                quantityInStock:e.target.value,
               }))
             }
             className={inputClassName()}
@@ -152,7 +162,7 @@ function ProductFormContent({
             onChange={(e) =>
               setValues((current) => ({
                 ...current,
-                lowStockThreshold: Number(e.target.value),
+                lowStockThreshold: e.target.value,
               }))
             }
             className={inputClassName()}
@@ -203,7 +213,7 @@ function ProductFormContent({
   );
 }
 
-function toProductPayload(values: ProductMutationInput): ProductMutationInput {
+function toProductPayload(values: ProductFormValues): ProductMutationInput {
   return {
     sku: values.sku.trim(),
     name: values.name.trim(),
@@ -228,7 +238,7 @@ export function ProductFormModal({
   const isEdit = Boolean(product);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingValues, setPendingValues] =
-    useState<ProductMutationInput | null>(null);
+    useState<ProductFormValues | null>(null);
   const { mutate: create, isPending: loadCreate } = useCreateProduct();
   const { mutate: edit, isPending: loadEdit } = useUpdateProduct(product?.id);
 
