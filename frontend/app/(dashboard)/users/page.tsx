@@ -9,7 +9,6 @@ export const metadata: Metadata = {
   description: "Manage system access, roles, and administrative privileges.",
 };
 
-/** Server Component. */
 export default function UsersPage() {
   return (
     <>

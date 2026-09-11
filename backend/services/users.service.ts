@@ -133,13 +133,18 @@ export const deleteUserService = async (id: string, businessId: string) => {
         return null
     }
 
-    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-        await tx.user.update({
-            where: { id },
-            data: {
-                deletedAt: new Date()
-            }
-        })
-        return true
+    await prisma.user.update({
+        where: { id },
+        data: { deletedAt: new Date() },
     })
+    return true
+}
+
+
+export const removeMembership = async (userId: string, businessId: string) => {
+  return prisma.membership.delete({
+    where: {
+      userId_businessId: { userId, businessId },
+    },
+  })
 }

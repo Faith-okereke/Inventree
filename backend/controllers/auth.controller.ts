@@ -9,7 +9,6 @@ import {
     createPasswordResetToken,
     getUserService,
     registerService,
-    softDeleteUser,
     updateUserPassword,
     verifyPasswordResetToken,
     upsertGoogleUser,
@@ -20,6 +19,7 @@ import type {
     ResetPasswordRequest,
 } from "../types/auth";
 import { hashPassword, verifyPassword } from "../utils/password";
+import { deleteUserService } from "../services/users.service";
 
 export const registerUser = async (req: Request, res: Response) => {
     const { email, password, name }: RegisterRequest = req.body;
@@ -234,6 +234,7 @@ export const verifyUserPassword = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Internal server error" })
     }
 }
+
 export const resetUserPassword = async (req: Request, res: Response) => {
     const { newPassword, token }: ResetPasswordRequest = req.body;
     try {
@@ -276,16 +277,21 @@ export const getUserProfile = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Internal Server Error occured" })
     }
 }
+
 export const deleteUserProfile = async (req: Request, res: Response) => {
     const authReq = req as AuthenticatedRequest
-    try {
-        const user = await getUserService({ email: authReq?.auth?.email as string })
+    const userId = authReq.auth?.id
+    const businessId = authReq.auth?.businessId
 
-        if (!user) {
+    if (!userId || !businessId) {
+        return res.status(401).json({ message: "Unauthorized" })
+    }
+
+    try {
+        const deleted = await deleteUserService(userId, businessId)
+        if (!deleted) {
             return res.status(404).json({ message: "User not found" })
         }
-
-        await softDeleteUser(user.id)
         return res.status(204).send()
     } catch (error) {
         console.log(error)

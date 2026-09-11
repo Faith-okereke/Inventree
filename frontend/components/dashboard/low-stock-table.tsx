@@ -1,5 +1,7 @@
+import { EmptyState } from "@/components/dashboard/empty-state";
 import { StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { icons } from "@/components/ui/app-icon";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableScroll, Td, Th, Tr } from "@/components/ui/table";
 import { formatNumber } from "@/lib/utils/format";
@@ -37,7 +39,18 @@ export function LowStockTable({
             </tr>
           </thead>
           <tbody>
-            {products.map((product, index) => (
+            {products.length === 0 ? (
+              <tr>
+                <td colSpan={6}>
+                  <EmptyState
+                    icon={icons.box}
+                    title="Everything is stocked"
+                    description="No product is at or below its reorder point right now."
+                  />
+                </td>
+              </tr>
+            ) : (
+              products.map((product, index) => (
               <Tr
                 key={product.id}
                 className="animate-fade-in"
@@ -58,22 +71,23 @@ export function LowStockTable({
                   {formatNumber(product.quantityInStock)}
                 </Td>
                 <Td className="hidden text-right text-ink-500 tabular-nums sm:table-cell">
-                  {formatNumber(5)}
+                  {formatNumber(product.lowStockThreshold)}
                 </Td>
                 <Td>
                   <StatusBadge
                     status={product.quantityInStock === 0 ? "Stock Out" : "Low Stock"}
                   />
                 </Td>
-                <Td className="text-right">
-                  {/* Raising a purchase order needs a backend; the button is the
-                      designed affordance for it. */}
-                  <Button variant="secondary" size="sm">
-                    Reorder
-                  </Button>
-                </Td>
-              </Tr>
-            ))}
+                  <Td className="text-right">
+                    {/* Raising a purchase order needs a backend; the button is the
+                        designed affordance for it. */}
+                    <Button variant="secondary" size="sm">
+                      Reorder
+                    </Button>
+                  </Td>
+                </Tr>
+              ))
+            )}
           </tbody>
         </Table>
       </TableScroll>

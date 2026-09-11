@@ -223,7 +223,7 @@ export function ProductsTable({
             </thead>
             <tbody>
               {filteredProducts.length === 0 ? (
-                <TableEmpty colSpan={COLUMN_COUNT}>
+                <TableEmpty colSpan={COLUMN_COUNT} >
                   No products match the current filters.
                 </TableEmpty>
               ) : (

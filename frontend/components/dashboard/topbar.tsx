@@ -78,14 +78,6 @@ export function Topbar() {
         >
           <AppIcon name={icons.bell} className="size-5" />
         </button>
-        <button
-          type="button"
-          className="hidden size-10 place-items-center rounded-full text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900 sm:grid"
-          aria-label="Activity history"
-        >
-          <AppIcon name={icons.history} className="size-5" />
-        </button>
-
         <div ref={menuRef} className="relative">
           <button
             type="button"
@@ -117,13 +109,13 @@ export function Topbar() {
             <div className="absolute right-0 top-[calc(100%+0.75rem)] w-72 overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.12)]">
               <div className="border-b border-ink-100 px-4 py-4">
                 <div className="flex items-center gap-3">
-                   {user?.avatar ? (
-              <img src={user.avatar} className="size-8 rounded-full" />
-            ) : (
-              <span className="grid size-11 place-items-center rounded-full bg-brand-600 text-sm font-semibold text-white">
-                {initials}
-              </span>
-            )}
+                  {user?.avatar ? (
+                    <img src={user.avatar} className="size-8 rounded-full" />
+                  ) : (
+                    <span className="grid size-11 place-items-center rounded-full bg-brand-600 text-sm font-semibold text-white">
+                      {initials}
+                    </span>
+                  )}
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-ink-900">
                       {user?.name || "Account"}

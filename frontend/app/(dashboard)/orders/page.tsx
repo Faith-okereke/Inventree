@@ -9,10 +9,6 @@ export const metadata: Metadata = {
   description: "View the list of customer orders and their fulfilment status.",
 };
 
-/**
- * Server Component. The toolbar and the table are the only Client Components,
- * because they read the shared filter state out of Redux.
- */
 export default function OrdersPage() {
   return (
     <>

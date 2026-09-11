@@ -1,8 +1,6 @@
 import { prisma } from "../database/prisma"
 import { Prisma } from "../generated/prisma/client"
 
-const dashboardLowStockThreshold = 5
-
 type DashboardOrder = {
     status: string
 }
@@ -23,6 +21,7 @@ type LowStockProduct = {
     name: string
     sku: string
     quantityInStock: number
+    lowStockThreshold: number
 }
 
 export const getOrderDashboard = async (businessId: string) => {
@@ -55,8 +54,14 @@ export const getOrderDashboard = async (businessId: string) => {
         prisma.product.findMany({
             where: {
                 businessId,
+                /*
+                 * Field reference, not a constant: each product is compared to its
+                 * own configured reorder point. This matches how the low-stock
+                 * emails decide to fire (see order.service / product.service), so
+                 * the dashboard and the alerts can no longer disagree.
+                 */
                 quantityInStock: {
-                    lte: dashboardLowStockThreshold,
+                    lte: prisma.product.fields.lowStockThreshold,
                 },
             },
             select: {
@@ -64,6 +69,7 @@ export const getOrderDashboard = async (businessId: string) => {
                 name: true,
                 sku: true,
                 quantityInStock: true,
+                lowStockThreshold: true,
             },
             orderBy: {
                 quantityInStock: 'asc',

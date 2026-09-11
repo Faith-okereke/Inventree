@@ -10,6 +10,8 @@ export interface DashboardLowStockProduct {
   name: string;
   sku: string;
   quantityInStock: number;
+  /** The product's own configured reorder point. */
+  lowStockThreshold: number;
 }
 
 export interface DashboardData {

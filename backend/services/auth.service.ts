@@ -136,23 +136,6 @@ export const updateUserPassword = async (userId: string, newHashedPassword: stri
   })
 }
 
-export const softDeleteUser = async (userId: string) => {
-  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-    const user = await tx.user.update({
-      where: { id: userId },
-      data: {
-        deletedAt: new Date()
-      }
-    })
-
-    await tx.passwordResetToken.deleteMany({
-      where: { userId }
-    })
-
-    return user
-  })
-}
-
 export const consumePasswordResetToken = async (tokenHash: string) => {
   return prisma.passwordResetToken.delete({
     where: { tokenHash }
@@ -164,3 +147,4 @@ export const logoutUserService = async ({ userId }: { userId: string }) => {
     where: { id: userId }
   })
 }
+

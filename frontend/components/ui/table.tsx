@@ -66,7 +66,7 @@ export function Tr({ className, ...props }: React.ComponentProps<"tr">) {
   );
 }
 
-/** Shown in place of rows when a filter matches nothing. */
+
 export function TableEmpty({
   colSpan,
   children,

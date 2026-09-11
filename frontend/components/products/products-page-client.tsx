@@ -132,7 +132,7 @@ export function ProductsPageClient() {
         </RequireRole>
       </PageHeader>
 
-      <div className="relative">
+      <div className="relative space-y-5">
         <StatGrid>
           {stats.map((stat, index) => (
             <StatCard

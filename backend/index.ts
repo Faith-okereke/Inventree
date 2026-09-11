@@ -49,8 +49,6 @@ app.use(
     swaggerUi.serve,
     swaggerUi.setup(swaggerSpec, {
         swaggerOptions: {
-            // Sort operations alphabetically within each tag group.
-            // Tag group order itself comes from `tags` in config/swagger.ts.
             operationsSorter: "alpha",
         },
     })
