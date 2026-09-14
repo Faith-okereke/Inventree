@@ -22,12 +22,12 @@ export const sendInvitation = async (req: Request, res: Response) => {
         if (!user) {
             return res.status(401).json({ message: "Unauthorized" });
         }
-
+        console.log("auth payload:", user);
         const invitation = await sendInvitationService({
             email,
             role,
             businessId: user.businessId,
-            invitedById: user.userId,
+            invitedById: user.id,
             tokenHash,
             expiresAt,
         });
@@ -58,8 +58,8 @@ export const sendInvitation = async (req: Request, res: Response) => {
 };
 export const acceptInvitation = async (req: Request, res: Response) => {
     try {
-        const token = req.params.token
-        const { name, password } = req.body
+        // const token = req.query.token as string;
+        const { token, name, password } = req.body
 
         if (!token) {
             return res.status(400).json({ message: "Token is required" });

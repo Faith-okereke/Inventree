@@ -280,10 +280,8 @@ paths:
           description: Internal server error
     delete:
       tags: [Auth]
-      summary: Delete the authenticated user's own account
-      description: >
-        Soft-deletes the caller's own account by setting `deletedAt`.
-        Currently restricted to admins by `requireRole('admin')`.
+      summary: Delete the authenticated user's account
+      description: Deletes the authenticated user's account. Requires admin role.
       security:
         - bearerAuth: []
       responses:
@@ -297,3 +295,45 @@ paths:
           description: User not found
         "500":
           description: Internal server error
+  /api/auth/google:
+    get:
+      tags: [Auth]
+      summary: Initiate Google OAuth login
+      description: >
+        Redirects the user to Google's OAuth consent screen. After authorization,
+        Google redirects back to the callback endpoint with an authorization code.
+      security: []
+      responses:
+        "302":
+          description: Redirect to Google OAuth consent screen
+        "500":
+          description: Google sign-in is not configured
+  /api/auth/google/callback:
+    get:
+      tags: [Auth]
+      summary: Handle Google OAuth callback
+      description: >
+        Handles the OAuth callback from Google. Exchanges the authorization code
+        for an access token, retrieves the user profile, creates or updates the user,
+        and redirects to the frontend with the auth token.
+      security: []
+      parameters:
+        - in: query
+          name: code
+          required: false
+          schema:
+            type: string
+          description: Authorization code from Google.
+        - in: query
+          name: error
+          required: false
+          schema:
+            type: string
+          description: Error code if the user denied the authorization request.
+      responses:
+        "302":
+          description: >
+            Redirect to frontend. On success, redirects to frontend URL with token.
+            On failure, redirects to /login?error=google_callback_failed
+        "500":
+          description: Google sign-in is not configured or token exchange failed
