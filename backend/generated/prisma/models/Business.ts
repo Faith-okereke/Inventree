@@ -175,6 +175,7 @@ export type BusinessWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   memberships?: Prisma.MembershipListRelationFilter
+  invitations?: Prisma.InvitationListRelationFilter
   products?: Prisma.ProductListRelationFilter
   orders?: Prisma.OrderListRelationFilter
 }
@@ -185,6 +186,7 @@ export type BusinessOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   memberships?: Prisma.MembershipOrderByRelationAggregateInput
+  invitations?: Prisma.InvitationOrderByRelationAggregateInput
   products?: Prisma.ProductOrderByRelationAggregateInput
   orders?: Prisma.OrderOrderByRelationAggregateInput
 }
@@ -198,6 +200,7 @@ export type BusinessWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Business"> | Date | string
   memberships?: Prisma.MembershipListRelationFilter
+  invitations?: Prisma.InvitationListRelationFilter
   products?: Prisma.ProductListRelationFilter
   orders?: Prisma.OrderListRelationFilter
 }, "id">
@@ -228,6 +231,7 @@ export type BusinessCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipCreateNestedManyWithoutBusinessInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutBusinessInput
   products?: Prisma.ProductCreateNestedManyWithoutBusinessInput
   orders?: Prisma.OrderCreateNestedManyWithoutBusinessInput
 }
@@ -238,6 +242,7 @@ export type BusinessUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutBusinessInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutBusinessInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutBusinessInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutBusinessInput
 }
@@ -248,6 +253,7 @@ export type BusinessUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUpdateManyWithoutBusinessNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutBusinessNestedInput
   products?: Prisma.ProductUpdateManyWithoutBusinessNestedInput
   orders?: Prisma.OrderUpdateManyWithoutBusinessNestedInput
 }
@@ -258,6 +264,7 @@ export type BusinessUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutBusinessNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutBusinessNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutBusinessNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutBusinessNestedInput
 }
@@ -351,11 +358,26 @@ export type BusinessUpdateOneRequiredWithoutOrdersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BusinessUpdateToOneWithWhereWithoutOrdersInput, Prisma.BusinessUpdateWithoutOrdersInput>, Prisma.BusinessUncheckedUpdateWithoutOrdersInput>
 }
 
+export type BusinessCreateNestedOneWithoutInvitationsInput = {
+  create?: Prisma.XOR<Prisma.BusinessCreateWithoutInvitationsInput, Prisma.BusinessUncheckedCreateWithoutInvitationsInput>
+  connectOrCreate?: Prisma.BusinessCreateOrConnectWithoutInvitationsInput
+  connect?: Prisma.BusinessWhereUniqueInput
+}
+
+export type BusinessUpdateOneRequiredWithoutInvitationsNestedInput = {
+  create?: Prisma.XOR<Prisma.BusinessCreateWithoutInvitationsInput, Prisma.BusinessUncheckedCreateWithoutInvitationsInput>
+  connectOrCreate?: Prisma.BusinessCreateOrConnectWithoutInvitationsInput
+  upsert?: Prisma.BusinessUpsertWithoutInvitationsInput
+  connect?: Prisma.BusinessWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BusinessUpdateToOneWithWhereWithoutInvitationsInput, Prisma.BusinessUpdateWithoutInvitationsInput>, Prisma.BusinessUncheckedUpdateWithoutInvitationsInput>
+}
+
 export type BusinessCreateWithoutMembershipsInput = {
   id?: string
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  invitations?: Prisma.InvitationCreateNestedManyWithoutBusinessInput
   products?: Prisma.ProductCreateNestedManyWithoutBusinessInput
   orders?: Prisma.OrderCreateNestedManyWithoutBusinessInput
 }
@@ -365,6 +387,7 @@ export type BusinessUncheckedCreateWithoutMembershipsInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutBusinessInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutBusinessInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutBusinessInput
 }
@@ -390,6 +413,7 @@ export type BusinessUpdateWithoutMembershipsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invitations?: Prisma.InvitationUpdateManyWithoutBusinessNestedInput
   products?: Prisma.ProductUpdateManyWithoutBusinessNestedInput
   orders?: Prisma.OrderUpdateManyWithoutBusinessNestedInput
 }
@@ -399,6 +423,7 @@ export type BusinessUncheckedUpdateWithoutMembershipsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutBusinessNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutBusinessNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutBusinessNestedInput
 }
@@ -409,6 +434,7 @@ export type BusinessCreateWithoutProductsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipCreateNestedManyWithoutBusinessInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutBusinessInput
   orders?: Prisma.OrderCreateNestedManyWithoutBusinessInput
 }
 
@@ -418,6 +444,7 @@ export type BusinessUncheckedCreateWithoutProductsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutBusinessInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutBusinessInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutBusinessInput
 }
 
@@ -443,6 +470,7 @@ export type BusinessUpdateWithoutProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUpdateManyWithoutBusinessNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutBusinessNestedInput
   orders?: Prisma.OrderUpdateManyWithoutBusinessNestedInput
 }
 
@@ -452,6 +480,7 @@ export type BusinessUncheckedUpdateWithoutProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutBusinessNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutBusinessNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
@@ -461,6 +490,7 @@ export type BusinessCreateWithoutOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipCreateNestedManyWithoutBusinessInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutBusinessInput
   products?: Prisma.ProductCreateNestedManyWithoutBusinessInput
 }
 
@@ -470,6 +500,7 @@ export type BusinessUncheckedCreateWithoutOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutBusinessInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutBusinessInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutBusinessInput
 }
 
@@ -495,6 +526,7 @@ export type BusinessUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUpdateManyWithoutBusinessNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutBusinessNestedInput
   products?: Prisma.ProductUpdateManyWithoutBusinessNestedInput
 }
 
@@ -504,7 +536,64 @@ export type BusinessUncheckedUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutBusinessNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutBusinessNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutBusinessNestedInput
+}
+
+export type BusinessCreateWithoutInvitationsInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutBusinessInput
+  products?: Prisma.ProductCreateNestedManyWithoutBusinessInput
+  orders?: Prisma.OrderCreateNestedManyWithoutBusinessInput
+}
+
+export type BusinessUncheckedCreateWithoutInvitationsInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutBusinessInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutBusinessInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutBusinessInput
+}
+
+export type BusinessCreateOrConnectWithoutInvitationsInput = {
+  where: Prisma.BusinessWhereUniqueInput
+  create: Prisma.XOR<Prisma.BusinessCreateWithoutInvitationsInput, Prisma.BusinessUncheckedCreateWithoutInvitationsInput>
+}
+
+export type BusinessUpsertWithoutInvitationsInput = {
+  update: Prisma.XOR<Prisma.BusinessUpdateWithoutInvitationsInput, Prisma.BusinessUncheckedUpdateWithoutInvitationsInput>
+  create: Prisma.XOR<Prisma.BusinessCreateWithoutInvitationsInput, Prisma.BusinessUncheckedCreateWithoutInvitationsInput>
+  where?: Prisma.BusinessWhereInput
+}
+
+export type BusinessUpdateToOneWithWhereWithoutInvitationsInput = {
+  where?: Prisma.BusinessWhereInput
+  data: Prisma.XOR<Prisma.BusinessUpdateWithoutInvitationsInput, Prisma.BusinessUncheckedUpdateWithoutInvitationsInput>
+}
+
+export type BusinessUpdateWithoutInvitationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutBusinessNestedInput
+  products?: Prisma.ProductUpdateManyWithoutBusinessNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutBusinessNestedInput
+}
+
+export type BusinessUncheckedUpdateWithoutInvitationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutBusinessNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutBusinessNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 
@@ -514,12 +603,14 @@ export type BusinessUncheckedUpdateWithoutOrdersInput = {
 
 export type BusinessCountOutputType = {
   memberships: number
+  invitations: number
   products: number
   orders: number
 }
 
 export type BusinessCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   memberships?: boolean | BusinessCountOutputTypeCountMembershipsArgs
+  invitations?: boolean | BusinessCountOutputTypeCountInvitationsArgs
   products?: boolean | BusinessCountOutputTypeCountProductsArgs
   orders?: boolean | BusinessCountOutputTypeCountOrdersArgs
 }
@@ -544,6 +635,13 @@ export type BusinessCountOutputTypeCountMembershipsArgs<ExtArgs extends runtime.
 /**
  * BusinessCountOutputType without action
  */
+export type BusinessCountOutputTypeCountInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InvitationWhereInput
+}
+
+/**
+ * BusinessCountOutputType without action
+ */
 export type BusinessCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ProductWhereInput
 }
@@ -562,6 +660,7 @@ export type BusinessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   createdAt?: boolean
   updatedAt?: boolean
   memberships?: boolean | Prisma.Business$membershipsArgs<ExtArgs>
+  invitations?: boolean | Prisma.Business$invitationsArgs<ExtArgs>
   products?: boolean | Prisma.Business$productsArgs<ExtArgs>
   orders?: boolean | Prisma.Business$ordersArgs<ExtArgs>
   _count?: boolean | Prisma.BusinessCountOutputTypeDefaultArgs<ExtArgs>
@@ -591,6 +690,7 @@ export type BusinessSelectScalar = {
 export type BusinessOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt", ExtArgs["result"]["business"]>
 export type BusinessInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   memberships?: boolean | Prisma.Business$membershipsArgs<ExtArgs>
+  invitations?: boolean | Prisma.Business$invitationsArgs<ExtArgs>
   products?: boolean | Prisma.Business$productsArgs<ExtArgs>
   orders?: boolean | Prisma.Business$ordersArgs<ExtArgs>
   _count?: boolean | Prisma.BusinessCountOutputTypeDefaultArgs<ExtArgs>
@@ -602,6 +702,7 @@ export type $BusinessPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "Business"
   objects: {
     memberships: Prisma.$MembershipPayload<ExtArgs>[]
+    invitations: Prisma.$InvitationPayload<ExtArgs>[]
     products: Prisma.$ProductPayload<ExtArgs>[]
     orders: Prisma.$OrderPayload<ExtArgs>[]
   }
@@ -1005,6 +1106,7 @@ readonly fields: BusinessFieldRefs;
 export interface Prisma__BusinessClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   memberships<T extends Prisma.Business$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  invitations<T extends Prisma.Business$invitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$invitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   products<T extends Prisma.Business$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orders<T extends Prisma.Business$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Business$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1454,6 +1556,30 @@ export type Business$membershipsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.MembershipScalarFieldEnum | Prisma.MembershipScalarFieldEnum[]
+}
+
+/**
+ * Business.invitations
+ */
+export type Business$invitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Invitation
+   */
+  select?: Prisma.InvitationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Invitation
+   */
+  omit?: Prisma.InvitationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InvitationInclude<ExtArgs> | null
+  where?: Prisma.InvitationWhereInput
+  orderBy?: Prisma.InvitationOrderByWithRelationInput | Prisma.InvitationOrderByWithRelationInput[]
+  cursor?: Prisma.InvitationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InvitationScalarFieldEnum | Prisma.InvitationScalarFieldEnum[]
 }
 
 /**

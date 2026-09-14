@@ -6,6 +6,7 @@ import productRoute from "./routes/products.route"
 import ordersRoute from "./routes/orders.route"
 import userRoute from "./routes/user.route"
 import dashboardRoute from './routes/dashboard.route'
+import invitationRoute from './routes/invitation.route'
 import { errorHandler } from "./middleware/error-handler"
 import swaggerUi from "swagger-ui-express"
 import { swaggerSpec } from "./config/swagger"
@@ -40,6 +41,7 @@ app.use('/api/products', productRoute)
 app.use('/api/orders', ordersRoute)
 app.use('/api/users', userRoute)
 app.use('/api/dashboard', dashboardRoute)
+app.use('/api/invitation', invitationRoute)
 app.use(limiter)
 
 app.use(errorHandler)

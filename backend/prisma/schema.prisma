@@ -18,6 +18,14 @@ enum Role {
   staff
 }
 
+enum InvitationStatus {
+  pending
+  accepted
+  revoked
+  expired
+  declined
+}
+
 model User {
   id                 String              @id @default(uuid())
   name               String
@@ -27,6 +35,7 @@ model User {
   providerId         String?             @unique
   avatar             String?
   memberships        Membership[]
+  invitations        Invitation[] 
   passwordResetToken PasswordResetToken?
   deletedAt          DateTime?
   createdAt          DateTime            @default(now())
@@ -47,10 +56,12 @@ model Business {
   id          String       @id @default(uuid())
   name        String
   memberships Membership[]
+  invitations Invitation[]
   products    Product[]
   orders      Order[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @default(now()) @updatedAt
+
 }
 
 model Membership {
@@ -106,4 +117,23 @@ model OrderItem {
   product      Product @relation(fields: [productId], references: [id])
   quantity     Int
   priceAtOrder Decimal
+}
+
+model Invitation {
+  id          String            @id @default(uuid())
+  email       String
+  role        Role              @default(staff)
+  status      InvitationStatus  @default(pending)
+  tokenHash   String            @unique
+  businessId  String
+  invitedById String
+  expiresAt   DateTime
+  createdAt   DateTime          @default(now())
+  acceptedAt  DateTime?
+
+  business  Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  invitedBy User     @relation(fields: [invitedById], references: [id])
+
+  @@unique([email, businessId, status])
+  @@index([businessId])
 }
