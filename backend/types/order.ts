@@ -1,14 +1,14 @@
-type OrderItemInput = {
-    productId: string;
-    quantity: number;
-};
-
-export type CreateOrderInput = {
-    userId: string;
-    status?: string; // 'pending', 'fulfilled', 'cancelled'
-    items: OrderItemInput[];
-};
-
-export type UpdateOrderInput = {
-    status?: string;
-};
+export type {
+  OrderStatus,
+  OrderItemProduct,
+  OrderItem,
+  OrderMembershipUser,
+  OrderMembership,
+  OrderResponse,
+  OrderListResponse,
+  OrderMutationInput,
+  OrderUpdate,
+  OrderItemInput,
+  CreateOrderInput,
+  UpdateOrderInput,
+} from "../../shared/types/order";

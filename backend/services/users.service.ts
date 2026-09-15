@@ -13,6 +13,7 @@ const userInclude = {
             id: true,
             role: true,
             businessId: true,
+            
         },
     },
 } as const
@@ -58,8 +59,33 @@ export const getAllUsersService = async (
         }),
         prisma.user.count({ where }),
     ]);
+
+    const invitations = await prisma.invitation.findMany({
+        where: {
+            businessId,
+            email: { in: data.map((user) => user.email) },
+        },
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            email: true,
+            status: true,
+            createdAt: true,
+        },
+    });
+
+    const invitationByEmail = new Map<string, (typeof invitations)[number]>();
+    for (const invitation of invitations) {
+        if (!invitationByEmail.has(invitation.email)) {
+            invitationByEmail.set(invitation.email, invitation);
+        }
+    }
+
     return {
-        data,
+        data: data.map((user) => ({
+            ...user,
+            invitation: invitationByEmail.get(user.email) ?? null,
+        })),
         pagination: {
             page,
             pageSize,
@@ -133,10 +159,7 @@ export const deleteUserService = async (id: string, businessId: string) => {
         return null
     }
 
-    await prisma.user.update({
-        where: { id },
-        data: { deletedAt: new Date() },
-    })
+    await removeMembership(id, businessId)
     return true
 }
 

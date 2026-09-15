@@ -1,55 +1,20 @@
-export type AuthRole = "admin" | "staff";
-export type AuthProvider = "local" | "google";
-
-export interface Memberships {
-  id: string;
-  role: AuthRole;
-  businessId:string
-  createdAt:string
-  updatedAt:string
-}
-export interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  provider: AuthProvider;
-  providerId: string | null;
-  avatar: string | null;
-  deletedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-  memberships:Memberships[]
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  name: string;
-}
-
-export interface LoginResponse {
-  token: string;
-  user: AuthUser;
-}
-
-export interface RegisterResponse extends AuthUser {}
-
-export interface CurrentUserResponse {
-  status: number;
-  data: AuthUser;
-}
-
-export interface ApiErrorResponse {
-  message: string;
-}
-
-export interface ResetPasswordRequest {
-  token: string;
-  newPassword: string;
-}
+export type {
+  AuthRole,
+  AuthProvider,
+  AuthMembership,
+  AuthUser,
+  Memberships,
+  LoginRequest,
+  RegisterRequest,
+  LoginResponse,
+  RegisterResponse,
+  CurrentUserResponse,
+  ApiErrorResponse,
+  ForgotPasswordResponse,
+  ResetPasswordResponse,
+  VerifyPasswordResponse,
+  ResetPasswordRequest,
+  AuthSession,
+  RegisterCredentials,
+  LoginCredentials,
+} from "../../shared/types/auth";

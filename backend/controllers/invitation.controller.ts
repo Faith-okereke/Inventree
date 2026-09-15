@@ -11,6 +11,7 @@ export const sendInvitation = async (req: Request, res: Response) => {
     try {
         const { email, role = "staff" } = req.body;
 
+
         if (!email) {
             return res.status(400).json({ message: "Email is required" });
         }
@@ -22,7 +23,7 @@ export const sendInvitation = async (req: Request, res: Response) => {
         if (!user) {
             return res.status(401).json({ message: "Unauthorized" });
         }
-        console.log("auth payload:", user);
+
         const invitation = await sendInvitationService({
             email,
             role,
@@ -31,6 +32,9 @@ export const sendInvitation = async (req: Request, res: Response) => {
             tokenHash,
             expiresAt,
         });
+        if (invitation.status !== "pending") {
+            return res.status(400).json({ message: "Invitation does not stand" });
+        }
 
         await sendInvitationEmail(
             {
@@ -51,30 +55,41 @@ export const sendInvitation = async (req: Request, res: Response) => {
                 expiresAt: invitation.expiresAt,
             },
         });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Internal Server Error occured" });
+    } catch (error:any) {
+        switch (error.message) {
+            case ("ALREADY_MEMBER"):
+                return res.status(400).json({ message: "User is already a member of this business" });
+            default:
+                console.log(error);
+                return res.status(500).json({ message: "Internal Server Error occured" });
+        }
+
     }
 };
 export const acceptInvitation = async (req: Request, res: Response) => {
     try {
-        // const token = req.query.token as string;
-        const { token, name, password } = req.body
+        const acceptToken = req.query.token as string;
+        const { name, password } = req.body
 
-        if (!token) {
+        if (!acceptToken) {
             return res.status(400).json({ message: "Token is required" });
         }
 
-        const { user, membership } = await acceptInvitationService({ token, name, password })
+        const { user, membership } = await acceptInvitationService({ token: acceptToken, name, password })
 
-        const authToken = jwt.sign(
+        const token = jwt.sign(
             { id: user.id, role: membership.role, businessId: membership.businessId },
             process.env.JWT_SECRET as string,
             { expiresIn: '7d' }
         )
 
         const { password: _, ...safeUser } = user;
-        return res.json({ message: "Invitation accepted successfully, Your account is now created!", authToken, safeUser, membership });
+        return res.json({
+            message: "Invitation accepted successfully, Your account is now created!",
+            token,
+            user: { ...safeUser, memberships: [membership] },
+            membership,
+        });
     } catch (error: any) {
         switch (error.message) {
             case "INVALID_INVITATION":

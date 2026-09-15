@@ -82,10 +82,10 @@ components:
           type: string
           example: "abc123def456..."
           description: The unique invitation token provided in the invitation email.
-    AuthToken:
+    AcceptToken:
       type: object
       properties:
-        authToken:
+        acceptToken:
           type: string
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
           description: JWT authentication token for subsequent API calls.
@@ -95,7 +95,7 @@ components:
         message:
           type: string
           example: "Invitation accepted successfully, Your account is now created!"
-        authToken:
+        acceptToken:
           type: string
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
           description: JWT authentication token valid for 7 days.

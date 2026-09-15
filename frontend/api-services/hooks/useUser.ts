@@ -1,5 +1,5 @@
-﻿import { useQuery } from "@tanstack/react-query";
-import { getAllUsers, getUsersById } from "../services/user.service";
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteUser, getAllUsers, getUsersById } from "../services/user.service";
 import type { ApiResponse } from "@/types/api";
 import toast from "react-hot-toast";
 import type { UserResponse } from "@/types/users";
@@ -7,7 +7,7 @@ import { getApiErrorMessage } from "@/lib/api/errors";
 
 export const useGetAllUsers = (
   page = 1,
-  pageSize = 10,
+  pageSize = 5,
   search?: string,
   role?: string,
   status?: string,
@@ -39,4 +39,19 @@ export const useGetUsersById = (userId: string | undefined) => {
   }
 
   return { ...query, data: query.data?.data };
+};
+
+export const useDeleteUser = (userId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deleteUser(userId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["getAllUsers"] });
+      toast.success("User deleted successfully");
+    },
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error));
+    },
+  });
 };

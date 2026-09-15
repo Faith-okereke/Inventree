@@ -6,4 +6,7 @@ export type {
   invitationRequest,
   invitationStatus,
   acceptInvitationRequest,
+  AcceptInvitationResponse,
+  SendInviteRequest,
+  SendInvitationInput,
 } from "../../shared/types/invitation";

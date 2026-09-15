@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
+
 import { Select } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setFilter } from "@/store/slices/filters.slice";
 import { Button } from "../ui/button";
 import { AppIcon, icons } from "../ui/app-icon";
+import { SendInviteModal } from "./send-invite-modal";
 
 const roleOptions = [
   { value: "all", label: "All roles" },
@@ -18,11 +21,10 @@ const statusOptions = [
   { value: "inactive", label: "Inactive" },
 ] as const;
 
-
 export function UsersToolbar() {
   const filters = useAppSelector((s) => s.filters.users);
   const dispatch = useAppDispatch();
-  // const { mutate } = useInviteUser();
+  const [inviteOpen, setInviteOpen] = useState(false);
 
   return (
     <>
@@ -49,10 +51,13 @@ export function UsersToolbar() {
           )
         }
       />
-      <Button size="sm" className="h-9" >
+
+      <Button size="sm" className="h-9" onClick={() => setInviteOpen(true)}>
         <AppIcon name={icons.plus} className="size-4" />
         Invite User
       </Button>
+
+      <SendInviteModal open={inviteOpen} onOpenChange={setInviteOpen} />
     </>
   );
 }

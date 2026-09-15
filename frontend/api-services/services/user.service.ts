@@ -50,7 +50,7 @@ function normalizeResponse(payload: unknown): UsersResponse | SingleUserResponse
     return payload;
 }
 
-export const getAllUsers = async (page = 1, pageSize = 10, filters: UserFilters = {}) => {
+export const getAllUsers = async (page = 1, pageSize = 5, filters: UserFilters = {}) => {
     const role = filters.role?.trim().toLowerCase();
     const status = filters.status?.trim().toLowerCase();
     const search = filters.search?.trim();
@@ -73,6 +73,7 @@ export const getUsersById = async (userId: string | undefined) => {
 };
 
 export const deleteUser = async (userId: string | undefined) => {
+    if (!userId) throw new Error("Missing user id");
     const response = await api.delete(`users/${userId}`)
     return response.data
 }

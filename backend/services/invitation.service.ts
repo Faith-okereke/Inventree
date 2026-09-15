@@ -4,6 +4,26 @@ import crypto from "node:crypto";
 import { hashPassword } from "../utils/password";
 
 export const sendInvitationService = async (invitationData: invitationRequest) => {
+    const existingUser = await prisma.user.findUnique({
+        where: { email: invitationData.email },
+        select: { id: true },
+    });
+
+    if (existingUser) {
+        const existingMembership = await prisma.membership.findUnique({
+            where: {
+                userId_businessId: {
+                    userId: existingUser.id,
+                    businessId: invitationData.businessId,
+                },
+            },
+        });
+
+        if (existingMembership) {
+            throw new Error("ALREADY_MEMBER");
+        }
+    }
+
     return await prisma.invitation.create({
         data: {
             email: invitationData.email,
@@ -41,9 +61,9 @@ const getValidInvitationByToken = async (token: string) => {
 export const acceptInvitationService = async ({
     token,
     name,
-    password}
+    password }
     : acceptInvitationRequest) => {
-   const invitation = await getValidInvitationByToken(token);
+    const invitation = await getValidInvitationByToken(token);
 
     return prisma.$transaction(async (tx) => {
         let user = await tx.user.findUnique({ where: { email: invitation.email } });
@@ -81,7 +101,7 @@ export const acceptInvitationService = async ({
 };
 
 export const declineInvitationService = async (token: string) => {
-    const invitation = await getValidInvitationByToken(token);  
+    const invitation = await getValidInvitationByToken(token);
 
     return prisma.invitation.update({
         where: { id: invitation.id },
