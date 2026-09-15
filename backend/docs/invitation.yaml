@@ -17,7 +17,7 @@ components:
           description: The role assigned to the invited user.
         status:
           type: string
-          enum: [pending, accepted, declined, revoked]
+          enum: [pending, accepted, declined, revoked, expired]
           example: "pending"
         businessId:
           type: string
@@ -54,14 +54,9 @@ components:
     AcceptInvitationInput:
       type: object
       required:
-        - token
         - name
         - password
       properties:
-        token:
-          type: string
-          example: "abc123def456..."
-          description: The unique invitation token provided in the invitation email.
         name:
           type: string
           example: "John Doe"
@@ -82,26 +77,19 @@ components:
           type: string
           example: "abc123def456..."
           description: The unique invitation token provided in the invitation email.
-    AcceptToken:
-      type: object
-      properties:
-        acceptToken:
-          type: string
-          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-          description: JWT authentication token for subsequent API calls.
     AcceptedInvitationResponse:
       type: object
       properties:
         message:
           type: string
           example: "Invitation accepted successfully, Your account is now created!"
-        acceptToken:
+        token:
           type: string
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
           description: JWT authentication token valid for 7 days.
-        safeUser:
+        user:
           type: object
-          description: User details excluding password.
+          description: User details excluding password, including the new membership.
           properties:
             id:
               type: string
@@ -114,9 +102,16 @@ components:
             provider:
               type: string
               nullable: true
+            providerId:
+              type: string
+              nullable: true
             avatar:
               type: string
               format: uri
+              nullable: true
+            deletedAt:
+              type: string
+              format: date-time
               nullable: true
             createdAt:
               type: string
@@ -124,24 +119,30 @@ components:
             updatedAt:
               type: string
               format: date-time
+            memberships:
+              type: array
+              items:
+                $ref: "#/components/schemas/Membership"
         membership:
-          type: object
-          properties:
-            id:
-              type: string
-              format: uuid
-            userId:
-              type: string
-              format: uuid
-            businessId:
-              type: string
-              format: uuid
-            role:
-              type: string
-              enum: [admin, staff]
-            createdAt:
-              type: string
-              format: date-time
+          $ref: "#/components/schemas/Membership"
+    Membership:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        businessId:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [admin, staff]
+        createdAt:
+          type: string
+          format: date-time
 
 paths:
   /api/invitation/send:
@@ -211,6 +212,13 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/AcceptInvitationInput"
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+          description: The raw invitation token from the invitation email.
       responses:
         "200":
           description: Invitation accepted successfully. Account created.

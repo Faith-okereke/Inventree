@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import { AuthenticatedRequest } from "../middleware/require-auth.middleware";
 import { sendInvitationEmail } from "../emails/invitation";
 import jwt from "jsonwebtoken";
+import { prisma } from "../database/prisma";
 
 
 
@@ -19,28 +20,35 @@ export const sendInvitation = async (req: Request, res: Response) => {
         const rawToken = crypto.randomBytes(32).toString("hex");
         const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
         const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-        const user = (req as AuthenticatedRequest).auth
-        if (!user) {
+        const authUser = (req as AuthenticatedRequest).auth
+        if (!authUser) {
             return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const inviter = await prisma.user.findUnique({
+            where: { id: authUser.id },
+            select: { name: true },
+        });
+        if (!inviter) {
+            return res.status(401).json({ message: "Authenticated user not found" });
         }
 
         const invitation = await sendInvitationService({
             email,
             role,
-            businessId: user.businessId,
-            invitedById: user.id,
+            businessId: authUser.businessId,
+            invitedById: authUser.id,
             tokenHash,
             expiresAt,
         });
         if (invitation.status !== "pending") {
             return res.status(400).json({ message: "Invitation does not stand" });
         }
-
         await sendInvitationEmail(
             {
                 to: email,
                 token: rawToken,
-                inviter: user.name
+                inviter: inviter.name,
 
             }
         );
