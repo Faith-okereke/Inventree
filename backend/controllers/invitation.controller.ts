@@ -64,6 +64,10 @@ export const sendInvitation = async (req: Request, res: Response) => {
             },
         });
     } catch (error:any) {
+        if (error.code === "ETIMEDOUT") {
+            return res.status(503).json({ message: "Invitation created, but email delivery timed out. Please try sending it again." });
+        }
+
         switch (error.message) {
             case ("ALREADY_MEMBER"):
                 return res.status(400).json({ message: "User is already a member of this business" });

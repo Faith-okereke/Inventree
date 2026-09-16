@@ -59,7 +59,7 @@ export function ProductsPageClient() {
         value: String(outOfStockCount),
         tone: "danger" as const,
       },
-      { label: "Est. Inventory Value", value: formatCurrency(inventoryValue) },
+      { label: "Est. Inventory Value", value: `₦ ${inventoryValue.toLocaleString()}` },
     ];
   }, [products]);
 

@@ -24,16 +24,29 @@ export const sendInvitationService = async (invitationData: invitationRequest) =
         }
     }
 
-    return await prisma.invitation.create({
-        data: {
+    return await prisma.invitation.upsert({
+        where: {
+            email_businessId_status: {
+                email: invitationData.email,
+                businessId: invitationData.businessId,
+                status: "pending",
+            },
+        },
+        create: {
             email: invitationData.email,
             businessId: invitationData.businessId,
             role: invitationData.role,
             invitedById: invitationData.invitedById,
             tokenHash: invitationData.tokenHash,
             expiresAt: invitationData.expiresAt,
-            status: 'pending'
-        }
+            status: "pending",
+        },
+        update: {
+            role: invitationData.role,
+            invitedById: invitationData.invitedById,
+            tokenHash: invitationData.tokenHash,
+            expiresAt: invitationData.expiresAt,
+        },
     });
 };
 
